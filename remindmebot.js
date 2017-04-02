@@ -83,8 +83,8 @@ client.on("message", msg => {
             .setTitle(`RemindMeBot Beta`)
             .addField("Uptime", uptime, true)
             .addField("Ping", `${(client.ping).toFixed(0)} ms`, true)
-            .addField("RAM Usage", `${((process.memoryUsage().heapUsed / 1024) / 1024).toFixed()}MB/${(os.totalmem() > 1073741824 ? os.totalmem() / 1024 / 1024 / 1024 : os.totalmem() / 1024 / 1024).toFixed()} ${os.totalmem() > 1073741824 ? "GB" : "MB"} (${(process.memoryUsage().heapUsed / os.totalmem() * 100).toFixed(2)}%)`, true)
-            .addField("System Info", `${process.platform} (${process.arch}), ${(os.totalmem() > 1073741824 ? os.totalmem() / 1024 / 1024 / 1024 : os.totalmem() / 1024 / 1024).toFixed(2)} ${os.totalmem() > 1073741824 ? "GB" : "MB"}`, true)
+            .addField("RAM Usage", `${(process.memoryUsage().heapUsed / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1024000000).toFixed(1) + " GB" : (os.totalmem() / 1024000).toFixed(2) + " MB")} (${(process.memoryUsage().heapUsed / os.totalmem() * 100).toFixed(2)}%)`, true)
+            .addField("System Info", `${process.platform} (${process.arch}), ${os.totalmem() > 1073741824 ? os.totalmem() / 1073741824 + " GB" : os.totalmem() / 1048576).toFixed(2) + " MB"}`, true)
             .addField("Libraries", `[Discord.js](https://discord.js.org) v${Discord.version}\nNode.js ${process.version}`, true)
             .setFooter("Created by Aether#2222");
         return msg.channel.sendEmbed(embed);
