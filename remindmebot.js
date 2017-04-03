@@ -238,7 +238,10 @@ client.on("message", msg => {
     };
 
     if (cmd === "prefix") {
-      if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length) === "") return msg.channel.sendEmbed(new Discord.RichEmbed().setColor(embedColor).setDescription(`The current prefix for this guild is \`${prefixdb[msg.guild.id]}\`.`))
+      if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length) === "") return msg.channel.sendEmbed(new Discord.RichEmbed()
+      .setColor(embedColor)
+      .setDescription(`The current prefix for this guild is \`${prefixdb[msg.guild.id]}\`.`))
+      
         if (msg.author.id === msg.guild.owner.id || msg.author.id === "284122164582416385") {
             if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length).length > 16) return msg.channel.sendMessage("Please keep your prefix below 16 characters.")
             prefixdb[msg.guild.id] = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length)
