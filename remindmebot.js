@@ -156,7 +156,7 @@ client.on("message", msg => {
                 if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 return collector.stop();
             } else {
-                del.push(m)
+                delarray.push(m)
                 msg.channel.sendMessage(":ballot_box_with_check: Cancelled.")
                 if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 return collector.stop();
