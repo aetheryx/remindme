@@ -1,3 +1,9 @@
 {
-  "token": "put your token here mkay"
+  "defaultPrefix": "r>",
+  "version": "v1.0.2",
+  "embedColor": "this can be a hex literal(0x1234), hex string(#FFFFF), RGB Array([255, 255, 255]) or simply a generic color(like 'DARK_BLUE')",
+  "keys": {
+    "token": "token goes here, mkay",
+    "dbots": "Discord Bots API key goes here"
+  }
 }
