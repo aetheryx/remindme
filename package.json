@@ -4,6 +4,7 @@
   "description": "A discord bot that creates reminders elegantly, with the possibility to view and delete reminders.",
   "main": "remindmebot.js",
   "scripts": {
+    "start": "node remindmebot",
     "test": "return 0 && echo \"No tests yet.\""
   },
   "repository": {
