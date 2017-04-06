@@ -275,7 +275,7 @@ client.on("message", msg => {
         if (timeArg === "tommorow") tParse = time("24 hours").absolute;
         if (timeArg.includes("next")) tParse = time(timeArg.replace(/next/g, "one")).absolute;
         if (!isNaN(timeArg) || !tParse) return msg.channel.sendMessage("Invalid time. Please enter a proper time argument, e.g. `12 hours` or `next week`. ")
-        if (time(msg.content).relative < 0) return msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
+        if (time(timeArg).relative < 0) return msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
         let reminder = msg.content.substring(msg.content.indexOf('"') + 1, msg.content.length - 1),
             dboption = {
                 "reminder": reminder,
