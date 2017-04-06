@@ -3,7 +3,7 @@ const Discord = require("discord.js"),
     time = require("time-parser"),
     fs = require("fs"),
     moment = require("moment"),
-    request = require("superagent"),
+    request = require("superagent"), // only for the bots.discord.pw API, remove if you don't need it
     db = require("./db.json"),
     settings = require("./settings.json"),
     prefixdb = require("./prefixdb.json"),
@@ -30,12 +30,20 @@ client.on("message", msg => {
 
     if (!prefixdb[msg.guild.id]) prefixdb[msg.guild.id] = settings.defaultPrefix;
 
+    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("prefix")) return msg.channel.sendMessage(`My prefix in this guild is ${prefixdb[msg.guild.id]}.`)
+
+    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("help")) return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]} <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
+        embed: new Discord.RichEmbed()
+            .setColor(settings.embedColor)
+            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(" ").sort().join(", "))
+    });
+
     if (!msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id])) return false;
 
     const cmd = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length).split(" ")[0];
 
     if (cmd === "reboot" || cmd === "restart") {
-        if (msg.author.id !== "284122164582416385") return msg.reply("You do not have permission to use this command.")
+        if (msg.author.id !== settings.ownerID) return msg.reply("You do not have permission to use this command.")
         msg.channel.sendEmbed(new Discord.RichEmbed()
                 .setColor(settings.embedColor)
                 .setDescription("Rebooting..."))
@@ -48,7 +56,7 @@ client.on("message", msg => {
         .setDescription("[Invite me to your server!](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608)"));
 
     if (cmd === "block") { // test write
-        if (msg.author.id !== "284122164582416385") return msg.reply("You do not have permission to use this command.");
+        if (msg.author.id !== settings.ownerID) return msg.reply("You do not have permission to use this command.");
         if (msg.mentions.users.size === 0) return msg.channel.sendMessage("No users mentioned.");
         blocked.push(msg.mentions.users.first().id);
         fs.writeFile("./blocked.json", JSON.stringify(blocked, "", "\t"), (err) => {
@@ -62,9 +70,9 @@ client.on("message", msg => {
     };
 
     if (cmd === "unblock") { // test write
-        if (msg.author.id !== "284122164582416385") return msg.reply("You do not have permission to use this command.");
+        if (msg.author.id !== settings.ownerID) return msg.reply("You do not have permission to use this command.");
         if (msg.mentions.users.size === 0) return msg.channel.sendMessage("No users mentioned.");
-        blocked.arr.splice(blocked.indexOf(msg.mentions.users.first().id), 1);
+        blocked.splice(blocked.indexOf(msg.mentions.users.first().id), 1);
         fs.writeFile("./blocked.json", JSON.stringify(blocked, "", "\t"), (err) => {
             if (err) return false;
             msg.channel.sendEmbed(new Discord.RichEmbed()
@@ -85,7 +93,7 @@ client.on("message", msg => {
             .addField("Guilds", client.guilds.size, true)
             .addField("Uptime", uptime, true)
             .addField("Ping", `${(client.ping).toFixed(0)} ms`, true)
-            .addField("RAM Usage", `${(process.memoryUsage().heapUsed / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed() + " MB")} (${(process.memoryUsage().heapUsed / os.totalmem() * 100).toFixed(2)}%)`, true)
+            .addField("RAM Usage", `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed() + " MB")} (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%)`, true)
             .addField("System Info", `${process.platform} (${process.arch}), ${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed(2) + " MB")}`, true)
             .addField("Libraries", `[Discord.js](https://discord.js.org) v${Discord.version}\nNode.js ${process.version}`, true)
             .setFooter("Created by Aether#2222");
@@ -96,8 +104,8 @@ client.on("message", msg => {
         .setColor(settings.embedColor)
         .setDescription(`:ping_pong: Pong! ${client.pings[0]}ms`));
 
-    if (cmd === "ev") {
-        if (msg.author.id !== "284122164582416385") return false;
+    if (cmd === "ev") { // test write
+        if (msg.author.id !== settings.ownerID) return false;
         let script = msg.content.substring(prefixdb[msg.guild.id].length + 3, msg.content.length);
         try {
             let code = eval(script);
@@ -116,11 +124,11 @@ client.on("message", msg => {
     if (cmd === "help") return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]} <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
         embed: new Discord.RichEmbed()
             .setColor(settings.embedColor)
-            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite")
+            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(" ").sort().join(", "))
     });
 
     if (cmd === "reminders" || cmd === "list") {
-        if (db[msg.author.id].length === 0 || !db[msg.author.id]) return msg.reply("You have no reminders set!");
+        if (!db[msg.author.id] || db[msg.author.id].length === 0) return msg.reply("You have no reminders set!");
         client.users.get(msg.author.id).sendEmbed(new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .addField(`Current reminder${(db[msg.author.id].length > 1 ? "s" : "")}:`, db[msg.author.id].map(r => r.reminder).join("\n"))
@@ -138,7 +146,7 @@ client.on("message", msg => {
 
     if (cmd === "clear" || cmd === "delete") {
         let delarray = [];
-        if (db[msg.author.id].length === 0 || !db[msg.author.id]) return msg.reply("You have no reminders set!")
+        if (!db[msg.author.id] || db[msg.author.id].length === 0) return msg.reply("You have no reminders set!")
         delarray.push(msg)
         msg.channel.sendMessage(":warning: This will delete all of your reminders! Are you sure? (`y`/`n`)").then(a => delarray.push(a))
         const collector = msg.channel.createCollector(m => msg.author.id === m.author.id, {
@@ -172,7 +180,7 @@ client.on("message", msg => {
         return;
     };
 
-    if (msg.content === prefixdb[msg.guild.id] + "remindme") {
+    if (msg.content.toLowerCase() === prefixdb[msg.guild.id] + "remindme") {
         let delarray = [];
         delarray.push(msg)
         msg.channel.sendMessage("What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)")
@@ -193,7 +201,7 @@ client.on("message", msg => {
                 msg.channel.sendMessage("Cancelled.");
                 return collector.stop();
             }
-            if (m.content.toLowerCase() === "!remindme") {
+            if (m.content.toLowerCase() === prefixdb[m.guild.id] + "remindme") {
                 delarray.push(m)
                 if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 return collector.stop();
@@ -209,11 +217,11 @@ client.on("message", msg => {
                 let tParse = time(m.content).absolute;
                 if (m.content === "tommorow") tParse = time("24 hours").absolute;
                 if (m.content.includes("next")) tParse = time(m.content.replace(/next/g, "one")).absolute;
-                if (!tParse) return msg.channel.sendMessage("Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
+                if (!isNaN(timeArg) || !tParse) return msg.channel.sendMessage("Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
                 if (time(m.content).relative < 0) {
                     collector.stop();
-                    msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
-                    return;
+                    // if (msg.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray);
+                    return msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
                 };
                 collector.stop();
                 dboption.when = tParse;
@@ -245,7 +253,7 @@ client.on("message", msg => {
             .setColor(settings.embedColor)
             .setDescription(`The current prefix for this guild is \`${prefixdb[msg.guild.id]}\`.`))
 
-        if (msg.author.id === msg.guild.owner.id || msg.author.id === "284122164582416385") {
+        if (msg.author.id === msg.guild.owner.id || msg.author.id === settings.ownerID) {
             if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length).length > 16) return msg.channel.sendMessage("Please keep your prefix below 16 characters.")
             prefixdb[msg.guild.id] = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length)
             fs.writeFile("./prefixdb.json", JSON.stringify(prefixdb, "", "\t"), (err) => {
@@ -266,7 +274,7 @@ client.on("message", msg => {
             tParse = time(timeArg).absolute;
         if (timeArg === "tommorow") tParse = time("24 hours").absolute;
         if (timeArg.includes("next")) tParse = time(timeArg.replace(/next/g, "one")).absolute;
-        if (!tParse) return msg.channel.sendMessage("Invalid time. Please enter a proper time argument, e.g. `12 hours` or `next week`. ")
+        if (!isNaN(timeArg) || !tParse) return msg.channel.sendMessage("Invalid time. Please enter a proper time argument, e.g. `12 hours` or `next week`. ")
         if (time(msg.content).relative < 0) return msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
         let reminder = msg.content.substring(msg.content.indexOf('"') + 1, msg.content.length - 1),
             dboption = {
@@ -289,7 +297,7 @@ client.on("message", msg => {
 
     /*    if (cmd === "forget") {
             let delarray = [];
-            if (db[msg.author.id].length === 0 || !db[msg.author.id]) return msg.reply("You have no reminders set!")
+            if (!db[msg.author.id] || db[msg.author.id].length === 0) return msg.reply("You have no reminders set!")
             delarray.push(msg)
             msg.channel.sendMessage("Here's a list of your current reminders: ", {
                 embed: new Discord.RichEmbed()
@@ -322,8 +330,9 @@ client.on("guildCreate", guild => {
         console.log(Date() + "Prefix DB updated.")
     })
 
-    guild.defaultChannel.sendMessage(`Hi, I'm ${client.user.toString()} and I can give you the ability to create reminders elegantly, with the possibility to view and delete reminders. To see a list of my commands, send \`${prefixdb[guild.id]}help\`.\nFeel free to dm Aether#2222 for any questions or concerns! (:`)
+    guild.defaultChannel.sendMessage(`Hi, I'm ${client.user.toString()} and I give you the possibility to set reminders and view or delete them. To see a list of my commands, send \`${prefixdb[guild.id]}help\`.\nFeel free to dm Aether#2222 for any questions or concerns! (:`)
 
+    // this is for the bots.discord.pw API, so you probably want to remove it if you're self hosting
     request
         .post("https://bots.discord.pw/api/bots/290947970457796608/stats")
         .set('Authorization', settings.keys.dbots)
@@ -336,6 +345,7 @@ client.on("guildCreate", guild => {
 });
 
 setInterval(() => {
+
     let expired = {};
 
     Object.keys(db).map(x => {
@@ -359,7 +369,7 @@ setInterval(() => {
                 .addField("Reminder:", expired[e].map(r => r.reminder).join("\n"))
                 .setFooter("Reminder set on ")
                 .setTimestamp(new Date(expired[e][0].made))
-            ).catch(e => console.log(e));
+            ).catch(e => console.log(e.message));
         };
 
         db[e] = db[e].filter(r => Date.now() <= r.when);
