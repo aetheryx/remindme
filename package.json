@@ -1,10 +1,10 @@
 {
   "name": "remindme",
-  "version": "1.0.0",
-  "description": "A discord bot that creates reminders elegantly, with the possibility to view and delete reminders.",
+  "version": "1.0.3",
+  "description": "A Discord bot that creates reminders elegantly, with the ability to view and delete reminders; and soon, much more.",
   "main": "remindmebot.js",
   "scripts": {
-    "start": "node remindmebot",
+    "start": "node --harmony remindmebot.js",
     "test": "return 0 && echo \"No tests yet.\""
   },
   "repository": {

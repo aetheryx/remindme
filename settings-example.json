@@ -1,9 +1,10 @@
 {
-  "defaultPrefix": "r>",
-  "version": "v1.0.2",
-  "embedColor": "this can be a hex literal(0x1234), hex string(#FFFFF), RGB Array([255, 255, 255]) or simply a generic color(like 'DARK_BLUE')",
+  "defaultPrefix": "Default prefix when your bot gets added to guilds.",
+  "version": "v1.0.3",
+  "embedColor": "This can be a hex literal(0x1234), hex string(#FFFFF), RGB Array([255, 255, 255]) or simply a generic color(like 'DARK_BLUE')",
+  "ownerID": "Put your ID here; this gives you access to some of the restricted commands like eval or reboot.",
   "keys": {
-    "token": "token goes here, mkay",
+    "token": "Put your bots token here.",
     "dbots": "Discord Bots API key goes here"
   }
 }
