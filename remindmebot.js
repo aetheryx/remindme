@@ -217,7 +217,7 @@ client.on("message", msg => {
                 let tParse = time(m.content).absolute;
                 if (m.content === "tommorow") tParse = time("24 hours").absolute;
                 if (m.content.includes("next")) tParse = time(m.content.replace(/next/g, "one")).absolute;
-                if (!isNaN(timeArg) || !tParse) return msg.channel.sendMessage("Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
+                if (!isNaN(m.content) || !tParse) return msg.channel.sendMessage("Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
                 if (time(m.content).relative < 0) {
                     collector.stop();
                     // if (msg.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray);
