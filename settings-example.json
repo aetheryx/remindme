@@ -1,6 +1,6 @@
 {
   "defaultPrefix": "Default prefix when your bot gets added to guilds.",
-  "version": "v1.0.3",
+  "version": "Version (see package.json for current version)",
   "embedColor": "This can be a hex literal(0x1234), hex string(#FFFFF), RGB Array([255, 255, 255]) or simply a generic color(like 'DARK_BLUE')",
   "ownerID": "Put your ID here; this gives you access to some of the restricted commands like eval or reboot.",
   "keys": {

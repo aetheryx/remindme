@@ -4,12 +4,12 @@ const Discord = require("discord.js"),
     fs = require("fs"),
     moment = require("moment"),
     request = require("superagent"), // only for the bots.discord.pw API, remove if you don't need it
-    db = require("./db.json"),
+    db = require("./reminders.json"),
     settings = require("./settings.json"),
     prefixdb = require("./prefixdb.json"),
     blocked = require("./blocked.json");
 
-delete require.cache[require.resolve("./db.json")]; // ?
+delete require.cache[require.resolve("./reminders.json")]; // ?
 delete require.cache[require.resolve("./prefixdb.json")]; // ?
 
 require("moment-duration-format");
@@ -30,12 +30,12 @@ client.on("message", msg => {
 
     if (!prefixdb[msg.guild.id]) prefixdb[msg.guild.id] = settings.defaultPrefix;
 
-    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("prefix")) return msg.channel.sendMessage(`My prefix in this guild is ${prefixdb[msg.guild.id]}.`)
+    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("prefix")) return msg.channel.sendMessage(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`)
 
     if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("help")) return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]} <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
         embed: new Discord.RichEmbed()
             .setColor(settings.embedColor)
-            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(" ").sort().join(", "))
+            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(", ").sort().join(", "))
     });
 
     if (!msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id])) return false;
@@ -85,16 +85,15 @@ client.on("message", msg => {
 
     if (cmd === "stats" || cmd === "info") {
         let os = require("os"),
-            uptime = moment.duration(process.uptime(), "seconds").format("dd:hh:mm:ss"),
             embed = new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .setTitle(`RemindMeBot ${settings.version}`)
             .setURL("https://github.com/Aetheryx/remindme")
             .addField("Guilds", client.guilds.size, true)
-            .addField("Uptime", uptime, true)
+            .addField("Uptime", moment.duration(process.uptime(), "seconds").format("dd:hh:mm:ss"), true)
             .addField("Ping", `${(client.ping).toFixed(0)} ms`, true)
             .addField("RAM Usage", `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed() + " MB")} (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%)`, true)
-            .addField("System Info", `${process.platform} (${process.arch}), ${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed(2) + " MB")}`, true)
+            .addField("System Info", `${process.platform} (${process.arch})\n${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed(2) + " MB")}`, true)
             .addField("Libraries", `[Discord.js](https://discord.js.org) v${Discord.version}\nNode.js ${process.version}`, true)
             .setFooter("Created by Aether#2222");
         return msg.channel.sendEmbed(embed);
@@ -157,16 +156,16 @@ client.on("message", msg => {
             if (m.content.toLowerCase() === "y" || m.content.toLowerCase() === "yes") {
                 delarray.push(m)
                 db[msg.author.id] = [];
-                fs.writeFile("./db.json", JSON.stringify(db, "", "\t"), (err) => {
+                fs.writeFile("./reminders.json", JSON.stringify(db, "", "\t"), (err) => {
                     if (err) return msg.channel.sendMessage("Your reminders weren't cleared.\n" + err.message);
                     msg.channel.sendMessage(":ballot_box_with_check: Reminders cleared.")
                 });
-                if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
+                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 return collector.stop();
             } else {
                 delarray.push(m)
                 msg.channel.sendMessage(":ballot_box_with_check: Cancelled.")
-                if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
+                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 return collector.stop();
             };
         });
@@ -197,13 +196,13 @@ client.on("message", msg => {
         collector.on("message", m => {
             if (m.content.toLowerCase() === "cancel") {
                 delarray.push(m)
-                if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
+                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 msg.channel.sendMessage("Cancelled.");
                 return collector.stop();
             }
             if (m.content.toLowerCase() === prefixdb[m.guild.id] + "remindme") {
                 delarray.push(m)
-                if (m.guild.members.get(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
+                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
                 return collector.stop();
             }
             if (step === 1) {
@@ -217,6 +216,7 @@ client.on("message", msg => {
                 let tParse = time(m.content).absolute;
                 if (m.content === "tommorow") tParse = time("24 hours").absolute;
                 if (m.content.includes("next")) tParse = time(m.content.replace(/next/g, "one")).absolute;
+                if (m.content.startsWith("a ")) tParse = time(m.content.replace(/a /g, "one ")).absolute;
                 if (!isNaN(m.content) || !tParse) return msg.channel.sendMessage("Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
                 if (time(m.content).relative < 0) {
                     collector.stop();
@@ -227,7 +227,7 @@ client.on("message", msg => {
                 dboption.when = tParse;
                 if (!db[msg.author.id]) db[msg.author.id] = [];
                 db[msg.author.id].push(dboption);
-                fs.writeFile("./db.json", JSON.stringify(db, "", "\t"), (err) => {
+                fs.writeFile("./reminders.json", JSON.stringify(db, "", "\t"), (err) => {
                     if (err) return msg.channel.sendMessage("Your reminder wasn't added.\n" + err.message);
                     msg.channel.sendEmbed(new Discord.RichEmbed()
                         .setColor(settings.embedColor)
@@ -274,6 +274,7 @@ client.on("message", msg => {
             tParse = time(timeArg).absolute;
         if (timeArg === "tommorow") tParse = time("24 hours").absolute;
         if (timeArg.includes("next")) tParse = time(timeArg.replace(/next/g, "one")).absolute;
+        if (timeArg.startsWith("a ")) tParse = time(timeArg.replace(/a /g, "one")).absolute;
         if (!isNaN(timeArg) || !tParse) return msg.channel.sendMessage("Invalid time. Please enter a proper time argument, e.g. `12 hours` or `next week`. ")
         if (time(timeArg).relative < 0) return msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
         let reminder = msg.content.substring(msg.content.indexOf('"') + 1, msg.content.length - 1),
@@ -284,7 +285,7 @@ client.on("message", msg => {
             };
         if (!db[msg.author.id]) db[msg.author.id] = [];
         db[msg.author.id].push(dboption);
-        fs.writeFile("./db.json", JSON.stringify(db, "", "\t"), (err) => {
+        fs.writeFile("./reminders.json", JSON.stringify(db, "", "\t"), (err) => {
             if (err) return msg.channel.sendMessage("Your reminder wasn't added.\n" + err.message);
             msg.channel.sendEmbed(new Discord.RichEmbed()
                 .setColor(settings.embedColor)
@@ -375,7 +376,7 @@ setInterval(() => {
         db[e] = db[e].filter(r => Date.now() <= r.when);
     });
 
-    fs.writeFile("./db.json", JSON.stringify(db, "", "\t"), (err) => {
+    fs.writeFile("./reminders", JSON.stringify(db, "", "\t"), (err) => {
         if (err) return false;
         console.log(Date() + "DB updated.")
     });
