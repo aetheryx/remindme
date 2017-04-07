@@ -53,7 +53,7 @@ client.on("message", msg => {
 
     if (cmd === "invite") return msg.channel.sendEmbed(new Discord.RichEmbed()
         .setColor(settings.embedColor)
-        .setDescription("[Invite me to your server!](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608)"));
+        .setDescription("[Invite me to your server!](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608)\n[Click here for a link to my support server.](https://discord.gg/Yphr6WG)"));
 
     if (cmd === "block") { // test write
         if (msg.author.id !== settings.ownerID) return msg.reply("You do not have permission to use this command.");
@@ -95,6 +95,7 @@ client.on("message", msg => {
             .addField("RAM Usage", `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed() + " MB")} (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%)`, true)
             .addField("System Info", `${process.platform} (${process.arch})\n${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed(2) + " MB")}`, true)
             .addField("Libraries", `[Discord.js](https://discord.js.org) v${Discord.version}\nNode.js ${process.version}`, true)
+            .addField("Invites", "[Click here to invite me to your guild!](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608)\n[Click here to join my support server!](https://discord.gg/Yphr6WG)", true)
             .setFooter("Created by Aether#2222");
         return msg.channel.sendEmbed(embed);
     };
@@ -216,7 +217,7 @@ client.on("message", msg => {
                 let tParse = time(m.content).absolute;
                 if (m.content === "tommorow") tParse = time("24 hours").absolute;
                 if (m.content.includes("next")) tParse = time(m.content.replace(/next/g, "one")).absolute;
-                if (m.content.startsWith("a ")) tParse = time(m.content.replace(/a /g, "one ")).absolute;
+                if (m.content.startsWith("a ") || m.content.startsWith("an ")) tParse = time(m.content.replace(/a /g, "one ").replace(/an /g, "one ")).absolute;
                 if (!isNaN(m.content) || !tParse) return msg.channel.sendMessage("Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
                 if (time(m.content).relative < 0) {
                     collector.stop();
@@ -274,7 +275,7 @@ client.on("message", msg => {
             tParse = time(timeArg).absolute;
         if (timeArg === "tommorow") tParse = time("24 hours").absolute;
         if (timeArg.includes("next")) tParse = time(timeArg.replace(/next/g, "one")).absolute;
-        if (timeArg.startsWith("a ")) tParse = time(timeArg.replace(/a /g, "one")).absolute;
+        if (timeArg.startsWith("a ") || timeArg.startsWith("an ")) tParse = time(timeArg.replace(/a /g, "one ").replace(/an /g, "one ")).absolute;
         if (!isNaN(timeArg) || !tParse) return msg.channel.sendMessage("Invalid time. Please enter a proper time argument, e.g. `12 hours` or `next week`. ")
         if (time(timeArg).relative < 0) return msg.channel.sendMessage("Your reminder wasn't added. \n__**ERR**: Unless you have a time machine, you can't set reminders in the past.__");
         let reminder = msg.content.substring(msg.content.indexOf('"') + 1, msg.content.length - 1),
@@ -335,7 +336,7 @@ client.on("guildCreate", guild => {
 
     // this is for the bots.discord.pw API, so you probably want to remove it if you're self hosting
     request
-        .post("https://bots.discord.pw/api/bots/290947970457796608/stats")
+        .post("https://bots.discord.pw/api/bots/" + client.user.id + "/stats")
         .set('Authorization', settings.keys.dbots)
         .send({
             server_count: client.guilds.size
