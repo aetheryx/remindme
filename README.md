@@ -1,8 +1,8 @@
-#RemindMeBot <iframe src="https://discordapp.com/widget?id=291640316816261120&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
+# RemindMeBot
 
 My own attempt at porting the famous RemindMeBot from Reddit to Discord; but better.
 
-##Getting started
+## Getting started
 
 RemindMeBot is written for Node.js, so install that for your OS ([click](https://nodejs.org/en/download/)) and get Node Package Manager(npm) to go with it.
 For Node I'm always working in the current build (7.8 at the time of writing) so I recommend you keep up, but anything above v7.0 should do.
