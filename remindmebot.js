@@ -124,7 +124,7 @@ client.on("message", msg => {
     if (cmd === "help") return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]} <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
         embed: new Discord.RichEmbed()
             .setColor(settings.embedColor)
-            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(" ").sort().join(", "))
+            .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(", ").sort().join(", "))
     });
 
     if (cmd === "reminders" || cmd === "list") {
