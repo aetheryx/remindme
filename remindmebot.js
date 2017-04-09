@@ -1,4 +1,4 @@
-const Discord = require("discord.js"),
+ios const Discord = require("discord.js"),
     client = new Discord.Client(),
     time = require("time-parser"),
     fs = require("fs"),
@@ -92,7 +92,7 @@ client.on("message", msg => {
             .addField("Guilds", client.guilds.size, true)
             .addField("Uptime", moment.duration(process.uptime(), "seconds").format("dd:hh:mm:ss"), true)
             .addField("Ping", `${(client.ping).toFixed(0)} ms`, true)
-            .addField("RAM Usage", `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed() + " MB")} (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%)`, true)
+            .addField("RAM Usage", `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed() + " MB")} \n(${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%)`, true)
             .addField("System Info", `${process.platform} (${process.arch})\n${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + " GB" : (os.totalmem() / 1048576).toFixed(2) + " MB")}`, true)
             .addField("Libraries", `[Discord.js](https://discord.js.org) v${Discord.version}\nNode.js ${process.version}`, true)
             .addField("Invites", "[Click here to invite me to your guild!](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608)\n[Click here to join my support server!](https://discord.gg/Yphr6WG)", true)
