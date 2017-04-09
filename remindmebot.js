@@ -1,4 +1,4 @@
-ios const Discord = require("discord.js"),
+const Discord = require("discord.js"),
     client = new Discord.Client(),
     time = require("time-parser"),
     fs = require("fs"),
