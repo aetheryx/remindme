@@ -1,6 +1,6 @@
 {
   "name": "remindme",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Discord bot that creates reminders elegantly, with the ability to view and delete reminders; and soon, much more.",
   "main": "remindmebot.js",
   "scripts": {

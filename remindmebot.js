@@ -32,7 +32,7 @@ client.on("message", msg => {
 
     if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("prefix")) return msg.channel.sendMessage(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`)
 
-    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("help")) return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]} <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
+    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("help")) return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]}remindme <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
         embed: new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(", ").sort().join(", "))
@@ -121,7 +121,7 @@ client.on("message", msg => {
         return;
     };
 
-    if (cmd === "help") return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]} <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
+    if (cmd === "help") return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]}remindme <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
         embed: new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .setDescription("remindme, list, clear, prefix, stats, ping, help, invite".split(", ").sort().join(", "))
@@ -358,7 +358,10 @@ setInterval(() => {
 
     if (Object.keys(expired).length === 0) return false;
 
+    let status;
+
     Object.keys(expired).map(e => {
+      if (!client.users.get(e)) return false;
         if (expired[e].length > 1) {
             client.users.get(e).sendEmbed(new Discord.RichEmbed()
                     .setColor(settings.embedColor)
@@ -375,9 +378,12 @@ setInterval(() => {
         };
 
         db[e] = db[e].filter(r => Date.now() <= r.when);
+
+        status = 1;
+
     });
 
-    fs.writeFile("./reminders", JSON.stringify(db, "", "\t"), (err) => {
+    if (status) fs.writeFile("./reminders", JSON.stringify(db, "", "\t"), (err) => {
         if (err) return false;
         console.log(Date() + "DB updated.")
     });
