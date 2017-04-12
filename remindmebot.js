@@ -196,18 +196,18 @@ client.on("message", msg => {
             };
         collector.on("message", m => {
             if (m.content.toLowerCase() === "cancel") {
-                delarray.push(m)
-                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
+                delarray.push(m);
+                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray);
                 msg.channel.sendMessage("Cancelled.");
                 return collector.stop();
             }
             if (m.content.toLowerCase() === prefixdb[m.guild.id] + "remindme") {
-                delarray.push(m)
-                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray)
+                delarray.push(m);
+                if (m.channel.permissionsFor(client.user.id).hasPermission("MANAGE_MESSAGES")) msg.channel.bulkDelete(delarray);
                 return collector.stop();
             }
             if (step === 1) {
-                delarray.push(m)
+                delarray.push(m);
                 if (m.content.length === 0) return msg.channel.sendMessage("The reminder cannot be empty.\nWhat would you like the reminder to be?").then(a => delarray.push(a));
                 dboption.reminder = m.content;
                 msg.channel.sendMessage("When would you like to be reminded? (e.g. 24 hours)").then(a => delarray.push(a));
@@ -270,7 +270,7 @@ client.on("message", msg => {
     };
 
     if (cmd === "remindme" && msg.content.length > prefixdb[msg.guild.id].length + 10) {
-        if (!msg.content.includes(`"`)) return msg.channel.sendMessage("Argument error. Please follow the proper syntax for the command:\n`" + prefixdb[msg.guild.id] + " <time argument> \"<message>\"`")
+        if (!msg.content.includes(`"`)) return msg.channel.sendMessage("Argument error. Please follow the proper syntax for the command:\n`" + prefixdb[msg.guild.id] + "remindme <time argument> \"<message>\"`")
         let timeArg = msg.content.substring(prefixdb[msg.guild.id].length + 9, msg.content.indexOf('"') - 1),
             tParse = time(timeArg).absolute;
         if (timeArg === "tommorow") tParse = time("24 hours").absolute;
