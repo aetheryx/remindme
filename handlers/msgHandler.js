@@ -1,10 +1,14 @@
-const time = require("time-parser")
-const settings = require("../storage/settings.json")
+const time = require("time-parser");
+const settings = require("../storage/settings.json");
+const fs = require("fs");
+const moment = require("moment");
 
-exports.run = function(client, msg, settings, Discord, blocked, moment, fs, db, prefixdb) {
+require('moment-duration-format');
+
+exports.run = function(client, msg, Discord, blocked, db, prefixdb) {
     if (!prefixdb[msg.guild.id]) prefixdb[msg.guild.id] = settings.defaultPrefix;
 
-    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("prefix")) return msg.channel.sendMessage(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`)
+    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("prefix")) return msg.channel.sendMessage(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`);
 
     if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes("help")) return msg.channel.sendMessage(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]}remindme <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
         embed: new Discord.RichEmbed()
@@ -17,12 +21,12 @@ exports.run = function(client, msg, settings, Discord, blocked, moment, fs, db, 
     const cmd = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length).split(" ")[0];
 
     if (cmd === "reboot" || cmd === "restart") {
-        if (msg.author.id !== settings.ownerID) return msg.reply("You do not have permission to use this command.")
+        if (msg.author.id !== settings.ownerID) return msg.reply("You do not have permission to use this command.");
         msg.channel.sendEmbed(new Discord.RichEmbed()
-                .setColor(settings.embedColor)
-                .setDescription("Rebooting..."))
-            .then(() => process.exit());
-        return;
+            .setColor(settings.embedColor)
+            .setDescription("Rebooting...")).then(() => {
+            client.destroy();
+        }).then(() => process.exit());
     };
 
     if (cmd === "invite") return msg.channel.sendEmbed(new Discord.RichEmbed()
@@ -81,6 +85,8 @@ exports.run = function(client, msg, settings, Discord, blocked, moment, fs, db, 
     if (cmd === "ev") { // test write
         if (msg.author.id !== settings.ownerID) return false;
         let script = msg.content.substring(prefixdb[msg.guild.id].length + 3, msg.content.length);
+        let silent = script.includes('--silent') ? true : false
+        if (silent) script = script.replace('--silent', '')
         try {
             let code = eval(script);
             if (typeof code !== 'string')
@@ -88,7 +94,7 @@ exports.run = function(client, msg, settings, Discord, blocked, moment, fs, db, 
                     depth: 0
                 });
             code = code.replace(new RegExp(client.user.email, "gi"), "git gud").replace(new RegExp(client.token, "gi"), "git gud");
-            msg.channel.sendMessage(script + "\n```xl\n" + code + "\n```");
+            if (!silent) msg.channel.sendCode('js', code)
         } catch (e) {
             msg.channel.sendMessage(script + "\n`ERROR` ```xl\n" + e + "\n```");
         };
