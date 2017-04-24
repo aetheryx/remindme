@@ -22,11 +22,11 @@ client.once('ready', () => {
     require('./handlers/dbHandler.js').run(client, Discord, db)
 
     let index = 0;
-    let statuses = [`in %s guilds`, 'r>help', `in %c channels`, '@mention prefix', '@mention help'];
+    let statuses = [`in %s guilds`, 'r>help', `in %c channels`, 'with %u users', '@mention help'];
 
     setInterval(function() {
         index = (index + 1) % statuses.length;
-        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size));
+        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size).replace('%c', client.users.size));
     }.bind(client), 10000);
 });
 
@@ -42,20 +42,17 @@ client.on('guildDelete', guild => {
 
 client.on('message', msg => {
 
-    if (msg.author.id === client.user.id || blocked.includes(msg.author.id) || msg.author.bot) return false;
-
-    if (msg.channel.type === 'dm') return msg.channel.sendMessage('RemindMeBot currently isn\'t supported in DMs. However, this is a feature I\'m currently looking into :)') // ?
+    if (blocked.includes(msg.author.id) || msg.author.bot || msg.channel.type === 'dm') return false;
 
     if (!prefixdb[msg.guild.id]) prefixdb[msg.guild.id] = settings.defaultPrefix;
 
-    if (!msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id])) return false;
+    if (!msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id]) && !msg.isMentioned(client.user.id)) return false;
 
     try {
         delete require.cache[require.resolve('./handlers/msgHandler.js')]
         require('./handlers/msgHandler.js').run(client, msg, Discord, blocked, db, prefixdb)
     } catch (e) {
         console.log(e);
-        return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here(discord.gg/TCNNsSQ) if the issue persists.')
+        return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/TCNNsSQ) if the issue persists.')
     };
-
-})
+});
