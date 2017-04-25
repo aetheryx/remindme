@@ -26,7 +26,7 @@ client.once('ready', () => {
 
     setInterval(function() {
         index = (index + 1) % statuses.length;
-        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size).replace('%c', client.users.size));
+        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size).replace('%u', client.users.size));
     }.bind(client), 10000);
 });
 
