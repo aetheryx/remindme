@@ -5,6 +5,7 @@
   "ownerID": "Put your ID here; this gives you access to some of the restricted commands like eval or reboot.",
   "keys": {
     "token": "Put your bots token here.",
-    "dbots": "Discord Bots API key goes here"
+    "dbots": "discordbots.org API key goes here. Do not touch this field if you don't have one.",
+    "botspw": "bots.discord.pw API key goes here. Do not touch this field if you don't have one."
   }
 }
