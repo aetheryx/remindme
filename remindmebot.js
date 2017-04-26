@@ -2,7 +2,6 @@ const Discord = require('discord.js'),
     client = new Discord.Client(),
     fs = require('fs'),
     moment = require('moment'),
-    request = require('superagent'), // only for the bots.discord.pw API, remove if you don't need it
     db = require('./storage/reminders.json'),
     settings = require('./storage/settings.json'),
     prefixdb = require('./storage/prefixdb.json'),
@@ -13,16 +12,14 @@ delete require.cache[require.resolve('./storage/prefixdb.json')]; // ?
 
 client.login(settings.keys.token);
 
-client.on('ready', () => {
-    console.log('Ready to remind people of shit they\'ve probably forgotten');
-});
+client.on('ready', () => console.log('Ready to remind people of shit they\'ve probably forgotten'));
 
 client.once('ready', () => {
     delete require.cache[require.resolve('./handlers/dbHandler.js')]
     require('./handlers/dbHandler.js').run(client, Discord, db)
 
     let index = 0;
-    let statuses = [`in %s guilds`, 'r>help', `in %c channels`, 'with %u users', '@mention help'];
+    let statuses = [`in %s guilds`, settings.defaultPrefix + 'help', `in %c channels`, 'with %u users', '@mention help'];
 
     setInterval(function() {
         index = (index + 1) % statuses.length;

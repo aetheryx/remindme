@@ -2,6 +2,7 @@ const time = require('time-parser');
 const settings = require('../storage/settings.json');
 const fs = require('fs');
 const moment = require('moment');
+const rp = require('request-promise');
 
 require('moment-duration-format');
 
@@ -58,7 +59,7 @@ exports.run = function(client, msg, Discord, blocked, db, prefixdb) {
             embed = new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .setTitle(`RemindMeBot ${settings.version}`)
-            .setURL('https://github.com/Aetheryx/remindme')
+            .setURL('https://discordbots.org/bot/290947970457796608')
             .addField('Guilds', client.guilds.size, true)
             .addField('Uptime', moment.duration(process.uptime(), 'seconds').format('dd:hh:mm:ss'), true)
             .addField('Ping', `${(client.ping).toFixed(0)} ms`, true)
@@ -66,8 +67,8 @@ exports.run = function(client, msg, Discord, blocked, db, prefixdb) {
 (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%)`, true)
             .addField('System Info', `${process.platform} (${process.arch})\n${(os.totalmem() > 1073741824 ? (os.totalmem() / 1073741824).toFixed(1) + ' GB' : (os.totalmem() / 1048576).toFixed(2) + ' MB')}`, true)
             .addField('Libraries', `[Discord.js](https://discord.js.org) v${Discord.version}\nNode.js ${process.version}`, true)
-            .addField('Invites', '[Click here to invite me to your guild!](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608)\n[Click here to join my support server!](https://discord.gg/Yphr6WG)', true)
-            .setFooter('Created by Aether#2222');
+            .addField('Links', '[Bot invite](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608) | [Support server invite](https://discord.gg/Yphr6WG) | [GitHub](https://github.com/Aetheryx/remindme) | [Bot Page](https://discordbots.org/bot/290947970457796608)', true)
+            .setFooter('Created by Aetheryx#2222');
 
         return msg.channel.sendEmbed(embed);
     };
@@ -91,6 +92,29 @@ exports.run = function(client, msg, Discord, blocked, db, prefixdb) {
             msg.channel.send('\n`ERROR` ```xl\n' + e + '\n```');
         };
         return;
+    };
+
+    if (cmd === 'exec') {
+        if (msg.author.id !== settings.ownerID) return false;
+        let script = msg.content.substring(prefixdb[msg.guild.id].length + 5, msg.content.length);
+        require('child_process').exec(script, (e, stdout, stderr) => {
+            if (stdout.length > 2000 || stderr.length > 2000) {
+                let options = {
+                    method: "POST",
+                    uri: "https://hastebin.com/documents",
+                    body: stdout
+                };
+                rp(options).then(data => {
+                      msg.channel.sendEmbed(new Discord.RichEmbed()
+                        .setColor(settings.embedColor)
+                        .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${JSON.parse(data).key}).`));
+                });
+            } else {
+                stdout && msg.channel.sendMessage('Info: \n\`\`\`' + stdout + '\`\`\`')
+                stderr && msg.channel.sendMessage('Errors: \n\`\`\`' + stderr + '\`\`\`')
+                if (!stderr && !stdout) msg.react("\u2611")
+            };
+        });
     };
 
     if (cmd === 'help' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('help')) return msg.channel.send(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]}remindme <time argument> "<message>"\`. \nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
