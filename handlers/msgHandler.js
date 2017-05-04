@@ -88,7 +88,7 @@ exports.run = async function(msg) {
                     depth: 0
                 });
             code = code.replace(new RegExp(client.token, "gi"), "*");
-            if (!silent) msg.channel.sendCode('js', code)
+            if (!silent) msg.channel.send(code, {code: 'js'});
         } catch (e) {
             msg.channel.send('\n`ERROR` ```xl\n' + e + '\n```');
         };
