@@ -1,17 +1,12 @@
-const fs = require('fs'),
-    request = require('superagent'),
-    settings = require('../storage/settings.json')
-
-exports.create = function(client, guild, prefixdb) {
+exports.create = function(guild) {
 
     prefixdb[guild.id] = settings.defaultPrefix;
 
     fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
         if (err) return console.log(Date() + ' createGuildHandler error: ' + err)
-        console.log(Date() + ' Prefix DB updated.')
     });
 
-    guild.defaultChannel.sendMessage(`Hi, I'm ${client.user.toString()} and I give you the possibility to set reminders and view or delete them. To see a list of my commands, send \`${prefixdb[guild.id]}help\`.\nFeel free to dm Aetheryx#2222 for any questions or concerns!`);
+    guild.defaultChannel.send(`Hi, I'm ${client.user.username} and I give you the possibility to set reminders and view or delete them. To see a list of my commands, send \`${prefixdb[guild.id]}help\`.\nFeel free to dm Aetheryx#2222 for any questions or concerns!`);
 
     if (!settings.keys.botspw.includes('API key'))
         request
@@ -20,7 +15,7 @@ exports.create = function(client, guild, prefixdb) {
         .send({
             server_count: client.guilds.size
         })
-        .end(() => console.log('bots.pw statistics updated, ' + client.guilds.size + ' guilds'));
+        .end(() => {});
 
     if (!settings.keys.dbots.includes('API key'))
         request
@@ -32,13 +27,12 @@ exports.create = function(client, guild, prefixdb) {
         .end(() => console.log('DBots statistics updated, ' + client.guilds.size + ' guilds'));
 };
 
-exports.delete = function(client, guild, prefixdb) {
+exports.delete = function(guild) {
 
     delete prefixdb[guild.id];
 
     fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
         if (err) return console.log(Date() + ' createGuildHandler error: ' + err)
-        console.log(Date() + ' Prefix DB updated.')
     });
 
     if (!settings.keys.botspw.includes('API key'))
@@ -48,7 +42,7 @@ exports.delete = function(client, guild, prefixdb) {
         .send({
             server_count: client.guilds.size
         })
-        .end(() => console.log('bots.pw statistics updated, ' + client.guilds.size + ' guilds'));
+        .end(() => {});
 
     if (!settings.keys.dbots.includes('API key'))
         request
