@@ -18,7 +18,7 @@ exports.create = function(guild) {
         .end(() => {});
 
     if (!settings.keys.dbots.includes('API key'))
-        request
+        sagent
         .post('https://discordbots.org/api/bots/' + client.user.id + '/stats')
         .set('Authorization', settings.keys.dbots)
         .send({
@@ -45,7 +45,7 @@ exports.delete = function(guild) {
         .end(() => {});
 
     if (!settings.keys.dbots.includes('API key'))
-        request
+        sagent
         .post('https://discordbots.org/api/bots/' + client.user.id + '/stats')
         .set('Authorization', settings.keys.dbots)
         .send({
