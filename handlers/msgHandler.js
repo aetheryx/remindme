@@ -10,14 +10,14 @@ exports.run = async function(msg) {
 
     const cmd = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length).split(' ')[0];
 
-    if (cmd === 'reboot' || cmd === 'restart') {
+    if (cmd === 'reboot' || cmd === 'restart' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('reboot')) {
         if (msg.author.id !== settings.ownerID) return msg.reply('You do not have permission to use this command.');
         await msg.channel.send('Restarting...')
         await client.destroy();
         process.exit();
     };
 
-    if (cmd === 'invite') return msg.channel.send({
+    if (cmd === 'invite' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('invite')) return msg.channel.send({
         embed: new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .setDescription('Click [here](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=' + client.user.id + ') to invite me to your server, or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.')
@@ -52,7 +52,7 @@ exports.run = async function(msg) {
         });
     };
 
-    if (cmd === 'stats' || cmd === 'info') {
+    if (cmd === 'stats' || cmd === 'info' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('stats') || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('info')) {
         let os = require('os'),
             embed = new Discord.RichEmbed()
             .setColor(settings.embedColor)
@@ -73,7 +73,7 @@ exports.run = async function(msg) {
         });
     };
 
-    if (cmd === 'ping')
+    if (cmd === 'ping' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('ping'))
         msg.channel.send(`:ping_pong: Pong! ${client.pings[0]}ms`)
 
     if (cmd === 'ev') {
@@ -122,7 +122,7 @@ exports.run = async function(msg) {
                 .setDescription('remindme, list, clear, prefix, info, ping, help, invite'.split(', ').sort().join(', '))
         });
 
-    if (cmd === 'reminders' || cmd === 'list') {
+    if (cmd === 'reminders' || cmd === 'list' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('list')) {
         if (!db[msg.author.id] || db[msg.author.id].length === 0)
             return msg.reply('You have no reminders set!');
 
@@ -144,7 +144,7 @@ exports.run = async function(msg) {
         });
     };
 
-    if (cmd === 'clear' || cmd === 'delete') {
+    if (cmd === 'clear' || cmd === 'delete' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('clear')) {
         if (!db[msg.author.id] || db[msg.author.id].length === 0) return msg.reply('You have no reminders set!');
         msg.channel.send(':warning: This will delete all of your reminders! Are you sure? (`y`/`n`)')
         const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, {
@@ -170,7 +170,7 @@ exports.run = async function(msg) {
         });
     };
 
-    if (msg.content.toLowerCase() === prefixdb[msg.guild.id] + 'remindme') {
+    if (msg.content.toLowerCase() === prefixdb[msg.guild.id] + 'remindme' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('remind me plz')) { // hidden for now because I'm not sure if people might trigger it accidentally
         let delarray = [];
         delarray.push(msg)
         msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
