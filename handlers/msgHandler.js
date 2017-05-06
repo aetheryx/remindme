@@ -232,7 +232,7 @@ exports.run = async function(msg) {
                 msg.channel.send({
                     embed: new Discord.RichEmbed()
                         .setColor(settings.embedColor)
-                        .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${sagent.body.key}).`)
+                        .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${res.body.key}).`)
                 });
             } else {
                 stdout && msg.channel.sendMessage('Info: \n\`\`\`' + stdout + '\`\`\`')
