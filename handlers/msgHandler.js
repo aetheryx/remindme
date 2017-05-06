@@ -4,55 +4,37 @@ const time = require('time-parser'),
 require('moment-duration-format');
 
 exports.run = async function(msg) {
-    if (msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('prefix')) return msg.channel.send(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`);
+    if (mentioned(msg, 'prefix'))
+        msg.channel.send(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`)
 
-    if (!prefixdb[msg.guild.id]) prefixdb[msg.guild.id] = settings.defaultPrefix;
+    if (!prefixdb[msg.guild.id])
+        prefixdb[msg.guild.id] = settings.defaultPrefix;
 
     const cmd = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length).split(' ')[0];
 
-    if (cmd === 'reboot' || cmd === 'restart' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('reboot')) {
-        if (msg.author.id !== settings.ownerID) return msg.reply('You do not have permission to use this command.');
-        await msg.channel.send('Restarting...')
+
+    if (cmd === 'ping' || mentioned(msg, 'ping'))
+        return msg.channel.send(`:ping_pong: Pong! ${client.pings[0]}ms`)
+
+    if (['reboot', 'restart'].includes(cmd) || mentioned(msg, ['reboot', 'restart'])) {
+        if (msg.author.id !== settings.ownerID)
+            return msg.reply('You do not have permission to use this command.');
+
+        await msg.channel.send('Restarting...');
         await client.destroy();
         process.exit();
     };
 
-    if (cmd === 'invite' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('invite')) return msg.channel.send({
-        embed: new Discord.RichEmbed()
-            .setColor(settings.embedColor)
-            .setDescription('Click [here](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=' + client.user.id + ') to invite me to your server, or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.')
-    })
+    if (cmd === 'invite' || mentioned(msg, 'invite'))
+        return msg.channel.send({
+            embed: new Discord.RichEmbed()
+                .setColor(settings.embedColor)
+                .setDescription('Click [here](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=' + client.user.id + ') to invite me to your server, or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.')
+        })
 
-    if (cmd === 'block') { // test write
-        if (msg.author.id !== settings.ownerID) return msg.reply('You do not have permission to use this command.');
-        if (msg.mentions.users.size === 0) return msg.channel.send('No users mentioned.');
-        blocked.push(msg.mentions.users.first().id);
-        fs.writeFile('./storage/blocked.json', JSON.stringify(blocked, '', '\t'), (err) => {
-            if (err) return false;
-            msg.channel.send({
-                embed: new Discord.RichEmbed()
-                    .setColor(settings.embedColor)
-                    .setDescription(`${msg.mentions.users.first().username} successfully blocked`)
-            })
 
-        });
-    };
 
-    if (cmd === 'unblock') { // test write
-        if (msg.author.id !== settings.ownerID) return msg.reply('You do not have permission to use this command.');
-        if (msg.mentions.users.size === 0) return msg.channel.send('No users mentioned.');
-        blocked.splice(blocked.indexOf(msg.mentions.users.first().id), 1);
-        fs.writeFile('./storage/blocked.json', JSON.stringify(blocked, '', '\t'), (err) => {
-            if (err) return false;
-            msg.channel.send({
-                embed: new Discord.RichEmbed()
-                    .setColor(settings.embedColor)
-                    .setDescription(`${msg.mentions.users.first().username} successfully unblocked`)
-            });
-        });
-    };
-
-    if (cmd === 'stats' || cmd === 'info' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('stats') || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('info')) {
+    if (['stats', 'info'].includes(cmd) || mentioned(msg, ['stats', 'info'])) {
         let os = require('os'),
             embed = new Discord.RichEmbed()
             .setColor(settings.embedColor)
@@ -73,56 +55,14 @@ exports.run = async function(msg) {
         });
     };
 
-    if (cmd === 'ping' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('ping'))
-        msg.channel.send(`:ping_pong: Pong! ${client.pings[0]}ms`)
-
-    if (cmd === 'ev') {
-        if (msg.author.id !== settings.ownerID) return false;
-        let script = msg.content.substring(prefixdb[msg.guild.id].length + 3, msg.content.length);
-        let silent = script.includes('--silent') ? true : false
-        if (silent) script = script.replace('--silent', '')
-        try {
-            let code = eval(script);
-            if (typeof code !== 'string')
-                code = require('util').inspect(code, {
-                    depth: 0
-                });
-            code = code.replace(new RegExp(client.token, "gi"), "*");
-            if (!silent) msg.channel.send(code, {code: 'js'});
-        } catch (e) {
-            msg.channel.send('\n`ERROR` ```xl\n' + e + '\n```');
-        };
-    };
-
-    if (cmd === 'exec') {
-        if (msg.author.id !== settings.ownerID) return false;
-        let script = msg.content.substring(prefixdb[msg.guild.id].length + 5, msg.content.length);
-        exec(script, async(e, stdout, stderr) => {
-            if (stdout.length > 2000 || stderr.length > 2000) {
-                let res = await sagent.post("https://hastebin.com/documents")
-                    .send(stdout + "\n\n" + stderr)
-                    .catch(e => msg.channel.send(e.message));
-                msg.channel.send({
-                    embed: new Discord.RichEmbed()
-                        .setColor(settings.embedColor)
-                        .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${sagent.body.key}).`)
-                });
-            } else {
-                stdout && msg.channel.sendMessage('Info: \n\`\`\`' + stdout + '\`\`\`')
-                stderr && msg.channel.sendMessage('Errors: \n\`\`\`' + stderr + '\`\`\`')
-                if (!stderr && !stdout) msg.react("\u2611")
-            };
-        });
-    };
-
-    if (cmd === 'help' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('help'))
-        msg.channel.send(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]}remindme time_argument <message>\`, ` + '\ne.g. `' + prefixdb[msg.guild.id] + 'remindme 31 December 2017 "New Years"`.' + `\nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
+    if (cmd === 'help' || mentioned(msg, 'help'))
+        return msg.channel.send(`To set a reminder, simply send \`${prefixdb[msg.guild.id]}remindme\` and follow the instructions. Alternatively, you can also send \`${prefixdb[msg.guild.id]}remindme time_argument <message>\`, ` + '\ne.g. `' + prefixdb[msg.guild.id] + 'remindme 31 December 2017 "New Years"`.' + `\nMy prefix is \`${prefixdb[msg.guild.id]}\`; here's a list of my commands:`, {
             embed: new Discord.RichEmbed()
                 .setColor(settings.embedColor)
                 .setDescription('remindme, list, clear, prefix, info, ping, help, invite'.split(', ').sort().join(', '))
         });
 
-    if (cmd === 'reminders' || cmd === 'list' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('list')) {
+    if (['reminders', 'list'].includes(cmd) || mentioned(msg, ['reminders', 'list'])) {
         if (!db[msg.author.id] || db[msg.author.id].length === 0)
             return msg.reply('You have no reminders set!');
 
@@ -144,9 +84,12 @@ exports.run = async function(msg) {
         });
     };
 
-    if (cmd === 'clear' || cmd === 'delete' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('clear')) {
-        if (!db[msg.author.id] || db[msg.author.id].length === 0) return msg.reply('You have no reminders set!');
-        msg.channel.send(':warning: This will delete all of your reminders! Are you sure? (`y`/`n`)')
+    if (['clear', 'delete'].includes(cmd) || mentioned(msg, ['clear', 'delete'])) {
+        if (!db[msg.author.id] || db[msg.author.id].length === 0)
+            return msg.reply('You have no reminders set!');
+
+        msg.channel.send(':warning: This will delete all of your reminders! Are you sure? (`y`/`n`)');
+
         const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, {
             time: 40000
         });
@@ -170,9 +113,9 @@ exports.run = async function(msg) {
         });
     };
 
-    if (msg.content.toLowerCase() === prefixdb[msg.guild.id] + 'remindme' || msg.isMentioned(client.user.id) && msg.content.toLowerCase().includes('remind me plz')) { // hidden for now because I'm not sure if people might trigger it accidentally
+    if (msg.content.toLowerCase() === prefixdb[msg.guild.id] + 'remindme' || mentioned(msg, ['remind me', 'remindme', 'remind'])) {
         let delarray = [];
-        delarray.push(msg)
+        delarray.push(msg);
         msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
             .then(m => delarray.push(m))
 
@@ -190,34 +133,47 @@ exports.run = async function(msg) {
         collector.on('collect', m => {
             delarray.push(m)
             if (m.content.toLowerCase() === prefixdb[m.guild.id] + 'remindme' || m.content.toLowerCase() === 'cancel') {
-                if (m.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES')) m.channel.bulkDelete(delarray);
+
+                if (m.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
+                    m.channel.bulkDelete(delarray);
+
                 return collector.stop();
             };
 
             if (step === 1) {
-                if (m.content.length === 0) return msg.channel.send('The reminder cannot be empty.\nWhat would you like the reminder to be?').then(a => delarray.push(a));
+                if (m.content.length === 0)
+                    return msg.channel.send('The reminder cannot be empty.\nWhat would you like the reminder to be?').then(a => delarray.push(a));
+
                 dboption.reminder = m.content;
+
                 msg.channel.send('When would you like to be reminded? (e.g. 24 hours)').then(a => delarray.push(a));
             };
 
             if (step === 2) {
                 let tParse = time(m.content).absolute;
+
                 if (m.content.includes('next'))
                     tParse = time(m.content.replace(/next/g, 'one')).absolute;
+
                 if (m.content.startsWith('a ') || m.content.startsWith('an '))
                     tParse = time(m.content.replace(/a /g, 'one ').replace(/an /g, 'one ')).absolute;
+
                 if (m.content.includes(' min'))
                     tParse = time(m.content.replace(/ min/g, 'minutes ')).absolute;
+
                 if (!isNaN(m.content) || !tParse)
                     return msg.channel.send('Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)').then(a => delarray.push(a));
+
                 if (time(m.content).relative < 0) {
                     collector.stop();
                     return msg.channel.send('Your reminder wasn\'t added because it was set for the past. Note that if you\'re trying to set a reminder for the same day at a specific time (e.g. `6 PM`), UTC time will be assumed.');
                 };
+
                 collector.stop();
                 dboption.when = tParse;
                 if (!db[msg.author.id])
                     db[msg.author.id] = [];
+
                 db[msg.author.id].push(dboption);
                 fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
                     if (err) return msg.channel.send('Your reminder wasn\'t added.\n' + err.message);
@@ -239,7 +195,50 @@ exports.run = async function(msg) {
             if (reason === 'time') {
                 if (msg.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
                     msg.channel.bulkDelete(delarray);
+
                 msg.channel.send('Prompt timed out.');
+            };
+        });
+    };
+
+    if (cmd === 'ev') {
+        if (msg.author.id !== settings.ownerID) return false;
+        let script = msg.content.substring(prefixdb[msg.guild.id].length + 3, msg.content.length);
+        let silent = script.includes('--silent') ? true : false
+        if (silent) script = script.replace('--silent', '')
+        try {
+            let code = eval(script);
+            if (typeof code !== 'string')
+                code = require('util').inspect(code, {
+                    depth: 0
+                });
+            code = code.replace(new RegExp(client.token, "gi"), "fite me irl");
+            if (!silent) msg.channel.send(code, {
+                code: 'js'
+            });
+        } catch (e) {
+            msg.channel.send('\n`ERROR` ```xl\n' + e + '\n```');
+        };
+    };
+
+    if (cmd === 'exec') {
+        if (msg.author.id !== settings.ownerID) return false;
+        let script = msg.content.substring(prefixdb[msg.guild.id].length + 5, msg.content.length);
+        exec(script, async(e, stdout, stderr) => {
+            if (stdout.length > 2000 || stderr.length > 2000) {
+                let res = await sagent.post("https://hastebin.com/documents")
+                    .send(stdout + "\n\n" + stderr)
+                    .catch(e => msg.channel.send(e.message));
+                msg.channel.send({
+                    embed: new Discord.RichEmbed()
+                        .setColor(settings.embedColor)
+                        .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${sagent.body.key}).`)
+                });
+            } else {
+                stdout && msg.channel.sendMessage('Info: \n\`\`\`' + stdout + '\`\`\`')
+                stderr && msg.channel.sendMessage('Errors: \n\`\`\`' + stderr + '\`\`\`')
+                if (!stderr && !stdout)
+                    msg.react("\u2611");
             };
         });
     };
@@ -259,6 +258,7 @@ exports.run = async function(msg) {
             return msg.channel.send('Please keep your prefix below 16 characters.');
 
         prefixdb[msg.guild.id] = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length);
+
         fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
             if (err) return msg.channel.send('Your prefix couldn\'t be changed.\n' + err.message);
             msg.channel.send(`Prefix successfully changed to \`${prefixdb[msg.guild.id]}\` for this guild.`);
@@ -308,6 +308,34 @@ exports.run = async function(msg) {
         });
     };
 
+    if (cmd === 'block') { // test write
+        if (msg.author.id !== settings.ownerID) return msg.reply('You do not have permission to use this command.');
+        if (msg.mentions.users.size === 0) return msg.channel.send('No users mentioned.');
+        blocked.push(msg.mentions.users.first().id);
+        fs.writeFile('./storage/blocked.json', JSON.stringify(blocked, '', '\t'), (err) => {
+            if (err) return false;
+            msg.channel.send({
+                embed: new Discord.RichEmbed()
+                    .setColor(settings.embedColor)
+                    .setDescription(`${msg.mentions.users.first().username} successfully blocked`)
+            })
+
+        });
+    };
+
+    if (cmd === 'unblock') { // test write
+        if (msg.author.id !== settings.ownerID) return msg.reply('You do not have permission to use this command.');
+        if (msg.mentions.users.size === 0) return msg.channel.send('No users mentioned.');
+        blocked.splice(blocked.indexOf(msg.mentions.users.first().id), 1);
+        fs.writeFile('./storage/blocked.json', JSON.stringify(blocked, '', '\t'), (err) => {
+            if (err) return false;
+            msg.channel.send({
+                embed: new Discord.RichEmbed()
+                    .setColor(settings.embedColor)
+                    .setDescription(`${msg.mentions.users.first().username} successfully unblocked`)
+            });
+        });
+    };
     /*    if (cmd === 'forget') {
             let delarray = [];
             if (!db[msg.author.id] || db[msg.author.id].length === 0) return msg.reply('You have no reminders set!')
@@ -327,6 +355,11 @@ exports.run = async function(msg) {
                 db[msg.author.id] = db[msg.author.id].filter(x => x.reminder != db[msg.author.id][parseInt(m.content) - 1].reminder)
             })
         } */
-
-
 };
+
+function mentioned(msg, x) {
+    if (!Array.isArray(x)) {
+        x = [x];
+    }
+    return msg.isMentioned(client.user.id) && x.some(c => msg.content.toLowerCase().includes(c))
+}
