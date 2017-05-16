@@ -202,7 +202,6 @@ exports.run = async function(msg) {
     if (cmd === 'forget') { // Very beta, kind of unstable.
         if (!db[msg.author.id] || db[msg.author.id].length === 0)
             return msg.reply('You have no reminders set!');
-        delarray.push(msg);
         msg.channel.send('Here\'s a list of your current reminders: ', {
             embed: new Discord.RichEmbed()
                 .setColor(settings.embedColor)
