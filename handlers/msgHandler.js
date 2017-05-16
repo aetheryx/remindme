@@ -269,8 +269,8 @@ exports.run = async function(msg) {
                         .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${res.body.key}).`)
                 });
             } else {
-                stdout && msg.channel.sendMessage('Info: \n\`\`\`' + stdout + '\`\`\`')
-                stderr && msg.channel.sendMessage('Errors: \n\`\`\`' + stderr + '\`\`\`')
+                stdout && msg.channel.send('Info: \n\`\`\`' + stdout + '\`\`\`')
+                stderr && msg.channel.send('Errors: \n\`\`\`' + stderr + '\`\`\`')
                 if (!stderr && !stdout)
                     msg.react("\u2611");
             };
