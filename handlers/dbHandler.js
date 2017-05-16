@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 exports.start = function() {
     setInterval(() => {
         let expired = {};
