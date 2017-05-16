@@ -11,8 +11,8 @@ exports.start = function() {
         if (Object.keys(expired).length === 0) return;
 
         Object.keys(expired).map(e => {
+            let toSend = new Discord.RichEmbed().setColor(settings.embedColor);
             if (expired[e].length > 1) {
-                let toSend = new Discord.RichEmbed().setColor(settings.embedColor);
                 toSend.addField(`Reminder${(expired[e].length > 1 ? 's' : '')}:`, expired[e].map(r => r.reminder).join('\n'));
                 toSend.setFooter(`Reminder${(expired[e].length > 1 ? 's' : '')} set on: ${expired[e].map(b => moment.utc(b.made).format('DD/MM/YYYY | H:mm:ss')).join(', ')} UTC`);
 
