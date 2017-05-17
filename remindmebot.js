@@ -1,6 +1,6 @@
-Discord = require('discord.js');
-client = new Discord.Client();
-db = require('./storage/reminders.json');
+Discord  = require('discord.js');
+client   = new Discord.Client();
+db       = require('./storage/reminders.json');
 settings = require('./storage/settings.json');
 prefixdb = require('./storage/prefixdb.json');
 
