@@ -8,7 +8,7 @@ exports.create = function (guild) {
             return console.log(Date() + ' createGuildHandler error: ' + err);
     });
     guild.defaultChannel.send(`Hi, I'm ${client.user.username} and I give you the possibility to set reminders and view or delete them. To see a list of my commands, send \`${prefixdb[guild.id]}help\`.\nFeel free to DM Aetheryx#2222 for any questions or concerns!`);
-    postStats();
+    postStats()
 };
 
 exports.delete = function (guild) {

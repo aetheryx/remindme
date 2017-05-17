@@ -343,7 +343,7 @@ exports.run = async function(msg) {
         if (msg.author.id !== msg.guild.owner.id && msg.author.id !== settings.ownerID) // lazy
             return msg.channel.send('You do not have the required permissions for this command.');
         let num = parseInt(args[0]);
-        if (!args[0]) num = 1;
+        if (!args[0]) num = 1
         if (isNaN(num))
             return msg.edit('Arg is not a number.');
         let messages = await msg.channel.fetchMessages({ limit: 100 });
