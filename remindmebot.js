@@ -12,7 +12,7 @@ client.on('ready', () => {
     console.log(`Bot invite link: \nhttps://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${client.user.id}`);
 });
 
-client.once('ready', () => { // hi just testing stuff k bai
+client.once('ready', () => {
     require('./handlers/dbHandler.js').start();
 
     let index = 0;
