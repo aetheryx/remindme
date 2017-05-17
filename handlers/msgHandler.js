@@ -238,7 +238,7 @@ exports.run = async function(msg) {
 
         try {
             let code = (asynchr ? eval(`(async()=>{${script}})();`) : eval(script));
-            if (code instanceof Promise) code = await code;
+            if (code instanceof Promise && asynchr) code = await code;
             if (typeof code !== 'string')
                 code = require('util').inspect(code, {
                     depth: 0
