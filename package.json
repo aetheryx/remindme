@@ -5,7 +5,7 @@
   "main": "remindmebot.js",
   "scripts": {
     "start": "node --harmony remindmebot.js",
-    "test": "return 0 && echo \"No tests yet.\""
+    "test": "eslint ./**/*.js"
   },
   "repository": {
     "type": "git",
