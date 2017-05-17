@@ -1,7 +1,14 @@
 {
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "script"
+    },
+    "env": {
+        "node": false
+    },
     "rules": {
         "semi": ["error", "always"],
         "quotes": ["error", "single"]
-    
+
     }
 }

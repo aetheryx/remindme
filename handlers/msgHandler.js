@@ -97,10 +97,10 @@ exports.run = async function(msg) {
                 db[msg.author.id] = [];
                 fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
                     if (err) return msg.channel.send('Your reminders weren\'t cleared.\n' + err.message);
-                    msg.channel.send(':ballot_box_with_check: Reminders cleared.')
+                    msg.channel.send(':ballot_box_with_check: Reminders cleared.');
                 });
             } else {
-                msg.channel.send(':ballot_box_with_check: Cancelled.')
+                msg.channel.send(':ballot_box_with_check: Cancelled.');
             };
             return collector.stop();
         });
@@ -115,11 +115,9 @@ exports.run = async function(msg) {
         let delarray = [];
         delarray.push(msg);
         msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
-            .then(m => delarray.push(m))
+            .then(m => delarray.push(m));
 
-        const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, {
-            time: 40000
-        })
+        const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, { time: 40000 });
 
         let step = 1,
             dboption = {
@@ -129,7 +127,7 @@ exports.run = async function(msg) {
             };
 
         collector.on('collect', m => {
-            delarray.push(m)
+            delarray.push(m);
             if (m.content.toLowerCase() === prefixdb[m.guild.id] + 'remindme' || m.content.toLowerCase() === 'cancel') {
 
                 if (m.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
@@ -179,7 +177,7 @@ exports.run = async function(msg) {
                         embed: new Discord.RichEmbed()
                             .setColor(settings.embedColor)
                             .setDescription(`:ballot_box_with_check: Reminder added: ${dboption.reminder}`)
-                            .setFooter(`Reminder set for `)
+                            .setFooter('Reminder set for ')
                             .setTimestamp(new Date(tParse))
                     }).then(() => {
                         if (m.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
@@ -226,7 +224,7 @@ exports.run = async function(msg) {
 
             msg.channel.send(`Reminder \`${reminder.reminder}\` deleted.`);
             return collector.stop();
-        })
+        });
     };
 
     const args = msg.content.split(' ').slice(1);
@@ -234,18 +232,18 @@ exports.run = async function(msg) {
     if (cmd === 'ev') {
         if (msg.author.id !== settings.ownerID) return false;
         let script = msg.content.substring(prefixdb[msg.guild.id].length + 3, msg.content.length);
-        let silent = script.includes('--silent') ? true : false
-        let asynchr = script.includes('--async') ? true : false
+        let silent = script.includes('--silent') ? true : false;
+        let asynchr = script.includes('--async') ? true : false;
         if (silent || asynchr) script = script.replace('--silent', '').replace('--async', '');
 
         try {
-            let code = (asynchr ? eval(`(async()=>{${script}})();`) : eval(script))
+            let code = (asynchr ? eval(`(async()=>{${script}})();`) : eval(script));
             if (code instanceof Promise) code = await code;
             if (typeof code !== 'string')
                 code = require('util').inspect(code, {
                     depth: 0
                 });
-            code = code.replace(new RegExp(client.token, "gi"), "fite me irl");
+            code = code.replace(new RegExp(client.token, 'gi'), 'fite me irl');
             if (!silent) msg.channel.send(code, { code: 'js' });
         } catch (e) {
             msg.channel.send('\n`ERROR` ```xl\n' + e + '\n```');
@@ -269,10 +267,10 @@ exports.run = async function(msg) {
                         .setDescription(`Console log exceeds 2000 characters. View [here](https://hastebin.com/${res.body.key}).`)
                 });
             } else {
-                stdout && msg.channel.send('Info: \n\`\`\`' + stdout + '\`\`\`')
-                stderr && msg.channel.send('Errors: \n\`\`\`' + stderr + '\`\`\`')
+                stdout && msg.channel.send('Info: \n\`\`\`' + stdout + '\`\`\`');
+                stderr && msg.channel.send('Errors: \n\`\`\`' + stderr + '\`\`\`');
                 if (!stderr && !stdout)
-                    msg.react("\u2611");
+                    msg.react('\u2611');
             };
         });
     };
@@ -300,7 +298,7 @@ exports.run = async function(msg) {
     };
 
     if (cmd === 'remindme' && msg.content.length > prefixdb[msg.guild.id].length + 10) {
-        if (!msg.content.includes(`"`))
+        if (!msg.content.includes('"'))
             return msg.channel.send('Argument error. Please follow the proper syntax for the command:\n`' + prefixdb[msg.guild.id] + 'remindme time_argument "message"`, e.g. `' + prefixdb[msg.guild.id] + 'remindme 31 December 2017 "New Years"`');
 
         let timeArg = msg.content.substring(prefixdb[msg.guild.id].length + 9, msg.content.indexOf('"') - 1),
@@ -313,7 +311,7 @@ exports.run = async function(msg) {
             tParse = time(timeArg.replace(/a /g, 'one ').replace(/an /g, 'one ')).absolute;
 
         if (!isNaN(timeArg) || !tParse)
-            return msg.channel.send('Invalid time argument. Please enter a proper time argument, e.g. `12 hours` or `next week`.')
+            return msg.channel.send('Invalid time argument. Please enter a proper time argument, e.g. `12 hours` or `next week`.');
 
         if (time(timeArg).relative < 0)
             return msg.channel.send('Your reminder wasn\'t added because it was set for the past. Note that if you\'re trying to set a reminder for the same day at a specific time (e.g. `6 PM`), UTC time will be assumed.');
@@ -335,7 +333,7 @@ exports.run = async function(msg) {
                 embed: new Discord.RichEmbed()
                     .setColor(settings.embedColor)
                     .setDescription(`:ballot_box_with_check: Reminder added: ${dboption.reminder}`)
-                    .setFooter(`Reminder set for `)
+                    .setFooter('Reminder set for ')
                     .setTimestamp(new Date(tParse))
             });
         });
@@ -347,10 +345,8 @@ exports.run = async function(msg) {
         let num = parseInt(args[0]);
         if (!args[0]) num = 1;
         if (isNaN(num))
-            return msg.edit("Arg is not a number.");
-        let messages = await msg.channel.fetchMessages({
-            limit: 100
-        });
+            return msg.edit('Arg is not a number.');
+        let messages = await msg.channel.fetchMessages({ limit: 100 });
         let mga = messages.array().filter(m => m.author.id === client.user.id);
         mga.length = num;
         mga.map(m => m.delete().catch());
@@ -358,12 +354,12 @@ exports.run = async function(msg) {
 };
 
 function plural(x) {
-  return (x.length > 1 ? 's' : '')
+  return (x.length > 1 ? 's' : '');
 }
 
 function mentioned(msg, x) {
     if (!Array.isArray(x)) {
         x = [x];
     }
-    return msg.isMentioned(client.user.id) && x.some(c => msg.content.toLowerCase().includes(c))
+    return msg.isMentioned(client.user.id) && x.some(c => msg.content.toLowerCase().includes(c));
 }

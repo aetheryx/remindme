@@ -16,7 +16,7 @@ client.once('ready', () => {
     require('./handlers/dbHandler.js').start();
 
     let index = 0;
-    let statuses = [`in %s guilds`, settings.defaultPrefix + 'help', 'with %u users', '@mention help'];
+    let statuses = ['in %s guilds', settings.defaultPrefix + 'help', 'with %u users', '@mention help'];
 
     setInterval(function() {
         index = (index + 1) % statuses.length;
