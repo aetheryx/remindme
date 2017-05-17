@@ -8,7 +8,7 @@ client.login(settings.keys.token);
 
 client.on('ready', () => {
     console.log('Ready to remind people of shit they\'ve probably forgotten.');
-    console.log(`Logged in as ${client.user.tag}.`)
+    console.log(`Logged in as ${client.user.tag}.`);
     console.log(`Bot invite link: \nhttps://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${client.user.id}`);
 });
 

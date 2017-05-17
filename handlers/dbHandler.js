@@ -2,7 +2,7 @@ const fs = require('fs');
 
 exports.start = function() {
     setInterval(() => {
-        let expired = {}
+        let expired = {};
 
         Object.keys(db).filter(u => client.users.get(u)).map(x => {
             let temp = db[x].filter(r => Date.now() >= r.when);
