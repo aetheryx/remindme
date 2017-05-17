@@ -1,4 +1,4 @@
-# RemindMeBot
+# RemindMeBot [![Build Status](https://travis-ci.org/Aetheryx/remindme.svg?branch=master)](https://travis-ci.org/Aetheryx/remindme)
 
 My own attempt at porting the famous RemindMeBot from Reddit to Discord; but better.
 
