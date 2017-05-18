@@ -284,10 +284,10 @@ exports.run = async function(msg) {
         if (msg.author.id !== msg.guild.owner.id && msg.author.id !== settings.ownerID)
             return msg.channel.send('You do not have the required permissions for this command.');
 
-        if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length).length > 16)
+        if (args[0].length > 16)
             return msg.channel.send('Please keep your prefix below 16 characters.');
 
-        prefixdb[msg.guild.id] = msg.content.toLowerCase().substring(args.join(' '));
+        prefixdb[msg.guild.id] = args[0]
         fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
             if (err) return msg.channel.send('Your prefix couldn\'t be changed.\n' + err.message);
             msg.channel.send(`Prefix successfully changed to \`${prefixdb[msg.guild.id]}\` for this guild.`);
