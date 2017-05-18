@@ -67,17 +67,17 @@ exports.run = async function(msg) {
         client.users.get(msg.author.id).send({
             embed: new Discord.RichEmbed()
                 .setColor(settings.embedColor)
-                .addField(`Current reminder${plural(db[msg.author.id])}:`, db[msg.author.id].map(r => r.reminder).join('\n'))
-                .setFooter(`Reminder${plural(db[msg.author.id])} set to expire in(dd:hh:mm:ss): ${db[msg.author.id].map(b => moment.duration(b.when - Date.now(), 'milliseconds').format('dd:hh:mm:ss')).join(', ')}`)
+                .addField(`Current reminder${plural(db[msg.author.id])}:`, db[msg.author.id].map((r) => r.reminder).join('\n'))
+                .setFooter(`Reminder${plural(db[msg.author.id])} set to expire in(dd:hh:mm:ss): ${db[msg.author.id].map((b) => moment.duration(b.when - Date.now(), 'milliseconds').format('dd:hh:mm:ss')).join(', ')}`)
         }).then(() => {
             msg.channel.send(':ballot_box_with_check: Check your DMs!');
-        }).catch(err => {
+        }).catch((err) => {
             if (err.message === 'Forbidden')
                 msg.channel.send({
                     embed: new Discord.RichEmbed()
                         .setColor(settings.embedColor)
-                        .addField(`Current reminder${plural(db[msg.author.id])}:`, db[msg.author.id].map(r => r.reminder).join('\n'))
-                        .setFooter(`Reminder${plural(db[msg.author.id])} set to expire in(dd:hh:mm:ss): ${db[msg.author.id].map(b => moment.duration(b.when - Date.now(), 'milliseconds').format('dd:hh:mm:ss')).join(', ')}`)
+                        .addField(`Current reminder${plural(db[msg.author.id])}:`, db[msg.author.id].map((r) => r.reminder).join('\n'))
+                        .setFooter(`Reminder${plural(db[msg.author.id])} set to expire in(dd:hh:mm:ss): ${db[msg.author.id].map((b) => moment.duration(b.when - Date.now(), 'milliseconds').format('dd:hh:mm:ss')).join(', ')}`)
                 });
         });
     }
@@ -88,11 +88,9 @@ exports.run = async function(msg) {
 
         msg.channel.send(':warning: This will delete all of your reminders! Are you sure? (`y`/`n`)');
 
-        const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, {
-            time: 40000
-        });
+        const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
 
-        collector.on('collect', m => {
+        collector.on('collect', (m) => {
             if (m.content.toLowerCase() === 'y' || m.content.toLowerCase() === 'yes') {
                 db[msg.author.id] = [];
                 fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
@@ -115,9 +113,9 @@ exports.run = async function(msg) {
         let delarray = [];
         delarray.push(msg);
         msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
-            .then(m => delarray.push(m));
+            .then((m) => delarray.push(m));
 
-        const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, { time: 40000 });
+        const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
 
         let step = 1,
             dboption = {
@@ -126,7 +124,7 @@ exports.run = async function(msg) {
                 'made': msg.createdTimestamp
             };
 
-        collector.on('collect', m => {
+        collector.on('collect', (m) => {
             delarray.push(m);
             if (m.content.toLowerCase() === prefixdb[m.guild.id] + 'remindme' || m.content.toLowerCase() === 'cancel') {
 
@@ -138,11 +136,11 @@ exports.run = async function(msg) {
 
             if (step === 1) {
                 if (m.content.length === 0)
-                    return msg.channel.send('The reminder cannot be empty.\nWhat would you like the reminder to be?').then(a => delarray.push(a));
+                    return msg.channel.send('The reminder cannot be empty.\nWhat would you like the reminder to be?').then((a) => delarray.push(a));
 
                 dboption.reminder = m.content;
 
-                msg.channel.send('When would you like to be reminded? (e.g. 24 hours)').then(a => delarray.push(a));
+                msg.channel.send('When would you like to be reminded? (e.g. 24 hours)').then((a) => delarray.push(a));
             };
 
             if (step === 2) {
@@ -158,7 +156,7 @@ exports.run = async function(msg) {
                     tParse = time(m.content.replace(/ min/g, 'minutes ')).absolute;
 
                 if (!isNaN(m.content) || !tParse)
-                    return msg.channel.send('Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)').then(a => delarray.push(a));
+                    return msg.channel.send('Invalid time.\nWhen would you like to be reminded? (e.g. 24 hours)').then((a) => delarray.push(a));
 
                 if (time(m.content).relative < 0) {
                     collector.stop();
@@ -207,8 +205,8 @@ exports.run = async function(msg) {
                 .setDescription(Object.keys(db[msg.author.id]).map((e, i) => `[${i + 1}] ` + db[msg.author.id][e].reminder).join('\n'))
                 .setFooter('Send the number of the reminder you want me to forget(e.g. 3), or send c to cancel.')
         });
-        const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, { time: 40000 });
-        collector.on('collect', m => {
+        const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
+        collector.on('collect', (m) => {
             if (isNaN(m.content))
                 return msg.channel.send('Argument entered is not a number. Send the number of the reminder you want me to forget (e.g. `3`), or send `c` to cancel.');
 
@@ -216,7 +214,7 @@ exports.run = async function(msg) {
                 return msg.channel.send('You don\'t have that many reminders, please choose a lower number.');
 
             let reminder = db[msg.author.id][parseInt(m.content) - 1];
-            db[msg.author.id] = db[msg.author.id].filter(x => x.reminder !== db[msg.author.id][parseInt(m.content) - 1].reminder);
+            db[msg.author.id] = db[msg.author.id].filter((x) => x.reminder !== db[msg.author.id][parseInt(m.content) - 1].reminder);
 
             fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
                 if (err) return msg.channel.send('Your reminder wasn\'t removed.\n' + err.message);
@@ -231,7 +229,7 @@ exports.run = async function(msg) {
 
     if (cmd === 'ev') {
         if (msg.author.id !== settings.ownerID) return false;
-        let script = msg.content.substring(prefixdb[msg.guild.id].length + 3, msg.content.length);
+        let script = args.join(' ');
         let silent = script.includes('--silent') ? true : false;
         let asynchr = script.includes('--async') ? true : false;
         if (silent || asynchr) script = script.replace('--silent', '').replace('--async', '');
@@ -259,7 +257,7 @@ exports.run = async function(msg) {
             if (stdout.length > 2000 || stderr.length > 2000) {
                 let res = await snekfetch.post('https://hastebin.com/documents')
                     .send(stdout + '\n\n' + stderr)
-                    .catch(e => msg.channel.send(e.message));
+                    .catch((e) => msg.channel.send(e.message));
 
                 msg.channel.send({
                     embed: new Discord.RichEmbed()
@@ -276,7 +274,7 @@ exports.run = async function(msg) {
     };
 
     if (cmd === 'prefix') {
-        if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length) === '')
+        if (!args[0])
             return msg.channel.send({
                 embed: new Discord.RichEmbed()
                     .setColor(settings.embedColor)
@@ -289,7 +287,7 @@ exports.run = async function(msg) {
         if (msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length).length > 16)
             return msg.channel.send('Please keep your prefix below 16 characters.');
 
-        prefixdb[msg.guild.id] = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length + 7, msg.content.length);
+        prefixdb[msg.guild.id] = msg.content.toLowerCase().substring(args.join(' '));
         fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
             if (err) return msg.channel.send('Your prefix couldn\'t be changed.\n' + err.message);
             msg.channel.send(`Prefix successfully changed to \`${prefixdb[msg.guild.id]}\` for this guild.`);
@@ -345,11 +343,11 @@ exports.run = async function(msg) {
         let num = parseInt(args[0]);
         if (!args[0]) num = 1;
         if (isNaN(num))
-            return msg.edit('Arg is not a number.');
+            return msg.channel.send('Arg is not a number.');
         let messages = await msg.channel.fetchMessages({ limit: 100 });
-        let mga = messages.array().filter(m => m.author.id === client.user.id);
+        let mga = messages.array().filter((m) => m.author.id === client.user.id);
         mga.length = num;
-        mga.map(m => m.delete().catch());
+        mga.map((m) => m.delete().catch());
     };
 };
 
@@ -361,5 +359,5 @@ function mentioned(msg, x) {
     if (!Array.isArray(x)) {
         x = [x];
     }
-    return msg.isMentioned(client.user.id) && x.some(c => msg.content.toLowerCase().includes(c));
+    return msg.isMentioned(client.user.id) && x.some((c) => msg.content.toLowerCase().includes(c));
 }

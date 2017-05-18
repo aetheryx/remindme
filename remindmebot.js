@@ -1,3 +1,5 @@
+const msgHandler   = require('./handlers/msgHandler.js');
+const guildHandler = require('./handlers/guildHandler');
 Discord  = require('discord.js');
 client   = new Discord.Client();
 db       = require('./storage/reminders.json');
@@ -25,14 +27,14 @@ client.once('ready', () => {
 });
 
 client.on('guildCreate', (guild) => {
-    require('./handlers/guildHandler.js').create(guild);
+    guildHandler.create(guild);
 });
 
 client.on('guildDelete', (guild) => {
-    require('./handlers/guildHandler.js').delete(guild);
+    guildHandler.delete(guild);
 });
 
-client.on('message', msg => {
+client.on('message', (msg) => {
     if (msg.author.bot || msg.channel.type === 'dm') return;
 
     if (!prefixdb[msg.guild.id])
@@ -42,7 +44,7 @@ client.on('message', msg => {
         return;
 
     try {
-        require('./handlers/msgHandler.js').run(msg);
+        msgHandler.run(msg);
     } catch (e) {
         console.log(e);
         return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/TCNNsSQ) if the issue persists.');
