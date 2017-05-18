@@ -287,7 +287,7 @@ exports.run = async function(msg) {
         if (args[0].length > 16)
             return msg.channel.send('Please keep your prefix below 16 characters.');
 
-        prefixdb[msg.guild.id] = args[0]
+        prefixdb[msg.guild.id] = args[0];
         fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
             if (err) return msg.channel.send('Your prefix couldn\'t be changed.\n' + err.message);
             msg.channel.send(`Prefix successfully changed to \`${prefixdb[msg.guild.id]}\` for this guild.`);
