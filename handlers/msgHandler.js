@@ -199,10 +199,6 @@ exports.run = async function(msg) {
         if (!db[msg.author.id] || db[msg.author.id].length === 0)
             return msg.reply('You have no reminders set!');
 
-        if (m.content.toLowerCase().startsWith(prefixdb[m.guild.id] + 'forget') || m.content.toLowerCase() === 'cancel' || m.content.toLowerCase() === 'c') 
-            return collector.stop();
-
-        
         msg.channel.send('Here\'s a list of your current reminders: ', {
             embed: new Discord.RichEmbed()
                 .setColor(settings.embedColor)
@@ -212,6 +208,9 @@ exports.run = async function(msg) {
         });
         const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
         collector.on('collect', (m) => {
+            if (m.content.toLowerCase().startsWith(prefixdb[m.guild.id] + 'forget') || m.content.toLowerCase() === 'cancel' || m.content.toLowerCase() === 'c') 
+                return collector.stop();
+                
             if (isNaN(m.content))
                 return msg.channel.send('Argument entered is not a number. Send the number of the reminder you want me to forget (e.g. `3`), or send `c` to cancel.');
 
