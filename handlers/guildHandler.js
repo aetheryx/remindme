@@ -31,7 +31,7 @@ function postStats() {
 
     if (!settings.keys.dbots.includes('API key'))
         snekfetch
-        .post(`https://bots.discord.pw/api/bots/${client.user.id}/stats`)
+        .post(`https://discordbots.org/api/bots/${client.user.id}/stats`)
         .set('Authorization', settings.keys.dbots)
         .send({ server_count: client.guilds.size })
         .end();
