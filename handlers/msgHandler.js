@@ -1,10 +1,13 @@
-const exec = require('child_process').exec;
-const time = require('time-parser');
-const moment = require('moment');
-const fs = require('fs');
+const snekfetch = require('snekfetch');
+const moment    = require('moment');
+const exec      = require('child_process').exec;
+const time      = require('time-parser');
+const fs        = require('fs');
+const os        = require('os');
+
 require('moment-duration-format');
 
-exports.run = async function(msg) {
+exports.run = async function (msg) {
     if (mentioned(msg, 'prefix'))
         msg.channel.send(`My prefix in this guild is \`${prefixdb[msg.guild.id]}\`.`);
 
@@ -19,7 +22,6 @@ exports.run = async function(msg) {
     if (['reboot', 'restart'].includes(cmd) || mentioned(msg, ['reboot', 'restart'])) {
         if (msg.author.id !== settings.ownerID)
             return msg.reply('You do not have permission to use this command.');
-
         await msg.channel.send('Restarting...');
         await client.destroy();
         process.exit();
@@ -32,11 +34,8 @@ exports.run = async function(msg) {
                 .setDescription('Click [here](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=' + client.user.id + ') to invite me to your server, or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.')
         });
 
-
-
     if (['stats', 'info'].includes(cmd) || mentioned(msg, ['stats', 'info'])) {
-        let os = require('os'),
-            embed = new Discord.RichEmbed()
+        let embed = new Discord.RichEmbed()
             .setColor(settings.embedColor)
             .setTitle(`RemindMeBot ${settings.version}`)
             .setURL('https://discordbots.org/bot/290947970457796608')
@@ -50,7 +49,7 @@ exports.run = async function(msg) {
             .addField('Links', '[Bot invite](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608) | [Support server invite](https://discord.gg/Yphr6WG) | [GitHub](https://github.com/Aetheryx/remindme)', true)
             .setFooter('Created by Aetheryx#2222');
 
-        msg.channel.send({ embed: embed });
+        msg.channel.send({ embed });
     };
 
     if (cmd === 'help' || mentioned(msg, 'help'))
@@ -88,13 +87,14 @@ exports.run = async function(msg) {
 
         msg.channel.send(':warning: This will delete all of your reminders! Are you sure? (`y`/`n`)');
 
-        const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
+        const collector = msg.channel.createMessageCollector(m => msg.author.id === m.author.id, { time: 40000 });
 
         collector.on('collect', (m) => {
             if (m.content.toLowerCase() === 'y' || m.content.toLowerCase() === 'yes') {
                 db[msg.author.id] = [];
                 fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
-                    if (err) return msg.channel.send('Your reminders weren\'t cleared.\n' + err.message);
+                    if (err) 
+                        return msg.channel.send('Your reminders weren\'t cleared.\n' + err.message);
                     msg.channel.send(':ballot_box_with_check: Reminders cleared.');
                 });
             } else {
