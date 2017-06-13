@@ -48,16 +48,16 @@ client.on('message', (msg) => {
         return;
     }
 
-    if (!prefixdb[msg.guild.id])
-        prefixdb[msg.guild.id] = settings.defaultPrefix;
-
-    if (msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id]) || msg.isMentioned(client.user.id))
+    if (msg.channel.type !== 'dm') {
+        if (!prefixdb[msg.guild.id])
+            prefixdb[msg.guild.id] = settings.defaultPrefix;
         try {
             msgHandler.run(msg);
         } catch (e) {
             console.log(e);
             return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/TCNNsSQ) if the issue persists.');
         }
+    }
 });
 
 client.on('error', console.error);
