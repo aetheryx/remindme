@@ -1,5 +1,6 @@
 const msgHandler   = require('./handlers/msgHandler.js');
-const guildHandler = require('./handlers/guildHandler');
+const guildHandler = require('./handlers/guildHandler.js');
+const dmHandler = require('./handlers/dmHandler.js');
 Discord  = require('discord.js');
 client   = new Discord.Client();
 db       = require('./storage/reminders.json');
@@ -18,11 +19,11 @@ client.once('ready', () => {
     require('./handlers/dbHandler.js').start();
 
     let index = 0;
-    let statuses = ['in %s guilds', settings.defaultPrefix + 'help', 'with %u users', '@mention help'];
+    const statuses = ['in %s guilds', `${settings.defaultPrefix}help`, '@mention help'];
 
-    setInterval(function() {
+    setInterval(function () {
         index = (index + 1) % statuses.length;
-        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size).replace('%u', client.users.size));
+        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size));
     }.bind(client), 10000);
 });
 
@@ -35,20 +36,28 @@ client.on('guildDelete', (guild) => {
 });
 
 client.on('message', (msg) => {
-    if (msg.author.bot || msg.channel.type === 'dm') return;
+    if (msg.author.bot) return;
+
+    if (msg.content.toLowerCase().startsWith(settings.defaultPrefix) && msg.channel.type === 'dm') {
+        try {
+            dmHandler.run(msg);
+        } catch (e) {
+            console.log(e);
+            return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/TCNNsSQ) if the issue persists.');
+        }
+        return;
+    }
 
     if (!prefixdb[msg.guild.id])
         prefixdb[msg.guild.id] = settings.defaultPrefix;
 
-    if (!msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id]) && !msg.isMentioned(client.user.id))
-        return;
-
-    try {
-        msgHandler.run(msg);
-    } catch (e) {
-        console.log(e);
-        return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/TCNNsSQ) if the issue persists.');
-    }
+    if (msg.content.toLowerCase().startsWith(prefixdb[msg.guild.id]) || msg.isMentioned(client.user.id))
+        try {
+            msgHandler.run(msg);
+        } catch (e) {
+            console.log(e);
+            return msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/TCNNsSQ) if the issue persists.');
+        }
 });
 
 client.on('error', console.error);
