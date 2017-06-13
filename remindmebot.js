@@ -51,6 +51,8 @@ client.on('message', (msg) => {
     if (msg.channel.type !== 'dm') {
         if (!prefixdb[msg.guild.id])
             prefixdb[msg.guild.id] = settings.defaultPrefix;
+        if (!msg.content.startsWith(prefixdb[msg.guild.id]))
+            return;
         try {
             msgHandler.run(msg);
         } catch (e) {
