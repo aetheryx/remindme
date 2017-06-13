@@ -28,6 +28,6 @@
         "settings": true,
         "Discord": true,
         "db": true,
-        "prefixdb", true
+        "prefixdb": true
     }
 }
