@@ -176,8 +176,8 @@ exports.run = async function (msg) {
                             .setFooter('Reminder set for ')
                             .setTimestamp(new Date(tParse))
                     }).then(() => {
-                        if (m.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
-                            msg.channel.bulkDelete(delarray);
+                    //    if (m.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
+                    //        msg.channel.bulkDelete(delarray);
                     });
                 });
             }
