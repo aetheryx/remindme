@@ -185,8 +185,8 @@ exports.run = async function (msg) {
         });
         collector.on('end', (collected, reason) => {
             if (reason === 'time') {
-                if (msg.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
-                    msg.channel.bulkDelete(delarray);
+     //           if (msg.channel.permissionsFor(client.user.id).hasPermission('MANAGE_MESSAGES'))
+       //             msg.channel.bulkDelete(delarray);
 
                 msg.channel.send('Prompt timed out.');
             }
