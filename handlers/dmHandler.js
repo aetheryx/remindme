@@ -1,37 +1,35 @@
-const snekfetch = require('snekfetch');
-const moment    = require('moment');
-const exec      = require('child_process').exec;
-const time      = require('time-parser');
-const fs        = require('fs');
-const os        = require('os');
-
+const botVersion = require('../package.json').version;
+const snekfetch  = require('snekfetch');
+const moment     = require('moment');
+const exec       = require('child_process').exec;
+const time       = require('time-parser');
+const fs         = require('fs');
+const os         = require('os');
 require('moment-duration-format');
 
 exports.run = async function (msg) {
-    const cmd = msg.content.toLowerCase().substring(settings.defaultPrefix.length).split(' ')[0];
-
-    if (cmd === 'ping' || mentioned(msg, 'ping'))
+    if (isCommand(msg, 'ping'))
         msg.channel.send(`:ping_pong: Pong! ${client.pings[0]}ms`);
 
-    if (['reboot', 'restart'].includes(cmd) || mentioned(msg, ['reboot', 'restart'])) {
+    if (isCommand(msg, ['reboot', 'restart'])) {
         if (msg.author.id !== settings.ownerID)
-            return msg.reply('You do not have permission to use this command.');
+            return;
         await msg.channel.send('Restarting...');
         await client.destroy();
         process.exit();
     }
 
-    if (cmd === 'invite' || mentioned(msg, 'invite'))
+    if (isCommand(msg, 'invite'))
         msg.channel.send({
             embed: new Discord.RichEmbed()
                 .setColor(settings.embedColor)
                 .setDescription(`Click [here](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${client.user.id}) to invite me to your server, or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.`)
         });
 
-    if (['stats', 'info'].includes(cmd) || mentioned(msg, ['stats', 'info'])) {
+    if (isCommand(msg, ['stats', 'info'])) {
         const embed = new Discord.RichEmbed()
             .setColor(settings.embedColor)
-            .setTitle(`RemindMeBot ${settings.version}`)
+            .setTitle(`RemindMeBot ${botVersion}`)
             .setURL('https://discordbots.org/bot/290947970457796608')
             .addField('Guilds', client.guilds.size, true)
             .addField('Uptime', moment.duration(process.uptime(), 'seconds').format('dd:hh:mm:ss'), true)
@@ -46,14 +44,14 @@ exports.run = async function (msg) {
         msg.channel.send({ embed });
     }
 
-    if (cmd === 'help' || mentioned(msg, 'help'))
+    if (isCommand(msg, 'help'))
         msg.channel.send(`To set a reminder, simply send \`${settings.defaultPrefix}remindme\` and follow the instructions. Alternatively, you can also send \`${settings.defaultPrefix}remindme time_argument "message"\`, \ne.g. \`${settings.defaultPrefix}remindme 31 December 2017 "New Years"\`.\nMy prefix is \`${settings.defaultPrefix}\`; here's a list of my commands: `, {
             embed: new Discord.RichEmbed()
                 .setColor(settings.embedColor)
                 .setDescription('remindme, list, clear, info, ping, help, invite, forget'.split(', ').sort().join(', '))
         });
 
-    if (['reminders', 'list'].includes(cmd) || mentioned(msg, ['reminders', 'list'])) {
+    if (isCommand(msg, ['reminders', 'list'])) {
         if (!db[msg.author.id] || db[msg.author.id].length === 0)
             return msg.reply('You have no reminders set!');
         client.users.get(msg.author.id).send({
@@ -64,7 +62,7 @@ exports.run = async function (msg) {
         });
     }
 
-    if (['clear', 'delete'].includes(cmd) || mentioned(msg, ['clear', 'delete'])) {
+    if (isCommand(msg, 'clear')) {
         if (!db[msg.author.id] || db[msg.author.id].length === 0)
             return msg.reply('You have no reminders set!');
 
@@ -92,7 +90,41 @@ exports.run = async function (msg) {
         });
     }
 
-    if (msg.content.toLowerCase() === `${settings.defaultPrefix}remindme` || mentioned(msg, ['remind me', 'remindme'])) {
+    if (isCommand(msg, ['forget', 'delete'])) { // Very beta, kind of unstable.
+        if (!db[msg.author.id] || db[msg.author.id].length === 0)
+            return msg.reply('You have no reminders set!');
+
+        msg.channel.send('Here\'s a list of your current reminders: ', {
+            embed: new Discord.RichEmbed()
+                .setColor(settings.embedColor)
+                .setTitle('Reminders')
+                .setDescription(Object.keys(db[msg.author.id]).map((e, i) => `[${i + 1}] ${db[msg.author.id][e].reminder}`).join('\n'))
+                .setFooter('Send the number of the reminder you want me to forget(e.g. 3), or send c to cancel.')
+        });
+        const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
+        collector.on('collect', (m) => {
+            if (m.content.toLowerCase().startsWith(`${settings.defaultPrefix}forget`) || m.content.toLowerCase() === 'cancel' || m.content.toLowerCase() === 'c') 
+                return collector.stop();
+                
+            if (isNaN(m.content))
+                return msg.channel.send('Argument entered is not a number. Send the number of the reminder you want me to forget (e.g. `3`), or send `c` to cancel.');
+
+            if (parseInt(m.content) > Object.keys(db[msg.author.id]).length)
+                return msg.channel.send('You don\'t have that many reminders, please choose a lower number.');
+
+            const reminder = db[msg.author.id][parseInt(m.content) - 1];
+            db[msg.author.id] = db[msg.author.id].filter((x) => x.reminder !== db[msg.author.id][parseInt(m.content) - 1].reminder);
+
+            fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
+                if (err) return msg.channel.send(`Your reminder wasn't removed.\n${err.message}`);
+            });
+
+            msg.channel.send(`Reminder \`${reminder.reminder}\` deleted.`);
+            return collector.stop();
+        });
+    }
+
+    if (isCommand(msg, 'remindme') && !args[0]) {
         msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)');
 
         const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
@@ -106,7 +138,7 @@ exports.run = async function (msg) {
         };
 
         collector.on('collect', (m) => {
-            if (m.content.toLowerCase() === `${settings.defaultPrefix}remindme` || m.content.toLowerCase() === 'cancel') 
+            if (m.content.toLowerCase() === `${settings.defaultPrefix}remindme` || m.content.toLowerCase() === 'cancel')
                 return collector.stop();
 
             if (step === 1) {
@@ -158,66 +190,33 @@ exports.run = async function (msg) {
             step++;
         });
         collector.on('end', (collected, reason) => {
-            if (reason === 'time') 
+            if (reason === 'time')
                 msg.channel.send('Prompt timed out.');
         });
     }
 
-    if (cmd === 'forget') { // Very beta, kind of unstable.
-        if (!db[msg.author.id] || db[msg.author.id].length === 0)
-            return msg.reply('You have no reminders set!');
-
-        msg.channel.send('Here\'s a list of your current reminders: ', {
-            embed: new Discord.RichEmbed()
-                .setColor(settings.embedColor)
-                .setTitle('Reminders')
-                .setDescription(Object.keys(db[msg.author.id]).map((e, i) => `[${i + 1}] ${db[msg.author.id][e].reminder}`).join('\n'))
-                .setFooter('Send the number of the reminder you want me to forget(e.g. 3), or send c to cancel.')
-        });
-        const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
-        collector.on('collect', (m) => {
-            if (m.content.toLowerCase().startsWith(`${settings.defaultPrefix}forget`) || m.content.toLowerCase() === 'cancel' || m.content.toLowerCase() === 'c') 
-                return collector.stop();
-                
-            if (isNaN(m.content))
-                return msg.channel.send('Argument entered is not a number. Send the number of the reminder you want me to forget (e.g. `3`), or send `c` to cancel.');
-
-            if (parseInt(m.content) > Object.keys(db[msg.author.id]).length)
-                return msg.channel.send('You don\'t have that many reminders, please choose a lower number.');
-
-            const reminder = db[msg.author.id][parseInt(m.content) - 1];
-            db[msg.author.id] = db[msg.author.id].filter((x) => x.reminder !== db[msg.author.id][parseInt(m.content) - 1].reminder);
-
-            fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
-                if (err) return msg.channel.send(`Your reminder wasn't removed.\n${err.message}`);
-            });
-
-            msg.channel.send(`Reminder \`${reminder.reminder}\` deleted.`);
-            return collector.stop();
-        });
-    }
-
+    const cmd = msg.content.toLowerCase().substring(settings.defaultPrefix.length).split(' ')[0];
     const args = msg.content.split(' ').slice(1);
 
     if (cmd === 'ev') {
-        if (msg.author.id !== settings.ownerID) return false;
-        let script = args.join(' ');
-        const silent = script.includes('--silent') ? true : false;
-        const asynchr = script.includes('--async') ? true : false;
-        if (silent || asynchr) script = script.replace('--silent', '').replace('--async', '');
+        if (msg.author.id !== settings.ownerID) 
+            return false;
+        let res = args.join(' ');
+        const silent = res.includes('--silent') ? true : false;
+        const asynchr = res.includes('--async') ? true : false;
+        if (silent || asynchr) res = res.replace('--silent', '').replace('--async', '');
 
         try {
-            let code = asynchr ? eval(`(async()=>{${script}})();`) : eval(script);
-            if (code instanceof Promise && asynchr) code = await code;
+            res = asynchr ? eval(`(async()=>{${res}})();`) : eval(res);
+            if (res instanceof Promise && asynchr) code = await res;
             if (typeof code !== 'string')
-                code = require('util').inspect(code, {
-                    depth: 0
-                });
-            code = code.replace(new RegExp(client.token, 'gi'), 'fite me irl');
-            if (!silent) msg.channel.send(code, { code: 'js' });
+                res = require('util').inspect(res, { depth: 0 });
+            res = res.replace(new RegExp(client.token, 'gi'), 'fite me irl');
         } catch (e) {
-            msg.channel.send(`\n\`ERROR\` \`\`\`xl\n${e}\n\`\`\``);
+            res = e;
         }
+        if (!silent)
+            msg.channel.send(res, { code: 'js' });
     }
 
     if (cmd === 'exec') {
@@ -294,8 +293,9 @@ function plural (x) {
     return x.length > 1 ? 's' : '';
 }
 
-function mentioned (msg, x) {
-    if (!Array.isArray(x)) 
+function isCommand (msg, x) {
+    const cmd = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length).split(' ')[0];
+    if (!Array.isArray(x))
         x = [x];
-    return msg.isMentioned(client.user.id) && x.some((c) => msg.content.toLowerCase().includes(c));
+    return x.includes(cmd) || msg.isMentioned(client.user.id) && x.some((c) => msg.content.toLowerCase().includes(c));
 }
