@@ -2,7 +2,7 @@ const msgHandler   = require('./handlers/msgHandler.js');
 const guildHandler = require('./handlers/guildHandler.js');
 const dmHandler = require('./handlers/dmHandler.js');
 Discord  = require('discord.js');
-client   = new Discord.Client();
+client   = new Discord.Client({ disabledEvents: ['CHANNEL_PINS_UPDATE', 'USER_SETTINGS_UPDATE', 'USER_NOTE_UPDATE', 'VOICE_STATE_UPDATE', 'TYPING_START', 'VOICE_SERVER_UPDATE', 'RELATIONSHIP_ADD', 'RELATIONSHIP_REMOVE', 'GUILD_BAN_ADD', 'GUILD_BAN_REMOVE', 'MESSAGE_UPDATE', 'MESSAGE_DELETE_BULK', 'MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE', 'MESSAGE_REACTION_REMOVE_ALL' ] });
 db       = require('./storage/reminders.json');
 settings = require('./storage/settings.json');
 prefixdb = require('./storage/prefixdb.json');
@@ -20,10 +20,9 @@ client.once('ready', () => {
 
     let index = 0;
     const statuses = ['in %s guilds', `${settings.defaultPrefix}help`, '@mention help'];
-
     setInterval(function () {
         index = (index + 1) % statuses.length;
-        this.user.setGame(statuses[index].replace('%s', client.guilds.size).replace('%c', client.channels.size));
+        this.user.setGame(statuses[index].replace('%s', client.guilds.size));
     }.bind(client), 10000);
 });
 
