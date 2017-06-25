@@ -237,7 +237,7 @@ exports.run = async function (msg) {
 
         try {
             res = asynchr ? eval(`(async()=>{${res}})();`) : eval(res);
-            if (res instanceof Promise && asynchr) code = await res;
+            if (res instanceof Promise && asynchr) res = await res;
             if (typeof code !== 'string')
                 res = require('util').inspect(res, { depth: 0 });
             res = res.replace(new RegExp(client.token, 'gi'), 'fite me irl');
