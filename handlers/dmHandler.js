@@ -294,7 +294,7 @@ function plural (x) {
 }
 
 function isCommand (msg, x) {
-    const cmd = msg.content.toLowerCase().substring(prefixdb[msg.guild.id].length).split(' ')[0];
+    const cmd = msg.content.toLowerCase().substring(settings.defaultPrefix.length).split(' ')[0];
     if (!Array.isArray(x))
         x = [x];
     return x.includes(cmd) || msg.isMentioned(client.user.id) && x.some((c) => msg.content.toLowerCase().includes(c));
