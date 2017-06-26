@@ -21,7 +21,8 @@
         "prefer-arrow-callback": "error",
         "prefer-const": "error",
         "prefer-template": "error",
-        "indent": ["error", 4, { "MemberExpression": 1 }]
+        "indent": ["error", 4, { "MemberExpression": 1 }],
+        "no-trailing-spaces": "error"
     },
     "globals": {
         "client": true,
