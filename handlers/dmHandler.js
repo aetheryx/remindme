@@ -74,7 +74,7 @@ exports.run = async function (msg) {
             if (m.content.toLowerCase() === 'y' || m.content.toLowerCase() === 'yes') {
                 db[msg.author.id] = [];
                 fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
-                    if (err) 
+                    if (err)
                         return msg.channel.send(`Your reminders weren't cleared.\n${err.message}`);
                     msg.channel.send(':ballot_box_with_check: Reminders cleared.');
                 });
@@ -103,9 +103,9 @@ exports.run = async function (msg) {
         });
         const collector = msg.channel.createMessageCollector((m) => msg.author.id === m.author.id, { time: 40000 });
         collector.on('collect', (m) => {
-            if (m.content.toLowerCase().startsWith(`${settings.defaultPrefix}forget`) || m.content.toLowerCase() === 'cancel' || m.content.toLowerCase() === 'c') 
+            if (m.content.toLowerCase().startsWith(`${settings.defaultPrefix}forget`) || m.content.toLowerCase() === 'cancel' || m.content.toLowerCase() === 'c')
                 return collector.stop();
-                
+
             if (isNaN(m.content))
                 return msg.channel.send('Argument entered is not a number. Send the number of the reminder you want me to forget (e.g. `3`), or send `c` to cancel.');
 
@@ -199,7 +199,7 @@ exports.run = async function (msg) {
     const args = msg.content.split(' ').slice(1);
 
     if (cmd === 'ev') {
-        if (msg.author.id !== settings.ownerID) 
+        if (msg.author.id !== settings.ownerID)
             return false;
         let res = args.join(' ');
         const silent = res.includes('--silent') ? true : false;

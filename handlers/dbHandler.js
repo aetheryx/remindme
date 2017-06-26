@@ -31,7 +31,7 @@ exports.start = () => {
             db[e] = db[e].filter(r => Date.now() <= r.when);
         });
         fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
-            if (err) 
+            if (err)
                 return console.log(`${Date()} dbHandler error: ${err}`);
         });
     }, 3000);

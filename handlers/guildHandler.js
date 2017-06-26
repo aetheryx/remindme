@@ -5,7 +5,7 @@ exports.create = (guild) => {
     prefixdb[guild.id] = settings.defaultPrefix;
     fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
         if (err)
-            return console.log(`${Date()} createGuildHandler error: ${err}`); 
+            return console.log(`${Date()} createGuildHandler error: ${err}`);
     });
     guild.defaultChannel.send(`Hi, I'm ${client.user.username} and I give you the possibility to set reminders and view or delete them. 
     To see a list of my commands, send \`${prefixdb[guild.id]}help\`.\nFeel free to DM Aetheryx#2222 for any questions or concerns!`);
@@ -16,7 +16,7 @@ exports.delete = (guild) => {
     delete prefixdb[guild.id];
     fs.writeFile('./storage/prefixdb.json', JSON.stringify(prefixdb, '', '\t'), (err) => {
         if (err)
-            return console.log(`${Date()} deleteGuildHandler error: ${err}`); 
+            return console.log(`${Date()} deleteGuildHandler error: ${err}`);
     });
     postStats();
 };

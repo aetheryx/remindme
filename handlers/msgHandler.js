@@ -86,7 +86,7 @@ exports.run = async function (msg) {
             if (m.content.toLowerCase() === 'y' || m.content.toLowerCase() === 'yes') {
                 db[msg.author.id] = [];
                 fs.writeFile('./storage/reminders.json', JSON.stringify(db, '', '\t'), (err) => {
-                    if (err) 
+                    if (err)
                         return msg.channel.send(`Your reminders weren't cleared.\n${err.message}`);
                     msg.channel.send(':ballot_box_with_check: Reminders cleared.');
                 });
@@ -228,7 +228,7 @@ exports.run = async function (msg) {
     }
 
     if (cmd === 'ev') {
-        if (msg.author.id !== settings.ownerID) 
+        if (msg.author.id !== settings.ownerID)
             return false;
         let res = args.join(' ');
         const silent = res.includes('--silent') ? true : false;
