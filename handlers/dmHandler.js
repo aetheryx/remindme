@@ -124,6 +124,9 @@ exports.run = async function (msg) {
         });
     }
 
+    const cmd = msg.content.toLowerCase().substring(settings.defaultPrefix.length).split(' ')[0];
+    const args = msg.content.split(' ').slice(1);
+
     if (isCommand(msg, 'remindme') && !args[0]) {
         msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)');
 
@@ -194,9 +197,6 @@ exports.run = async function (msg) {
                 msg.channel.send('Prompt timed out.');
         });
     }
-
-    const cmd = msg.content.toLowerCase().substring(settings.defaultPrefix.length).split(' ')[0];
-    const args = msg.content.split(' ').slice(1);
 
     if (cmd === 'ev') {
         if (msg.author.id !== settings.ownerID)
