@@ -1,0 +1,15 @@
+body {
+    background: linear-gradient(-45deg, #6495ed, #fa8072) no-repeat center center fixed;
+    background-size: 170% 170%;
+    -webkit-animation: background 19s ease infinite;
+    -moz-animation: background 19s ease infinite;
+    -o-animation: background 19s ease infinite;
+    animation: background 19s ease infinite;
+}
+
+#box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
