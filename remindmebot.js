@@ -78,7 +78,6 @@ function initWebDashboard () {
     app.use(express.static('dashboard'));
 
     app.get('/api/stats', (req, res) => {
-        res.send(`{"g":${client.guilds.size},"c":${client.channels.filter(c => c.type === 'text').size},"u":${client.users.size},"up":${process.uptime().toFixed()}
-        }`);
+        res.send(JSON.stringify({g:client.guilds.size,c:client.channels.filter(c => c.type === 'text').size,u:client.users.size,up:process.uptime().toFixed()}));
     });
 }
