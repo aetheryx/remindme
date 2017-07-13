@@ -79,10 +79,10 @@ function initWebDashboard () {
 
     app.get('/api/stats', (req, res) => {
         res.send(JSON.stringify({
-            guilds: client.guilds.size,
-            channels: client.channels.filter(c => c.type === 'text').size,
-            users: client.users.size,
-            uptime: process.uptime()
+            g: client.guilds.size,
+            c: client.channels.filter(c => c.type === 'text').size,
+            u: client.users.size,
+            up: process.uptime()
         }));
     });
 }
