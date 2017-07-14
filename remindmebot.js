@@ -71,8 +71,8 @@ client.on('warn', console.warn);
 
 
 function initWebDashboard () {
-    app.listen(42069, () => {
-        console.log('Listening on port 42069.');
+    app.listen(80, () => {
+        console.log('Listening on port 80.');
     });
 
     app.use(express.static('dashboard'));
