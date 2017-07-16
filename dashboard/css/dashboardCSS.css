@@ -33,7 +33,6 @@ html, body {
 #botimg {
   border-radius: 100%;
   padding: 16px;
-
 }
 
 .information {
@@ -68,7 +67,7 @@ html, body {
 }
 
 .card {
-  min-width: 290px;
+  min-width: 600px;
   border-radius: 4px;
   text-align: left;
   font-size: 30px;
@@ -90,10 +89,17 @@ html, body {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-code {
-  display: block;
+nav.navbar.navbar-default {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.35);  
+  border: none;
 }
 
-.botintd {
-  align-items: top;
+.rmbblock {
+  background: rgba(255, 255, 255, 0);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.rmbblock:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
