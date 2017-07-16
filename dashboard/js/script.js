@@ -13,8 +13,7 @@ function initiateUptimeClock () {
     xhttp.send();
 
     setInterval(() => {
-        document.getElementById('uptime').innerHTML = '9 days, 99 hours, 99 minutes and 99 seconds'
-        // humanizeDuration(uptime.toFixed() * 1000, { conjunction: ' and ', serialComma: false }); // eslint-disable-line no-undef
+        document.getElementById('uptime').innerHTML = humanizeDuration(uptime.toFixed() * 1000, { conjunction: ' and ', serialComma: false }); // eslint-disable-line no-undef
         uptime++;
     }, 1000);
 }

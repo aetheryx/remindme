@@ -8,8 +8,6 @@
        url(/fonts/Sansation.ttf#svgFontName) format('svg'); /* Legacy iOS */
 }
 
-
-
 body {
   background: linear-gradient(-45deg, #6495ed, #fa8072) no-repeat center center fixed;
   animation: background 1s ease infinite;
@@ -46,11 +44,24 @@ body {
   margin: 30px 0px;
 }
 
+@media(max-width: 768px) {
+  #mainheader {
+    font-size: 200%;
+  }
+  .card {
+    font-weight: 600;
+    font-size: 140%;
+    min-width: 80%;
+  }
+}
+
+
 @media(max-width: 414px) {
   #mainheader {
     font-size: 300%;
   }
   .card {
+    font-weight: 600;
     font-size: 73%;
     min-width: 40%;
   }
@@ -61,13 +72,11 @@ body {
     font-size: 200%;
   }
   .card {
-    font-size: 65%;
-    min-width: 35%;
+    font-weight: 600;
+    font-size: 62%;
+    min-width: 40%;
   }
 }
-
-
-
 
 .card-1 {
   background: rgba(255, 255, 255, 0.15);
