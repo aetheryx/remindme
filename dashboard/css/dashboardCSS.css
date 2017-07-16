@@ -51,7 +51,7 @@ body {
   .card {
     font-weight: 600;
     font-size: 140%;
-    min-width: 80%;
+    min-width: 81%;
   }
 }
 
@@ -63,7 +63,7 @@ body {
   .card {
     font-weight: 600;
     font-size: 73%;
-    min-width: 40%;
+    min-width: 87%;
   }
 }
 
@@ -73,8 +73,8 @@ body {
   }
   .card {
     font-weight: 600;
-    font-size: 62%;
-    min-width: 40%;
+    font-size: 53%;
+    min-width: 80%;
   }
 }
 
