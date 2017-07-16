@@ -8,56 +8,25 @@
        url(/fonts/Sansation.ttf#svgFontName) format('svg'); /* Legacy iOS */
 }
 
-html, body {
+
+
+body {
   background: linear-gradient(-45deg, #6495ed, #fa8072) no-repeat center center fixed;
+  animation: background 1s ease infinite;
   background-size: 170% 170%;
-  -webkit-animation: background 15s ease infinite;
-  -moz-animation: background 15s ease infinite;
-  -o-animation: background 15s ease infinite;
-  animation: background 15s ease infinite;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
   font-family: 'Sansation', Fallback, sans-serif;
+  text-align: center;
+  font-size: 16px;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  flex-flow: column;
+#mainheader {
+  font-size: 500%;
 }
+
 
 #botimg {
   border-radius: 100%;
   padding: 16px;
-}
-
-.information {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@-webkit-keyframes background {
-  0% { background-position: 0% 51% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 51% }
-}
-
-@-o-keyframes background {
-  0% { background-position: 0% 51% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 51% }
-}
-
-@-moz-keyframes background {
-  0% { background-position: 0% 51% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 51% }
 }
 
 @keyframes background {
@@ -67,16 +36,25 @@ html, body {
 }
 
 .card {
+  display: inline-block;
+  overflow: hidden;
   min-width: 600px;
   border-radius: 4px;
   text-align: left;
-  font-size: 30px;
+  font-size: 200%;
+  margin: 30px;
 }
 
-.card div {
-  float: left;
-  clear: none;
+@media(max-width: 60em) {
+  #mainheader {
+    font-size: 200%;
+  }
+  .card {
+    font-size: 73%;
+    min-width: 352px;
+  }
 }
+
 
 .card-1 {
   background: rgba(255, 255, 255, 0.15);
@@ -102,4 +80,9 @@ nav.navbar.navbar-default {
 
 .rmbblock:hover {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.inner {
+  float: left;
+  padding: 16px;
 }
