@@ -8,12 +8,7 @@
     <title>RemindMeBot</title>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
-
-
     <link rel="stylesheet" type="text/css" href="css/dashboardCSS.css">
-    
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -23,49 +18,45 @@
   </head>
   <body>
     <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">RemindMeBot</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Home</a></li>
-      <li class="rmbblock"><a href="links.html">Links</a>
-      <li class="rmbblock"><a href="commands.html">Commands</a>
-      <li class="rmbblock"><a href="selfhosting.html">Self Hosting</a>
-    </ul>
-  </div>
-</nav>
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">RemindMeBot</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li class="rmbblock"><a href="links.html">Links</a>
+          <li class="rmbblock"><a href="commands.html">Commands</a>
+          <li class="rmbblock"><a href="selfhosting.html">Self Hosting</a>
+        </ul>
+      </div>
+    </nav>
 
     <img src="https://cdn.discordapp.com/avatars/290947970457796608/8bed18606a509374a486ae5fa83320cb.png?size=2048" height="175px" width="175px" id="botimg">
     <p id="mainheader">
       RemindMeBot
     </p>
 
+    <div class="card card-1">
+      <div class="inner">
+        Guilds:<br>
+        Channels:<br>
+        Users:<br>
+        Uptime:<br>
+      </div>
+      <div class="inner">
+        <span id="guilds">Loading...</span><br>
+        <span id="channels">Loading...</span><br>
+        <span id="users">Loading...</span><br>
+        <span id="uptime">Loading...</span><br>
+      </div>
+    </div>
 
-<div class="card card-1">
-  <div class="inner">
-    Guilds:<br>
-    Channels:<br>
-    Users:<br>
-    Uptime:<br>
-  </div>
-  <div class="inner">
-    <span id="guilds">Loading...</span><br>
-    <span id="channels">Loading...</span><br>
-    <span id="users">Loading...</span><br>
-    <span id="uptime">9 days, 99 hours, 99 minutes and 99 seconds</span><br>
-  </div>
-</div>
-
-
-  <h1> More coming soon! ;) </h1>
-
+    <h1> More coming soon! ;) </h1>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/jGravity-min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/humanize-duration.js"></script>
   </body>
