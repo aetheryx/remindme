@@ -10,7 +10,7 @@
 
 body {
   background: linear-gradient(-45deg, #6495ed, #fa8072) no-repeat center center fixed;
-  animation: background 1s ease infinite;
+  animation: background 10s ease infinite;
   background-size: 170% 170%;
   font-family: 'Sansation', Fallback, sans-serif;
   text-align: center;
