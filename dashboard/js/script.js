@@ -13,7 +13,7 @@ function initiateUptimeClock () {
     xhttp.send();
 
     setInterval(() => {
-        document.getElementById('p').innerHTML = humanizeDuration(uptime.toFixed() * 1000, { conjunction: ' and ', serialComma: false }); // eslint-disable-line no-undef
+        document.getElementById('uptime').innerHTML = humanizeDuration(uptime.toFixed() * 1000, { conjunction: ' and ', serialComma: false }); // eslint-disable-line no-undef
         uptime++;
     }, 1000);
 }
