@@ -68,16 +68,3 @@ client.on('message', (msg) => {
 
 client.on('error', console.error);
 client.on('warn', console.warn);
-
-
-function initWebDashboard () {
-    app.listen(80, () => {
-        console.log('Listening on port 80.');
-    });
-
-    app.use(express.static('dashboard'));
-
-    app.get('/api/stats', (req, res) => {
-        res.send(JSON.stringify({g:client.guilds.size,c:client.channels.filter(c => c.type === 'text').size,u:client.users.size,p:parseInt(process.uptime().toFixed())}));
-    });
-}
