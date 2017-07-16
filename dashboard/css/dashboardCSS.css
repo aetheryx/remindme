@@ -38,22 +38,35 @@ body {
 .card {
   display: inline-block;
   overflow: hidden;
-  min-width: 600px;
+  min-width: 40%;
+  max-width: 100%;
   border-radius: 4px;
   text-align: left;
   font-size: 200%;
-  margin: 30px;
+  margin: 30px 0px;
 }
 
-@media(max-width: 60em) {
+@media(max-width: 414px) {
+  #mainheader {
+    font-size: 300%;
+  }
+  .card {
+    font-size: 73%;
+    min-width: 40%;
+  }
+}
+
+@media(max-width: 320px) {
   #mainheader {
     font-size: 200%;
   }
   .card {
-    font-size: 73%;
-    min-width: 352px;
+    font-size: 65%;
+    min-width: 35%;
   }
 }
+
+
 
 
 .card-1 {
