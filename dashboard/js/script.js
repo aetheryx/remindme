@@ -1,4 +1,4 @@
-let uptime = 0;
+var uptime = 0;
 updateStats();
 initiateUptimeClock();
 
