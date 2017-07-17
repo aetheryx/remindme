@@ -1,6 +1,5 @@
 let uptime = 0;
 updateStats();
-setInterval(updateStats, 2000);
 initiateUptimeClock();
 
 function initiateUptimeClock () {
@@ -24,8 +23,10 @@ function updateStats () {
         if (this.readyState === 4 && this.status === 200) {
             const stats = JSON.parse(xhttp.responseText);
             const array = Object.keys(stats);
-            for (const value in array)
+            for (const value in array) {
                 document.getElementById(array[value]).innerHTML = stats[array[value]];
+            }
+            setTimeout(updateStats, 2000);
         }
     };
     xhttp.open('GET', '/api/stats', true);
