@@ -11,7 +11,7 @@ module.exports = function () {
     app.get('/api/stats', (req, res) => {
         res.send(JSON.stringify({
             guilds: this.guilds.size,
-            channels: `${this.channels.filter(c => c.type === 'voice').size} voice, ${this.channels.filter(c => c.type === 'text').size} text (${this.channels.size})`,
+            channels: `${this.channels.filter(c => c.type === 'voice').size} voice, ${this.channels.filter(c => c.type === 'text').size} text (${this.channels.size} total)`,
             users: `${this.guilds.map(g => parseInt(g.memberCount)).reduce((a, b) => { return a + b; })} (${this.users.size} online)`}));
     });
 
