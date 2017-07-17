@@ -9,8 +9,11 @@
 }
 
 body {
-  background: linear-gradient(-45deg, #6495ed, #fa8072) no-repeat center center fixed;
-  animation: background 10s ease infinite;
+  background: linear-gradient(-45deg, #58a4fc, #ff8172) no-repeat center center fixed;
+  -webkit-animation: background 15s ease infinite;
+  -moz-animation: background 15s ease infinite;
+  -o-animation: background 15s ease infinite;
+  animation: background 15s ease infinite;
   background-size: 170% 170%;
   font-family: 'Sansation', Fallback, sans-serif;
   text-align: center;
@@ -21,13 +24,44 @@ body {
   font-size: 500%;
 }
 
-
 #botimg {
+  height: 175px;
+  width: 175px;
   border-radius: 100%;
   padding: 16px;
 }
 
+.nav-active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.glasspane {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-text {
+  margin-right: 0px; /* For some reason, this fixes the margin. If I don't specify anything, there is none. */
+}
+
 @keyframes background {
+  0% { background-position: 0% 51% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 51% }
+}
+
+@-o-keyframes background {
+  0% { background-position: 0% 51% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 51% }
+}
+
+@-moz-keyframes background {
+  0% { background-position: 0% 51% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 51% }
+}
+
+@-webkit-keyframes background {
   0% { background-position: 0% 51% }
   50% { background-position: 100% 50% }
   100% { background-position: 0% 51% }
@@ -95,16 +129,26 @@ nav.navbar.navbar-default {
   border: none;
 }
 
-.rmbblock {
-  background: rgba(255, 255, 255, 0);
+.nav-block {
   transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-.rmbblock:hover {
-  background: rgba(255, 255, 255, 0.15);
+.nav-block:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#links-dropdown-btn[aria-expanded=true] {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .inner {
   float: left;
   padding: 16px;
+}
+
+#brandimg {
+  border-radius: 20%;
+  margin-right: 5px;
+  width: 25px;
+  height: 25px;
 }

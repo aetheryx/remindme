@@ -19,19 +19,57 @@
   <body>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
+
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">RemindMeBot</a>
+          <a class="navbar-brand" href="#">
+            <span>
+              <img src="img/rmbavatar.png" class="d-inline-block align-top" id="brandimg" alt="rmb_avatar">
+            </span>
+            RemindMeBot
+          </a>
         </div>
+
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li class="rmbblock"><a href="links.html">Links</a>
-          <li class="rmbblock"><a href="commands.html">Commands</a>
-          <li class="rmbblock"><a href="selfhosting.html">Self Hosting</a>
+
+          <li class="active nav-link">
+            <a href="#">
+              Home
+            </a>
+          </li>
+
+          <li class="nav-block dropdown">
+            <a class="dropdown-toggle" id="links-dropdown-btn" data-toggle="dropdown">
+              Links<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu glasspane">
+              <li><a class="dropdown-item" href="https://github.com/Aetheryx/remindme">GitHub Repository</a></li>
+              <li><a class="dropdown-item" href="https://github.com/Aetheryx">GitHub Profile</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a class="dropdown-item" href="https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=290947970457796608">Discord Bot Invite</a></li>
+              <li><a class="dropdown-item" href="https://discordapp.com/invite/Yphr6WG">Discord Support Server</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a class="dropdown-item" href="https://discordbots.org/bot/290947970457796608">discordbots.org Page</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-block nav-item">
+            <a class="nav-link" href="commands.html">
+              Commands
+            </a>
+          </li>
+
+          <li class="nav-block nav-item">
+            <a class="nav-link" href="selfhosting.html">
+              Self Hosting
+            </a>
+          </li>
+
         </ul>
+        <p class="navbar-text navbar-right">Built by Aetheryx#2222 | Z. A.</p>
       </div>
     </nav>
 
-    <img src="https://cdn.discordapp.com/avatars/290947970457796608/8bed18606a509374a486ae5fa83320cb.png?size=2048" height="175px" width="175px" id="botimg">
+    <img src="https://cdn.discordapp.com/avatars/290947970457796608/8bed18606a509374a486ae5fa83320cb.png?size=2048" id="botimg">
     <p id="mainheader">
       RemindMeBot
     </p>
@@ -51,13 +89,13 @@
       </div>
     </div>
 
-    <h3> More coming soon! ;) </h1>
+    <h3> More coming soon. </h3>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/script.js"></script>
     <script src="js/humanize-duration.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>
