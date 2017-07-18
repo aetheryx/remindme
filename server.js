@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
-const os = require('os');
+const os = promisifyAll(require('os-utils'));
+
 
 module.exports = function () {
-    app.listen(80, () => {
+    app.listen(42069, () => {
         console.log('Listening on port 80.');
     });
 
@@ -14,9 +15,9 @@ module.exports = function () {
             guilds: this.guilds.size,
             channels: `${this.channels.filter(c => c.type === 'voice').size} voice, ${this.channels.filter(c => c.type === 'text').size} text (${this.channels.size} total)`,
             users: `${this.guilds.map(g => parseInt(g.memberCount)).reduce((a, b) => { return a + b; })} (${this.users.size} online)`,
-            ram: `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? `${(os.totalmem() / 1073741824).toFixed(1)}GB` : `${(os.totalmem() / 1048576).toFixed()}MB`)}
-            (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%), ${(os.freemem() > 1073741824 ? `${(os.freemem() / 1073741824).toFixed(1)}GB` : `${(os.freemem() / 1048576).toFixed()}MB`)} free on server`,
-            cpu: `${await getCPUUsage()}% (1|5|15 min avg: ${os.loadavg().map(p => `${(p * 100).toFixed(2)}%`).join('|')})`}
+            ram: `${(process.memoryUsage().rss / (1024 * 1024)).toFixed()}MB/${(os.totalmem() > 1024 ? `${(os.totalmem() / 1000).toFixed(1)}GB` : `${(os.totalmem()).toFixed()}MB`)}
+            (${(process.memoryUsage().rss / (os.totalmem() * 1024 * 1024) * 100).toFixed(2)}%), ${(os.freemem() > 1024 ? `${(os.freemem() / 1024).toFixed(1)}GB` : `${(os.freemem()).toFixed()}MB`)} free on server`,
+            cpu: `${(await os.cpuUsageAsync() * 100).toFixed(2)}% (1/5/15 min avg: ${os.loadavg(1).toFixed(2)}/${os.loadavg(5).toFixed(2)}/${os.loadavg(15).toFixed(2)})`}
         ));
     });
 
@@ -25,28 +26,25 @@ module.exports = function () {
     });
 };
 
-function getCPUUsage () {
-    return new Promise(resolve => {
-        const startMeasure = cpuAverage();
-        setTimeout(() => {
-            var endMeasure = cpuAverage();
-            var idleDifference = endMeasure.idle - startMeasure.idle;
-            var totalDifference = endMeasure.total - startMeasure.total;
-            var percentageCPU = 100 - ~~(100 * idleDifference / totalDifference);
-            resolve(percentageCPU);
-        }, 100);
-    });
-}
-
-function cpuAverage () {
-    var totalIdle = 0, totalTick = 0;
-    var cpus = os.cpus();
-    for (var i = 0, len = cpus.length; i < len; i++) {
-        const cpu = cpus[i];
-        for (type in cpu.times) {
-            totalTick += cpu.times[type];
-        }     
-        totalIdle += cpu.times.idle;
+function promisifyAll (obj) {
+    const { promisify } = require('util');
+    const ret = obj;
+    for (const key in obj) {
+        if (!obj.hasOwnProperty(key))
+            continue;
+        const val = obj[key];
+        if (typeof val === 'object' && !Array.isArray(val))
+            ret[key] = promisifyAll(val);
+        if(typeof val !== 'function')
+            continue;
+        const osutilsWrapper = (func) => {
+            return (callback) => {
+                func((val) => {
+                    return callback(undefined, val);
+                });
+            };
+        };
+        ret[`${key}Async`] = promisify(osutilsWrapper(val));
     }
-    return { idle: totalIdle / cpus.length,  total: totalTick / cpus.length };
+    return ret;
 }
