@@ -16,7 +16,7 @@ module.exports = function () {
             users: `${this.guilds.map(g => parseInt(g.memberCount)).reduce((a, b) => { return a + b; })} (${this.users.size} online)`,
             ram: `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? `${(os.totalmem() / 1073741824).toFixed(1)}GB` : `${(os.totalmem() / 1048576).toFixed()}MB`)}
             (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%), ${(os.freemem() > 1073741824 ? `${(os.freemem() / 1073741824).toFixed(1)}GB` : `${(os.freemem() / 1048576).toFixed()}MB`)} free on server`,
-            cpu: `${await getCPUUsage()}% (1/5/15 minute average: ${os.loadavg().map(p => p + '%').join('/')})`}
+            cpu: `${await getCPUUsage()}% (1/5/15 minute average: ${os.loadavg().map(p => `${(p * 100).toFixed(2)}%`).join('/')})`}
         ));
     });
 
@@ -29,22 +29,24 @@ function getCPUUsage () {
     return new Promise(resolve => {
         const startMeasure = cpuAverage();
         setTimeout(() => {
-            const endMeasure = cpuAverage();
-            const idleDifference = endMeasure.idle - startMeasure.idle;
-            const totalDifference = endMeasure.total - startMeasure.total;
-            const percentageCPU = 100 - ~~(100 * idleDifference / totalDifference);
+            var endMeasure = cpuAverage();
+            var idleDifference = endMeasure.idle - startMeasure.idle;
+            var totalDifference = endMeasure.total - startMeasure.total;
+            var percentageCPU = 100 - ~~(100 * idleDifference / totalDifference);
             resolve(percentageCPU);
         }, 100);
     });
 }
 
-
 function cpuAverage () {
-    let totalIdle = 0, totalTick = 0;
-    const cpu = os.cpus()[0];
-    for (const type in cpu.times) {
-        totalTick += cpu.times[type];
+    var totalIdle = 0, totalTick = 0;
+    var cpus = os.cpus();
+    for (var i = 0, len = cpus.length; i < len; i++) {
+        const cpu = cpus[i];
+        for (type in cpu.times) {
+            totalTick += cpu.times[type];
+        }     
+        totalIdle += cpu.times.idle;
     }
-    totalIdle += cpu.times.idle;
-    return { idle: totalIdle,  total: totalTick };
+    return { idle: totalIdle / cpus.length,  total: totalTick / cpus.length };
 }
