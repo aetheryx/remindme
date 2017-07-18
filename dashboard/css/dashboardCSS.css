@@ -21,7 +21,15 @@ body {
 }
 
 #mainheader {
+  z-index: 1;
   font-size: 500%;
+  transition: 0.8s;
+  animation: inserttop 0.8s;
+}
+
+@keyframes inserttop {
+    from { transform: translate(0px, -525px); }
+    to   { transform: translate(0px, 0px); }
 }
 
 #botimg {
@@ -74,6 +82,12 @@ body {
   text-align: left;
   font-size: 200%;
   margin: 30px 0px;
+  animation: fadein 0.8s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 @media(max-width: 768px) {
@@ -121,6 +135,7 @@ body {
 }
 
 nav.navbar.navbar-default {
+  z-index: 2;
   width: 100%;
   background: rgba(255, 255, 255, 0.35);  
   border: none;
@@ -148,4 +163,11 @@ nav.navbar.navbar-default {
   margin-right: 5px;
   width: 25px;
   height: 25px;
+}
+
+#commands, #selfhosting {
+  font-size: 80px;
+  display: none;
+  transition-duration: 0.8s;
+  animation: fadein 0.8s;
 }
