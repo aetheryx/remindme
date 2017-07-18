@@ -1,1 +1,2 @@
-dashboard
+dashboard/js/*
+!dashboard/js/script.js
