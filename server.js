@@ -16,7 +16,7 @@ module.exports = function () {
             users: `${this.guilds.map(g => parseInt(g.memberCount)).reduce((a, b) => { return a + b; })} (${this.users.size} online)`,
             ram: `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1073741824 ? `${(os.totalmem() / 1073741824).toFixed(1)}GB` : `${(os.totalmem() / 1048576).toFixed()}MB`)}
             (${(process.memoryUsage().rss / os.totalmem() * 100).toFixed(2)}%), ${(os.freemem() > 1073741824 ? `${(os.freemem() / 1073741824).toFixed(1)}GB` : `${(os.freemem() / 1048576).toFixed()}MB`)} free on server`,
-            cpu: `${await getCPUUsage()}% (1/5/15 minute average: ${os.loadavg().map(p => `${(p * 100).toFixed(2)}%`).join('/')})`}
+            cpu: `${await getCPUUsage()}% (1|5|15 min avg: ${os.loadavg().map(p => `${(p * 100).toFixed(2)}%`).join('|')})`}
         ));
     });
 
