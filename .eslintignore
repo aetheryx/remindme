@@ -1,2 +1,1 @@
-dashboard/js/*
-!dashboard/js/script.js
+src/website/js/*.js

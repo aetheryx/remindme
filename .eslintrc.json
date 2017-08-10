@@ -12,11 +12,10 @@
     "rules": {
         "semi": ["error", "always"],
         "quotes": ["error", "single"],
-        "no-console": "off",
         "no-extra-parens": "error",
         "space-before-function-paren": ["error", "always"],
         "no-whitespace-before-property": "error",
-        "curly": ["error", "multi", "consistent"],
+        "curly": ["error", "all"],
         "eqeqeq": "error",
         "space-before-blocks": ["error", "always"],
         "prefer-arrow-callback": "error",
@@ -24,12 +23,5 @@
         "prefer-template": "error",
         "indent": ["error", 4, { "MemberExpression": 1 }],
         "no-trailing-spaces": "error"
-    },
-    "globals": {
-        "client": true,
-        "settings": true,
-        "Discord": true,
-        "db": true,
-        "prefixdb": true
     }
 }
