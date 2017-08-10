@@ -1,3 +1,5 @@
+/* eslint-disable */ // (TO BE REWORKED SOON)
+
 const snekfetch = require('snekfetch');
 const fs        = require('fs');
 

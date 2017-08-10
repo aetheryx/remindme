@@ -24,7 +24,7 @@ class RMB {
 
     async start () {
         await this.initDB();
-        require('./utils/server.js').bind(this.client);
+        require('./utils/server.js')(this);
         //await require('./handlers/dbHandler.js').bind(this);
 
         let index = 0;

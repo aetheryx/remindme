@@ -8,7 +8,7 @@ require('moment-duration-format');
 module.exports = async function (Bot, msg) {
     const prefix = await Bot.db.get('SELECT * FROM prefixes WHERE guildID = ?', msg.guild.id) || Bot.config.defaultPrefix;
     const command = msg.content.toLowerCase().slice(prefix.length).split(' ')[0];
-    const args = msg.content.split(' ').slice(1);
+    const args = msg.content.split(' ').slice(1); // eslint-disable-line no-unused-vars
     const isCommand = (commands) => {
         if (!Array.isArray(commands)) {
             commands = [commands];
