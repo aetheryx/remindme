@@ -25,7 +25,7 @@ class RMB {
     async start () {
         await this.initDB();
         require('./utils/server.js')(this);
-        //await require('./handlers/dbHandler.js').bind(this);
+        require('./handlers/reminderHandler')(this);
 
         let index = 0;
         const statuses = ['in %s guilds', `${this.config.defaultPrefix}help`, '@mention help'];
@@ -41,11 +41,11 @@ class RMB {
             guildID INTEGER,
             prefix  TEXT);`);
         await this.db.run(`CREATE TABLE IF NOT EXISTS reminders (
-            owner        INTEGER,
+            owner        TEXT,
             reminderText TEXT,
             createdDate  INTEGER,
             dueDate      INTEGER,
-            channelID    INTEGER);`);
+            channelID    TEXT);`);
     }
 
     onMessage (msg) {
