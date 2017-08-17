@@ -39,7 +39,7 @@ module.exports = async function (Bot, msg) {
     }
 
     if (isCommand('help')) {
-        msg.channel.send(`To set a reminder, simply send \`${prefix}remindme\` and follow the instructions. Alternatively, you can also send \`${prefix}remindme time_argument "message"\`, \ne.g. \`${prefix}remindme 31 December 2017 "New Years"\`.\nMy prefix is \`${prefix}\`; here's a list of my commands: `, { embed: {
+        msg.channel.send(`To set a reminder, simply send \`${prefix}remindme\` and follow the instructions. \nAlternatively, you can also send \`${prefix}remindme time_argument "message"\`, e.g. \`${prefix}remindme 31 December 2017 "New Years"\`.\nMy prefix is \`${prefix}\`; here's a list of my commands: `, { embed: {
             color: Bot.config.embedColor,
             description: 'clear, forget, help, info, invite, list, ping, prefix, remindme'
         }});
@@ -73,7 +73,7 @@ module.exports = async function (Bot, msg) {
         process.exit();
     }
 
-    if (isCommand('list')) {
+    if (isCommand(['list', 'reminders'])) {
         const reminders = await Bot.db.all('SELECT reminderText, dueDate, createdDate FROM reminders WHERE owner = ?;', msg.author.id);
         if (!reminders[0]) {
             return msg.reply('You have no reminders set.');
@@ -202,11 +202,11 @@ module.exports = async function (Bot, msg) {
             }
         });
 
-        const parsedTime = time(timeArg.trim()).absolute;
-        if (!isNaN(timeArg) || !parsedTime) {
+        const parsedTime = time(timeArg.trim());
+        if (!isNaN(timeArg) || !parsedTime.absolute) {
             return msg.channel.send('Invalid time argument. Please enter a proper time argument, e.g. `12 hours` or `next week`.');
         }
-        if (time(timeArg).relative < 0) {
+        if (parsedTime.relative < 0) {
             return msg.channel.send('Your reminder wasn\'t added because it was set for the past. Note that if you\'re trying to set a reminder for the same day at a specific time (e.g. `6 PM`), UTC time will be assumed.');
         }
 
@@ -220,14 +220,14 @@ module.exports = async function (Bot, msg) {
         }
 
         Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, dueDate, channelID)
-        VALUES (?, ?, ?, ?, ?);`,      msg.author.id, reminder, Date.now(), parsedTime, channelID ? channelID[1].replace(/<|>|#/g, '') : null)
+        VALUES (?, ?, ?, ?, ?);`,      msg.author.id, reminder, Date.now(), parsedTime.absolute, channelID ? channelID[1].replace(/<|>|#/g, '') : null)
             .then(res => {
                 if (res) {
                     msg.channel.send({ embed: {
                         color: Bot.config.embedColor,
                         description: `:ballot_box_with_check: Reminder added: ${reminder}`,
                         footer: { text: 'Reminder set for ' },
-                        timestamp: new Date(parsedTime)
+                        timestamp: new Date(parsedTime.absolute)
                     }});
                 }
             })
@@ -235,6 +235,105 @@ module.exports = async function (Bot, msg) {
                 msg.channel.send(`Your reminder wasn't added. This incident has been logged.\n${err.message}`);
                 Bot.log(err.stack, 'error');
             });
+    }
+
+    if (isCommand('remindme') && !args[0]) {
+        const delarray = [];
+        delarray.push(msg);
+
+        msg.channel.send('What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
+            .then(m => delarray.push(m));
+
+        const collector = msg.channel.createMessageCollector(m => m.author.id === msg.author.id, { time: 60000 });
+        let step = 1;
+        const r = {
+            reminderText: undefined,
+            dueDate:      undefined,
+            channelID:    undefined
+        };
+
+        collector.on('collect', m => {
+            delarray.push(m);
+            if (m.content.length === 0 && !m.attachments.first()) {
+                return;
+            }
+            if (m.content.toLowerCase().includes('remindme') || m.content.toLowerCase().includes('cancel')) {
+                if (msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+                    msg.channel.bulkDelete(delarray);
+                }
+                return collector.stop();
+            }
+
+            if (step === 1) {
+                r.reminderText = m.content || m.attachments.first().proxyURL;
+
+                msg.channel.send('When would you like to be reminded? (e.g. 24 hours)')
+                    .then(m => delarray.push(m));
+            }
+
+            if (step === 2) {
+                Object.keys(timeRXes).map(regexKey => {
+                    if (m.content.includes(regexKey)) {
+                        m.content = m.content.replace(new RegExp(regexKey, 'gi'), timeRXes[regexKey]);
+                    }
+                });
+
+                const parsedTime = time(m.content);
+                if (!isNaN(m.content) || !parsedTime.absolute) {
+                    return msg.channel.send('Invalid time argument. When would you like to be reminded? (e.g. `12 hours` or `next week`).')
+                        .then(m => delarray.push(m));
+                }
+                if (parsedTime.relative < 0) {
+                    return msg.channel.send('Your reminder wasn\'t added because it was set for the past. Note that if you\'re trying to set a reminder for the same day at a specific time (e.g. `6 PM`), UTC time will be assumed.\nWhen would you like to be reminded? (e.g. `12 hours` or `next week`).')
+                        .then(m => delarray.push(m));
+                }
+
+                r.dueDate = parsedTime.absolute;
+                msg.channel.send('Would you like to receive the channel in a specific channel, or in your DMs?\nMention the channel you\'d like to receive the reminder in, or send `DM` if you\'d like to receive it in your DMs.')
+                    .then(m => delarray.push(m));
+            }
+
+            if (step === 3) {
+                if (m.content.toLowerCase() !== 'dm' && m.content.toLowerCase() !== 'dms') {
+                    if (!m.mentions.channels.first()) {
+                        return msg.channel.send('You need to either ping the channel you\'d like to receive your reminder in or send `DM`.\nWhere would you like to receive your reminder?')
+                            .then(m => delarray.push(m));
+                    }
+                    r.channelID = m.mentions.channels.first() ? m.mentions.channels.first().id : null;
+                }
+
+                collector.stop();
+
+                Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, dueDate, channelID)
+                VALUES (?, ?, ?, ?, ?);`, msg.author.id, r.reminderText, Date.now(), r.dueDate, r.channelID)
+                    .then(res => {
+                        if (res) {
+                            msg.channel.send({ embed: {
+                                color: Bot.config.embedColor,
+                                description: `:ballot_box_with_check: Reminder added: ${r.reminderText}`,
+                                footer: { text: 'Reminder set for ' },
+                                timestamp: new Date(r.dueDate)
+                            }});
+                        }
+                    })
+                    .catch(err => {
+                        msg.channel.send(`Your reminder wasn't added. This incident has been logged.\n${err.message}`);
+                        Bot.log(err.stack, 'error');
+                    });
+            }
+            step++;
+        });
+
+        collector.on('end', (collected, reason) => {
+            if (msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+                msg.channel.bulkDelete(delarray);
+            }
+            if (reason === 'time') {
+                msg.channel.send('Prompt timed out.');
+            }
+        });
+
+
     }
 
     if (isCommand(['reboot', 'restart'])) {
@@ -245,8 +344,6 @@ module.exports = async function (Bot, msg) {
         await Bot.client.destroy();
         process.exit();
     }
-
-
 };
 
 function plural (item) {
