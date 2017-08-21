@@ -1,9 +1,12 @@
 const os = require('os');
 const moment = require('moment');
 const botVersion = require('../../package.json').version;
+const snekfetch = require('snekfetch');
 const { version } = require('discord.js');
 const time = require('time-parser');
 const humanize = require('humanize-duration');
+const { exec } = require('child_process');
+const util = require('util');
 const timeRXes = {
     'next' : 'one',
     'a '   : 'one ',
@@ -62,15 +65,6 @@ module.exports = async function (Bot, msg) {
             ],
             footer: { text: 'Created by Aetheryx#2222' }
         }});
-    }
-
-    if (isCommand(['reboot', 'restart'])) {
-        if (msg.author.id !== Bot.config.ownerID) {
-            return msg.reply('You do not have permission to use this command.');
-        }
-        await msg.channel.send('Restarting...');
-        await Bot.client.destroy();
-        process.exit();
     }
 
     if (isCommand(['list', 'reminders'])) {
@@ -332,18 +326,73 @@ module.exports = async function (Bot, msg) {
                 msg.channel.send('Prompt timed out.');
             }
         });
+    }
 
-
+    if (msg.author.id !== Bot.owner.id) {
+        return;
     }
 
     if (isCommand(['reboot', 'restart'])) {
-        if (msg.author.id !== Bot.config.ownerID) {
-            return msg.reply('You do not have permission to use this command.');
-        }
         await msg.channel.send('Restarting...');
         await Bot.client.destroy();
         process.exit();
     }
+
+    if (isCommand(['ev', 'e', 'eval'])) {
+        let input = args.join(' ');
+        const silent = input.includes('--silent');
+        const asynchr = input.includes('--async');
+        if (silent || asynchr) {
+            input = input.replace(/--silent|--async/g, '');
+        }
+
+        let result;
+        try {
+            result = asynchr ? eval(`(async()=>{${input.includes('\n') ? '' : 'return'} ${input}})();`) : eval(input);
+            if (result instanceof Promise && asynchr) {
+                result = await result;
+            }
+            const tokenRegex = new RegExp(Bot.client.token, 'gi');
+            if (typeof result !== 'string') {
+                result = util.inspect(result, { depth: 0 });
+            }
+            result = result.replace(tokenRegex, '*');
+        } catch (err) {
+            result = err.message;
+        }
+
+        if (!silent) {
+            msg.channel.send(`${input}\n\`\`\`js\n${result}\n\`\`\``);
+        } else {
+            msg.delete().catch(() => {});
+        }
+    }
+
+    if (isCommand(['bash', 'exec'])) {
+        exec(args.join(' '), async (e, stdout, stderr) => {
+            if (stdout.length + stderr.length > 2000) {
+                const res = await snekfetch.post('https://hastebin.com/documents')
+                    .send(`${stdout}\n\n${stderr}`);
+
+                msg.channel.send({ embed: {
+                    color: Bot.config.embedColor,
+                    description: `Console log exceeds 2000 characters. View [here](https://hastebin.com/${res.body.key}).`
+                }});
+            } else {
+                if (!stderr && !stdout) {
+                    return msg.react('\u2611');
+                }
+                msg.channel.send(stdout ? `Info: \`\`\`${stdout}\n` : '',
+                    stderr ? `Errors: \`\`\`${stderr}` : '');
+            }
+        });
+    }
+
+
+
+
+
+
 };
 
 function plural (item) {
