@@ -18,7 +18,7 @@ const timeRXes = {
 require('moment-duration-format');
 
 module.exports = async function (Bot, msg) {
-    const prefix = await Bot.db.get('SELECT prefix FROM prefixes WHERE guildID = ?', msg.guild.id) || Bot.config.defaultPrefix;
+    const prefix = await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix;
     const command = msg.content.toLowerCase().slice(prefix.length).split(' ')[0];
     const args = msg.content.split(' ').slice(1).filter(arg => arg !== Bot.client.user.toString());
     const isCommand = (commands) => {
@@ -65,6 +65,25 @@ module.exports = async function (Bot, msg) {
             ],
             footer: { text: 'Created by Aetheryx#2222' }
         }});
+    }
+
+    if (isCommand(['prefix', 'setprefix'])) {
+        if (msg.channel.type !== 'text') {
+            return msg.channel.send('Custom prefixes are currently not supported in DMs.');
+        }
+        if (args.join(' ').length > 32) {
+            return msg.channel.send('Your prefix cannot be longer than 32 characters.');
+        }
+        if (!msg.member.hasPermission('MANAGE_GUILD')) {
+            return msg.channel.send('You are not authorized to use this command.');
+        }
+        if (!Bot.prefixes.has(msg.guild.id)) {
+            await Bot.db.run('INSERT INTO prefixes (guildID, prefix) VALUES (?, ?);', msg.guild.id, args.join(' '));
+        } else {
+            await Bot.db.run('UPDATE prefixes SET prefix = ? WHERE guildID = ?;', args.join(' '), msg.guild.id);
+        }
+        Bot.prefixes.set(msg.guild.id, args.join(' '));
+        msg.channel.send(`Prefix successfully changed to \`${args.join(' ')}\` for this guild.`);
     }
 
     if (isCommand(['list', 'reminders'])) {
@@ -252,7 +271,7 @@ module.exports = async function (Bot, msg) {
                 return;
             }
             if (m.content.toLowerCase().includes('remindme') || m.content.toLowerCase().includes('cancel')) {
-                if (msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+                if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
                     msg.channel.bulkDelete(delarray);
                 }
                 return collector.stop();
@@ -319,7 +338,7 @@ module.exports = async function (Bot, msg) {
         });
 
         collector.on('end', (collected, reason) => {
-            if (msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+            if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
                 msg.channel.bulkDelete(delarray);
             }
             if (reason === 'time') {
@@ -387,12 +406,6 @@ module.exports = async function (Bot, msg) {
             }
         });
     }
-
-
-
-
-
-
 };
 
 function plural (item) {
