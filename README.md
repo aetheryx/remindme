@@ -1,26 +1,47 @@
-# RemindMeBot [![Build Status](https://travis-ci.org/Aetheryx/remindme.svg?branch=master)](https://travis-ci.org/Aetheryx/remindme)
-
-My own attempt at porting the famous RemindMeBot from Reddit to Discord; but better.
+# RemindMeBot [![Build Status](https://travis-ci.org/Aetheryx/remindme.svg?branch=master)](https://travis-ci.org/Aetheryx/remindme) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ccbde6fcb76f489fbf5b66970ffe9757)](https://www.codacy.com/app/Aetheryx/remindme?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Aetheryx/remindme&amp;utm_campaign=Badge_Grade) [![License](https://img.shields.io/github/license/aetheryx/remindme.svg)](https://github.com/Aetheryx/remindme/blob/master/LICENSE)
 
 ## Getting started
 
-RemindMeBot is written for Node.js, so install that for your OS ([click](https://nodejs.org/en/download/)) and get Node Package Manager (`npm`) to go with it.
-For Node I'm always working in the current build (7.8 at the time of writing) so I recommend you keep up, but anything above v7.0 should do.
+Make sure you have `git` and `node` (latest is preferred) installed on your machine. <sup>Side note - if your version of Node is below 7.6, you need to run with a `--harmony` flag.</sup>
 
-To get started, make sure you have `git` installed on your machine, and then run `git clone https://github.com/Aetheryx/remindme.git`. This will create a new directory with all of the files and directories you need; move into it.
-
-Start by editing your [settings.json](https://github.com/Aetheryx/remindme/blob/master/storage/settings-example.json) file to include your bot token and all of the other information in the file. Also, edit the file name to `settings.json`
-After making sure `node` and `npm` are ready to go, make sure you're running a command prompt from the directory where the files are, and run:
+Clone the repo, go into it, npm install:
 ```
+git clone https://github.com/Aetheryx/remindme.git folderName
+cd folderName
 npm install
 ```
-Now the bot should be fully installed!
 
-At this point, all you have to do is start the bot:
+Fill in your config file (`src/config-example.json`) with all of the keys and settings:
+```js
+{
+  "defaultPrefix": "abcd", // Default prefix for new guilds.
+  "embedColor": 12345678, // Embed color, in base10
+  "ownerID": "string", // ID of the bot owner, gives you access to eval
+  "tick": 1234, // The tick of the interval at which the bot checks for expired reminders, in ms. I wouldn't put this under 1 second.
+  "keys": {
+    "token": "abcd", // Bot token
+    "dbots": "abcd", // your bots.discord.pw token, leave empty if you don't have one
+    "botspw": "abcd" // your discordbots.org token, leave empty if you don't have one
+  },
+  "disabledEvents": [ // Disabled websocket events. Removing items from this list is probably harmless, but adding some can fuck up things. Be careful.
+    "CHANNEL_PINS_UPDATE",
+    "USER_NOTE_UPDATE",
+    "VOICE_STATE_UPDATE",
+    "TYPING_START",
+    "VOICE_SERVER_UPDATE",
+    "RELATIONSHIP_ADD",
+    "RELATIONSHIP_REMOVE",
+    "GUILD_BAN_ADD",
+    "GUILD_BAN_REMOVE", 
+    "MESSAGE_UPDATE",
+    "MESSAGE_DELETE_BULK",
+    "MESSAGE_REACTION_ADD",
+    "MESSAGE_REACTION_REMOVE",
+    "MESSAGE_REACTION_REMOVE_ALL"
+  ]
+}
 ```
-npm start
-```
 
-Feel free to make an issue on GH or add me on Discord (Aetheryx#2222) for any questions.
+At this point, all you have to do is start the bot with `sudo npm start` (or `sudo pm2 start remindmebot.js`).
 
-Special thanks to CrimsonXV, fer22f, Melmsie, Samoxive, and rgoliviera.
+[wip]
