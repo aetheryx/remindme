@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ccbde6fcb76f489fbf5b66970ffe9757)](https://www.codacy.com/app/Aetheryx/remindme?utm_source=github.com&utm_medium=referral&utm_content=Aetheryx/remindme&utm_campaign=badger)
 # RemindMeBot [![Build Status](https://travis-ci.org/Aetheryx/remindme.svg?branch=master)](https://travis-ci.org/Aetheryx/remindme)
 
 My own attempt at porting the famous RemindMeBot from Reddit to Discord; but better.
