@@ -20,7 +20,7 @@ require('moment-duration-format');
 module.exports = async function (Bot, msg) {
     const prefix = await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix;
     const command = msg.content.toLowerCase().slice(prefix.length).split(' ')[0];
-    const args = msg.content.split(' ').slice(1).filter(arg => arg !== Bot.client.user.toString());
+    const args = msg.content.split(' ').filter(arg => arg !== Bot.client.user.toString()).slice(1);
     const isCommand = (commands) => {
         if (!Array.isArray(commands)) {
             commands = [commands];
@@ -70,6 +70,9 @@ module.exports = async function (Bot, msg) {
     if (isCommand(['prefix', 'setprefix'])) {
         if (msg.channel.type !== 'text') {
             return msg.channel.send('Custom prefixes are currently not supported in DMs.');
+        }
+        if (!args[0]) {
+            return msg.channel.send(`The prefix in this server is \`${prefix}\`.`);
         }
         if (args.join(' ').length > 32) {
             return msg.channel.send('Your prefix cannot be longer than 32 characters.');
@@ -166,7 +169,7 @@ module.exports = async function (Bot, msg) {
         const fetchAndParseInput = async () => {
             let m;
             try {
-                m = await msg.channel.awaitMessages(m => m.author.id === msg.author.id, { max: 1, time: 1000, errors: ['time'] });
+                m = await msg.channel.awaitMessages(m => m.author.id === msg.author.id, { max: 1, time: 45000, errors: ['time'] });
             } catch (e) {
                 msg.channel.send('Prompt timed out.');
                 return false;
@@ -357,7 +360,7 @@ module.exports = async function (Bot, msg) {
         process.exit();
     }
 
-    if (isCommand(['ev', 'e', 'eval'])) {
+    if (isCommand(['ev', 'eval'])) {
         let input = args.join(' ');
         const silent = input.includes('--silent');
         const asynchr = input.includes('--async');
@@ -401,8 +404,8 @@ module.exports = async function (Bot, msg) {
                 if (!stderr && !stdout) {
                     return msg.react('\u2611');
                 }
-                msg.channel.send(stdout ? `Info: \`\`\`${stdout}\n` : '',
-                    stderr ? `Errors: \`\`\`${stderr}` : '');
+                msg.channel.send(stdout ? `Info: \`\`\`\n${stdout}\n\`\`\`` : '',
+                    stderr ? `Errors: \`\`\`\n${stderr}\`\`\`` : '');
             }
         });
     }
