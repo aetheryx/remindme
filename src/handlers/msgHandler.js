@@ -370,7 +370,7 @@ module.exports = async function (Bot, msg) {
 
         let result;
         try {
-            result = asynchr ? eval(`(async()=>{${input.includes('\n') ? '' : 'return'} ${input}})();`) : eval(input);
+            result = asynchr ? eval(`(async()=>{${input}})();`) : eval(input);
             if (result instanceof Promise && asynchr) {
                 result = await result;
             }
