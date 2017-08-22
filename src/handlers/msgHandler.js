@@ -268,13 +268,13 @@ module.exports = async function (Bot, msg) {
             channelID:    undefined
         };
 
-        collector.on('collect', m => {
+        collector.on('collect', async m => {
             delarray.push(m);
             if (m.content.length === 0 && !m.attachments.first()) {
                 return;
             }
             if (m.content.toLowerCase().includes('remindme') || m.content.toLowerCase().includes('cancel')) {
-                if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+                if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me || await msg.guild.fetchMember(Bot.client.user)).has('MANAGE_MESSAGES')) {
                     msg.channel.bulkDelete(delarray);
                 }
                 return collector.stop();
@@ -340,8 +340,8 @@ module.exports = async function (Bot, msg) {
             step++;
         });
 
-        collector.on('end', (collected, reason) => {
-            if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me).has('MANAGE_MESSAGES')) {
+        collector.on('end', async (collected, reason) => {
+            if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me || await msg.guild.fetchMember(Bot.client.user)).has('MANAGE_MESSAGES')) {
                 msg.channel.bulkDelete(delarray);
             }
             if (reason === 'time') {
