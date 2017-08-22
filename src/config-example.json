@@ -1,12 +1,12 @@
 {
-  "defaultPrefix": ".",
-  "version": "1.2.0",
+  "defaultPrefix": "r>",
   "embedColor": 13394255,
-  "ownerID": "284122164582416385",
+  "ownerID": "",
+  "tick": 3000
   "keys": {
-    "token": "MjkyMjg1ODMyMTg4OTE5ODEw.DGP6gw.RKP_LDDcN80wKPfA7jrkMiLDyUE",
-    "dbots": "discordbots.org API key goes here. Do not touch this field if you don't have one.",
-    "botspw": "bots.discord.pw API key goes here. Do not touch this field if you don't have one."
+    "token": "",
+    "dbots": "",
+    "botspw": ""
   },
   "disabledEvents": [
     "CHANNEL_PINS_UPDATE",
