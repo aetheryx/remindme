@@ -1,12 +1,19 @@
 const express = require('express');
 const app = express();
+const { promisify } = require('util');
+const osutilsWrapper = (func) => {
+    return (callback) => {
+        func((val) => {
+            return callback(undefined, val);
+        });
+    };
+};
 const os = promisifyAll(require('os-utils'));
-const port = os.platform() === 'win32' ? 42069 : 80; // My router doesn't like it when I host something on port 80 :c
-
+const port = os.platform() === 'win32' ? 42069 : 80; // Don't even ask.
 
 module.exports = function (Bot) {
     app.listen(port, () => {
-        Bot.log(`${Date().toString().split(' ').slice(1, 5).join(' ')} Listening on port ${port}.`);
+        Bot.log(`Web server listening on port ${port}.`);
     });
 
     app.use(express.static('./website'));
@@ -15,9 +22,9 @@ module.exports = function (Bot) {
         res.send(JSON.stringify({
             guilds: Bot.client.guilds.size,
             channels: `${Bot.client.channels.filter(c => c.type === 'voice').size} voice, ${Bot.client.channels.filter(c => c.type === 'text').size} text (${Bot.client.channels.filter(c => c.type === 'text' || c.type === 'voice').size} total)`,
-            users: `${Bot.client.guilds.map(g => parseInt(g.memberCount)).reduce((a, b) => { return a + b; })} (${Bot.client.users.size} online)`,
+            users: `${Bot.client.users.size} (${Bot.client.users.filter(u => u.presence.status !== 'offline').size} online)`,
             ram: `${(process.memoryUsage().rss / (1024 * 1024)).toFixed()}MB/${(os.totalmem() > 1000 ? `${(os.totalmem() / 1000).toFixed(1)}GB` : `${(os.totalmem()).toFixed()}MB`)}
-            (${(process.memoryUsage().rss / (os.totalmem() * 1024 * 1024) * 100).toFixed(2)}%), ${(os.freemem() > 1024 ? `${(os.freemem() / 1024).toFixed(1)}GB` : `${(os.freemem()).toFixed()}MB`)} free on server`, // very big mess. Fix later. os-util uses SI, process.memoryUsage() uses binary.
+            (${(process.memoryUsage().rss / (os.totalmem() * 1024 * 1024) * 100).toFixed(2)}%), ${(os.freemem() > 1024 ? `${(os.freemem() / 1024).toFixed(1)}GB` : `${(os.freemem()).toFixed()}MB`)} free on server`, // ewww
             cpu: `${(await os.cpuUsageAsync() * 100).toFixed(2)}%`}
         ));
     });
@@ -28,7 +35,6 @@ module.exports = function (Bot) {
 };
 
 function promisifyAll (obj) {
-    const { promisify } = require('util');
     const ret = obj;
     for (const key in obj) {
         if (!obj.hasOwnProperty(key)) {
@@ -41,13 +47,6 @@ function promisifyAll (obj) {
         if (typeof val !== 'function') {
             continue;
         }
-        const osutilsWrapper = (func) => {
-            return (callback) => {
-                func((val) => {
-                    return callback(undefined, val);
-                });
-            };
-        };
         ret[`${key}Async`] = promisify(osutilsWrapper(val));
     }
     return ret;
