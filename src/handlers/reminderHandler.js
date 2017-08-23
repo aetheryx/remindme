@@ -1,8 +1,9 @@
 module.exports = async (Bot) => {
     setInterval(async () => {
-        await Bot.db.each('SELECT rowid, owner, reminderText, createdDate, channelID FROM reminders WHERE dueDate < ?;', Date.now(), async (err, r) => {
+        await Bot.db.each('SELECT rowid, owner, reminderText, createdDate, channelID FROM reminders WHERE dueDate < ?;',
+        Date.now(), async (err, r) => {
             if (err) {
-                return Bot.log(err, 'error');
+                return Bot.log(err.stack, 'error');
             }
 
             const embed = {
@@ -25,10 +26,10 @@ module.exports = async (Bot) => {
                     Bot.client.users.get(r.owner).send({ embed });
                 }
             } catch (err) {
-                Bot.log(err, 'error');
+                Bot.log(err.stack, 'error');
             } finally {
                 await Bot.db.run('DELETE FROM reminders WHERE rowid = ?;', r.rowid);
             }
         });
-    }, Bot.config.tick);
+    }, Bot.config.tick || 3000);
 };

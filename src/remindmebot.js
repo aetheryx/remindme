@@ -41,7 +41,7 @@ class RMB {
     }
 
     async initDB () {
-        await this.db.open('./rmb.database'); // ./rmb.database
+        await this.db.open('./rmb.database');
         await this.db.run(`CREATE TABLE IF NOT EXISTS prefixes (
             guildID TEXT,
             prefix  TEXT);`);
