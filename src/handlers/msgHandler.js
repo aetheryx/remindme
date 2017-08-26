@@ -229,7 +229,7 @@ module.exports = async function (Bot, msg) {
         const channelRX = /channel: *(<#[0-9]{18}>)/g;
         const channelID = channelRX.exec(msg.content);
 
-        const reminderRX = /"(.*?)"/i;
+        const reminderRX = /"([^]*?)"/i;
         const reminder = reminderRX.exec(msg.cleanContent)[1].trim();
         if (reminder.length > 1000) {
             return msg.channel.send('Your reminder cannot exceed 1000 characters.');
