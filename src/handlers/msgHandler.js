@@ -8,25 +8,26 @@ const humanize = require('humanize-duration');
 const { exec } = require('child_process');
 const util = require('util');
 const timeRXes = {
-    'next' : 'one',
-    'a '   : 'one ',
-    'an '  : 'one ',
-    'sec ' : 'second',
-    'min ' : 'minute'
+    'next'  : 'one',
+    'a '    : 'one ',
+    'an '   : 'one ',
+    'sec '  : 'second ',
+    'min '  : 'minute ',
+    'mins ' : 'minutes '
 };
 
 require('moment-duration-format');
 
 module.exports = async function (Bot, msg) {
-    const prefix = await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix;
+    const prefix = msg.content.startsWith(Bot.client.user.toString()) ? `${Bot.client.user.toString()} ` : await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix;
+    const displayPrefix = prefix.includes(Bot.client.user.toString()) ? await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix : prefix; // these are really ugly, try to refactor prefix and command parsing some time
     const command = msg.content.toLowerCase().slice(prefix.length).split(' ')[0];
-    const args = msg.content.split(' ').filter(arg => arg !== Bot.client.user.toString()).slice(1);
+    const args = msg.content.split(' ').slice(1);
     const isCommand = (commands) => {
         if (!Array.isArray(commands)) {
             commands = [commands];
         }
-        return commands.includes(command) && msg.content.startsWith(prefix) ||
-        msg.isMentioned(Bot.client.user.id) && commands.some(word => msg.content.toLowerCase().includes(word));
+        return commands.includes(command) && msg.content.startsWith(prefix);
     };
 
 
@@ -42,7 +43,7 @@ module.exports = async function (Bot, msg) {
     }
 
     if (isCommand('help')) {
-        msg.channel.send(`To set a reminder, simply send \`${prefix}remindme\` and follow the instructions. \nAlternatively, you can also send \`${prefix}remindme time_argument "message"\`, e.g. \`${prefix}remindme 31 December 2017 "New Years"\`.\nMy prefix is \`${prefix}\`; here's a list of my commands: `, { embed: {
+        msg.channel.send(`To set a reminder, simply send \`${displayPrefix}remindme\` and follow the instructions. \nAlternatively, you can also send \`${displayPrefix}remindme time_argument "message"\`, e.g. \`${displayPrefix}remindme 31 December 2017 "New Years"\`.\nMy current prefix is \`${displayPrefix}\`, but you can also mention me as a prefix.\nHere's a list of my commands: `, { embed: {
             color: Bot.config.embedColor,
             description: 'clear, forget, help, info, invite, list, ping, prefix, remindme'
         }});
@@ -74,11 +75,11 @@ module.exports = async function (Bot, msg) {
         if (!args[0]) {
             return msg.channel.send(`The prefix in this server is \`${prefix}\`.`);
         }
-        if (args.join(' ').length > 32) {
-            return msg.channel.send('Your prefix cannot be longer than 32 characters.');
-        }
         if (!msg.member.hasPermission('MANAGE_GUILD')) {
             return msg.channel.send('You are not authorized to use this command.');
+        }
+        if (args.join(' ').length > 32) {
+            return msg.channel.send('Your prefix cannot be longer than 32 characters.');
         }
         if (!Bot.prefixes.has(msg.guild.id)) {
             await Bot.db.run('INSERT INTO prefixes (guildID, prefix) VALUES (?, ?);', msg.guild.id, args.join(' '));
@@ -86,7 +87,7 @@ module.exports = async function (Bot, msg) {
             await Bot.db.run('UPDATE prefixes SET prefix = ? WHERE guildID = ?;', args.join(' '), msg.guild.id);
         }
         Bot.prefixes.set(msg.guild.id, args.join(' '));
-        msg.channel.send(`Prefix successfully changed to \`${args.join(' ')}\` for this guild.`);
+        msg.channel.send(`Prefix successfully set to \`${args.join(' ')}\` for this server.`);
     }
 
     if (isCommand(['list', 'reminders'])) {
@@ -163,7 +164,7 @@ module.exports = async function (Bot, msg) {
             color: Bot.config.embedColor,
             title: 'Reminders',
             description: reminders.map((r, i) => `[${i + 1}] ${r.reminderText}`).join('\n'),
-            footer: { text: 'Send the number of the reminder you want me to forget (e.g. 3), or send c to cancel.' }
+            footer: { text: 'Send the number of the reminder you want me to forget (e.g. `2`), or send `c` to cancel.' }
         }});
 
         const fetchAndParseInput = async () => {
@@ -184,11 +185,11 @@ module.exports = async function (Bot, msg) {
             }
 
             if (!parseInt(m)) {
-                msg.channel.send('Send the number of the reminder you want me to forget (e.g. 2), or send c to cancel.');
+                msg.channel.send('Send the number of the reminder you want me to forget (e.g. `2`), or send `c` to cancel.');
                 return fetchAndParseInput();
             }
             if (parseInt(m) > reminders.length) {
-                msg.channel.send('You don\'t have that many reminders. Send the number of the reminder you want me to forget (e.g. 3), or send c to cancel.');
+                msg.channel.send('You don\'t have that many reminders. Send the number of the reminder you want me to forget (e.g. `3`), or send `c` to cancel.');
                 return fetchAndParseInput();
             }
             return parseInt(m);
@@ -210,8 +211,7 @@ module.exports = async function (Bot, msg) {
         }
 
         const timeRX = new RegExp(`${prefix}remindme(.*?)"`, 'i');
-        let timeArg = timeRX.exec(msg.cleanContent)[1];
-
+        let timeArg = timeRX.exec(msg.content)[1];
         Object.keys(timeRXes).map(regexKey => {
             if (timeArg.includes(regexKey)) {
                 timeArg = timeArg.replace(new RegExp(regexKey, 'gi'), timeRXes[regexKey]);
@@ -273,10 +273,14 @@ module.exports = async function (Bot, msg) {
             if (m.content.length === 0 && !m.attachments.first()) {
                 return;
             }
-            if (m.content.toLowerCase().includes('remindme') || m.content.toLowerCase().includes('cancel')) {
+            if (m.content.startsWith(`${prefix}remindme`)) {
                 if (msg.channel.type === 'text' && msg.channel.permissionsFor(msg.guild.me || await msg.guild.fetchMember(Bot.client.user)).has('MANAGE_MESSAGES')) {
                     msg.channel.bulkDelete(delarray);
                 }
+                return collector.stop();
+            }
+            if (m.content.toLowerCase().includes('cancel') || m.content.toLowerCase() === 'c') {
+                msg.channel.send('Cancelled.');
                 return collector.stop();
             }
 
