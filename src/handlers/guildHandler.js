@@ -12,19 +12,14 @@ exports.delete = async (Bot, guild) => {
 };
 
 function postStats (Bot) {
-    if (Bot.config.keys.botspw) {
-        snekfetch
-            .post(`https://bots.discord.pw/api/bots/${Bot.client.user.id}/stats`)
-            .set('Authorization', Bot.config.keys.botspw)
-            .send({ server_count: Bot.client.guilds.size })
-            .end();
-    }
-
-    if (Bot.config.keys.dbots) {
-        snekfetch
-            .post(`https://discordbots.org/api/bots/${Bot.client.user.id}/stats`)
-            .set('Authorization', Bot.config.keys.dbots)
-            .send({ server_count: Bot.client.guilds.size })
-            .end();
-    }
+    Bot.botlists.forEach((token, url) => {
+        if (url) {
+            console.log(url, token);
+            snekfetch
+                .post(url)
+                .set('Authorization', token)
+                .send({ server_count: Bot.client.guilds.size })
+                .end();
+        }
+    });
 }
