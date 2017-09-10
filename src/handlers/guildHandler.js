@@ -14,7 +14,6 @@ exports.delete = async (Bot, guild) => {
 function postStats (Bot) {
     Bot.botlists.forEach((token, url) => {
         if (url) {
-            console.log(url, token);
             snekfetch
                 .post(url)
                 .set('Authorization', token)
