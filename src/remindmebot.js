@@ -2,6 +2,8 @@ const guildHandler = require('./handlers/guildHandler.js');
 const handleMsg    = require('./handlers/msgHandler.js');
 const { Client }   = require('discord.js');
 
+global.Promise = require('bluebird');
+
 class RMB {
     constructor () {
         this.log = require('./utils/logger.js');
