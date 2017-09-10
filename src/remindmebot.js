@@ -66,13 +66,13 @@ class RMB {
         });
     }
 
-    onMessage (msg) {
+    async onMessage (msg) {
         if (msg.author.bot) {
             return;
         }
 
         try {
-            handleMsg(this, msg);
+            await handleMsg(this, msg);
         } catch (err) {
             this.log(err, 'error');
             msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (<discord.gg/TCNNsSQ>) if the issue persists.');
