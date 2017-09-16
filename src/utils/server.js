@@ -23,8 +23,8 @@ module.exports = function (Bot) {
             guilds: Bot.client.guilds.size,
             channels: `${Bot.client.channels.filter(c => c.type === 'voice').size} voice, ${Bot.client.channels.filter(c => c.type === 'text').size} text (${Bot.client.channels.filter(c => c.type === 'text' || c.type === 'voice').size} total)`,
             users: `${Bot.client.users.size}`,
-            ram: `${(process.memoryUsage().rss / 1024 * 1024).toFixed()}MB/${(os.totalmem() > 1000 ? `${(os.totalmem() / 1000).toFixed(1)}GB` : `${os.totalmem().toFixed()}MB`)}
-            (${(process.memoryUsage().rss / (os.totalmem() * 1024 * 1024) * 100).toFixed(2)}%), ${(os.freemem() > 1024 ? `${(os.freemem() / 1024).toFixed(1)}GB` : `${os.freemem().toFixed()}MB`)} free on server`, // ewww
+            ram: `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1000 ? `${(os.totalmem() / 1000).toFixed(1)}GB` : `${os.totalmem().toFixed()}MB`)}
+            (${(process.memoryUsage().rss / (os.totalmem() * 1048576) * 100).toFixed(2)}%), ${(os.freemem() > 1024 ? `${(os.freemem() / 1024).toFixed(1)}GB` : `${os.freemem().toFixed()}MB`)} free on server`, // ewww
             cpu: `${(await os.cpuUsageAsync() * 100).toFixed(2)}%`}
         ));
     });
