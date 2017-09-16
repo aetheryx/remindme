@@ -19,16 +19,26 @@ const timeRXes = {
 require('moment-duration-format');
 
 module.exports = async function (Bot, msg) {
-    const prefix = msg.content.startsWith(Bot.client.user.toString()) ? `${Bot.client.user.toString()} ` : await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix;
-    const displayPrefix = prefix.includes(Bot.client.user.toString()) ? await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix : prefix; // these are really ugly, try to refactor prefix and command parsing some time
+    const rx = new RegExp(`<@!*${Bot.client.user.id}>`);
+    const match = msg.content.slice(0, 22).match(rx);
+    const prefix = match ? `${match[0]} ` : await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix;
+    const displayPrefix = prefix.includes(Bot.client.user.id) ? await Bot.prefixes.get(msg.guild ? msg.guild.id : null) || Bot.config.defaultPrefix : prefix; // these are really ugly, try to refactor prefix and command parsing some time
     const command = msg.content.toLowerCase().slice(prefix.length).split(' ')[0];
     const args = msg.content.split(' ').slice(1);
+
+    if (command === args[0]) { // same as comment above
+        args.shift();
+    }
     const isCommand = (commands) => {
         if (!Array.isArray(commands)) {
             commands = [commands];
         }
         return commands.includes(command) && msg.content.startsWith(prefix);
     };
+
+    if (isCommand('test')) {
+        return msg.channel.send(JSON.stringify(args));
+    }
 
 
     if (isCommand('ping')) {
@@ -73,7 +83,7 @@ module.exports = async function (Bot, msg) {
             return msg.channel.send('Custom prefixes are currently not supported in DMs.');
         }
         if (!args[0]) {
-            return msg.channel.send(`The prefix in this server is \`${prefix}\`.`);
+            return msg.channel.send(`The prefix in this server is \`${displayPrefix}\`.`);
         }
         if (!msg.member.hasPermission('MANAGE_GUILD')) {
             return msg.channel.send('You are not authorized to use this command.');
