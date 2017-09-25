@@ -4,26 +4,85 @@ var index = 3;
 
 const commands = [
     {
+        Name: 'help',
+        Info: 'Returns a help message to get you started with RemindMeBot.',
+        Usage: 'r>help'
+    },
+    {
+        Name: 'remindme',
+        Info: 'Creates a reminder. Pass without args to start a guided tour.',
+        Usage: 'r>remindme [<time argument> "<message>"]',
+        Example: 'r>remindme 12 hours "Buy groceries"'
+    },
+    {
+        Name: 'list',
+        Info: ['Sends you your current reminders in DM.', 'Note: will send in channel if DMs are disabled.'],
+        Usage: 'r>list'
+    },
+    {
+        Name: 'clear',
+        Info: 'Starts a guided tour to clear all of your reminders.',
+        Usage: 'r>clear'
+    },
+    {
+        Name: 'forget',
+        Info: 'Starts a guided tour to forget one of your reminders.',
+        Usage: 'r>forget'
+    },
+    {
+        Name: 'prefix',
+        Info: 'Changes your prefix to the given argument.',
+        Usage: 'r>prefix <desired prefix>',
+        Example: 'r>prefix !!'
+    },
+    {
+        Name: 'invite',
+        Info: 'Returns an invite for RemindMeBot.',
+        Usage: 'r>invite'
+    },
+    {
         Name: 'ping',
         Info: '	Returns the Websocket ping to the API servers in ms.',
-        Usage: 'r>ping',
-        Example: 'r>ping'
+        Usage: 'r>ping'
+    },
+    {
+        Name: 'stats',
+        Info: 'Returns information and statistics about RemindMeBot.',
+        Usage: 'r>stats'
     }
-]
+];
 
-function loadCommands () {
+function loadCommands () { // eslint-disable-line no-unused-vars
+    document.getElementById('commands').appendChild(document.createElement('br'));
     commands.forEach(command => {
-        const card = document.createElement('DIV');
+        const card = document.createElement('div');
         card.className = 'card card-1';
         card.style.padding = '16px';
         Object.keys(command).forEach(commandKey => {
-            card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey]}`))
-            card.appendChild(document.createElement('BR'));
-        })
+            if (Array.isArray(command[commandKey])) {
+                card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey][0]}`));
+                card.appendChild(document.createElement('br'));
+                card.appendChild(document.createTextNode(command[commandKey][1]));
+            } else if (['Usage', 'Example'].includes(commandKey)) {
+                const tag = document.createElement('kbd');
+                const text = document.createTextNode(command[commandKey]);
+                tag.appendChild(text);
+                card.appendChild(document.createTextNode(commandKey + ': '));
+                card.appendChild(tag);
+            } else {
+                card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey]}`));
+            }
+            card.appendChild(document.createElement('br'));
+        });
         document.getElementById('commands').appendChild(card);
-    })
+    });
 
-    console.log('hey kid you wanna buy some rly good smonking weeds')
+    const soontm = document.createElement('p');
+    soontm.appendChild(document.createTextNode('More coming soon.'));
+    soontm.style.fontSize = '50px';
+    document.getElementById('commands').appendChild(soontm);
+
+    console.log('hey kid you wanna smonk some weeds'); // eslint-disable-line no-console
 }
 
 function initStats (uptime, statsPage, index) {
@@ -63,53 +122,44 @@ function initStats (uptime, statsPage, index) {
     }, 1000);
 }
 
-function enterHomePage () { // eslint-disable-line no-unused-vars
+function switchNavSelected (state) {
     document.querySelector('li.nav-link.active').className = document.querySelector('li.nav-link.active').className.replace(' active', '');
-    document.querySelector('li.nav-link#homepagebtn').className += ' active';
-    statsPage = true;
-    document.getElementById('selfhosting').style.opacity = '0';
-    document.getElementById('commands').style.opacity = '0';
+    document.querySelector(`li.nav-link#${state}`).className += ' active';
+    statsPage = state === 'homepagebtn' ? true : false;
+}
+
+function enterHomePage () { // eslint-disable-line no-unused-vars
+    switchNavSelected('homepagebtn');
+
+    const commandsStyle = document.getElementById('commands').style;
+    commandsStyle.opacity = '0';
+
     setTimeout(() => {
-        document.getElementById('mainheader').style.maxHeight = '1000px';
-        document.getElementById('mainheader').style.transform = 'translate(0px, 0px)';
-        document.querySelector('div.card.card-1').style.display = 'inline-block';
-        document.querySelector('div.card.card-1').style.opacity = '1';
-        document.getElementById('selfhosting').style.display = 'none';
-        document.getElementById('commands').style.display = 'none';
+        const headerStyle = document.getElementById('mainheader').style;
+        headerStyle.maxHeight = '1000px';
+        headerStyle.transform = 'translate(0px, 0px)';
+
+        setTimeout(() => {
+            const cardStyle = document.querySelector('div.card.card-1').style;
+            cardStyle.display = 'inline-block';
+            cardStyle.opacity = '1';
+        }, 200);
+
+        commandsStyle.display = 'none';
     }, 800);
 }
 
-function leaveHomePage () {
-    statsPage = false;
+function enterCommandPage () { // eslint-disable-line no-unused-vars
+    switchNavSelected('cmdpagebtn');
     document.getElementById('mainheader').style.transform = 'translate(0px, -715px)';
     document.querySelector('div.card.card-1').style.opacity = '0';
     setTimeout(() => document.getElementById('mainheader').style.maxHeight = '1px', 120);
     setTimeout(() => {
         document.querySelector('div.card.card-1').style.display = 'none';
     }, 800);
-}
-
-function enterCommandPage () { // eslint-disable-line no-unused-vars
-    document.querySelector('li.nav-link.active').className = document.querySelector('li.nav-link.active').className.replace(' active', '');
-    document.querySelector('li.nav-block.nav-link.nav-item#cmdpagebtn').className += ' active';
-    document.getElementById('selfhosting').style.opacity = '0';
-    leaveHomePage();
     setTimeout(() => {
         document.getElementById('commands').style.display = 'inline';
         document.getElementById('commands').style.opacity = '1';
-        document.getElementById('selfhosting').style.display = 'none';
-    }, 1200);
-}
-
-function enterSelfHosting () { // eslint-disable-line no-unused-vars
-    document.querySelector('li.nav-link.active').className = document.querySelector('li.nav-link.active').className.replace(' active', '');
-    document.querySelector('li.nav-block.nav-link.nav-item#selfhostingbtn').className += ' active';
-    document.getElementById('commands').style.opacity = '0';
-    document.getElementById('selfhosting').style.opacity = '1';
-    leaveHomePage();
-    setTimeout(() => {
-        document.getElementById('selfhosting').style.display = 'inline';
-        document.getElementById('commands').style.display = 'none';
     }, 1200);
 }
 

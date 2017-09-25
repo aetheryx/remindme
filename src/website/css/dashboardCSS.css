@@ -78,7 +78,7 @@ body {
 
 
 .card {
-  line-height: 135%;
+  line-height: 155%;
   display: inline-block;
   min-width: 935px;
   border-radius: 4px;
@@ -178,8 +178,4 @@ nav.navbar.navbar-default {
 #commands {
   font-size: 75%;
   padding: 16px;
-}
-
-#selfhosting {
-  font-size: 80px;
 }
