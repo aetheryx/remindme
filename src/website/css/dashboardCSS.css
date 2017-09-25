@@ -75,13 +75,17 @@ body {
   100% { background-position: 0% 51% }
 }
 
+
+
 .card {
+  line-height: 135%;
   display: inline-block;
   min-width: 935px;
   border-radius: 4px;
   text-align: left;
   font-size: 200%;
   margin: 30px 0px;
+  padding: 3px;
   animation: fadein 0.8s;
 }
 
@@ -166,8 +170,16 @@ nav.navbar.navbar-default {
 }
 
 #commands, #selfhosting {
-  font-size: 80px;
   display: none;
   transition-duration: 0.8s;
   animation: fadein 0.8s;
+}
+
+#commands {
+  font-size: 75%;
+  padding: 16px;
+}
+
+#selfhosting {
+  font-size: 80px;
 }

@@ -1,8 +1,30 @@
-/* eslint curly: ["error", "all"] */
-
 var uptime = 0;
 var statsPage = true;
 var index = 3;
+
+const commands = [
+    {
+        Name: 'ping',
+        Info: '	Returns the Websocket ping to the API servers in ms.',
+        Usage: 'r>ping',
+        Example: 'r>ping'
+    }
+]
+
+function loadCommands () {
+    commands.forEach(command => {
+        const card = document.createElement('DIV');
+        card.className = 'card card-1';
+        card.style.padding = '16px';
+        Object.keys(command).forEach(commandKey => {
+            card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey]}`))
+            card.appendChild(document.createElement('BR'));
+        })
+        document.getElementById('commands').appendChild(card);
+    })
+
+    console.log('hey kid you wanna buy some rly good smonking weeds')
+}
 
 function initStats (uptime, statsPage, index) {
     if (uptime === 0) {
