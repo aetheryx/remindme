@@ -1,13 +1,6 @@
 const express = require('express');
 const app = express();
 const { promisify } = require('util');
-const osutilsWrapper = (func) => {
-    return (callback) => {
-        func((val) => {
-            return callback(undefined, val);
-        });
-    };
-};
 const os = promisifyAll(require('os-utils'));
 const port = os.platform() === 'win32' ? 42069 : 80; // Don't even ask.
 
@@ -19,12 +12,22 @@ module.exports = function (Bot) {
     app.use(express.static('./website'));
 
     app.get('/api/stats', async (req, res) => {
+        const totalMem = os.totalmem();
+        const processMem = process.memoryUsage().rss;
+        const freeMem = os.freemem();
+
         res.send(JSON.stringify({
             guilds: Bot.client.guilds.size,
+
             channels: `${Bot.client.channels.filter(c => c.type === 'voice').size} voice, ${Bot.client.channels.filter(c => c.type === 'text').size} text (${Bot.client.channels.filter(c => c.type === 'text' || c.type === 'voice').size} total)`,
+
             users: `${Bot.client.users.size}`,
-            ram: `${(process.memoryUsage().rss / 1048576).toFixed()}MB/${(os.totalmem() > 1000 ? `${(os.totalmem() / 1000).toFixed(1)}GB` : `${os.totalmem().toFixed()}MB`)}
-            (${(process.memoryUsage().rss / (os.totalmem() * 1048576) * 100).toFixed(2)}%), ${(os.freemem() > 1024 ? `${(os.freemem() / 1024).toFixed(1)}GB` : `${os.freemem().toFixed()}MB`)} free on server`, // ewww
+
+            ram: `${(processMem / 1048576).toFixed()}MB/` +
+                 (totalMem > 1000 ? `${(totalMem / 1000).toFixed(1)}GB` : `${totalMem.toFixed()}MB`) +
+                 ` (${(processMem / (totalMem * 1048576) * 100).toFixed(2)}%), ` +
+                 (freeMem > 1024 ? `${(freeMem / 1024).toFixed(1)}GB` : `${freeMem.toFixed()}MB`) + ' free on server',
+
             cpu: `${(await os.cpuUsageAsync() * 100).toFixed(2)}%`}
         ));
     });
@@ -32,6 +35,14 @@ module.exports = function (Bot) {
     app.get('/api/uptime', (req, res) => {
         res.send(process.uptime().toString());
     });
+};
+
+function osutilsWrapper (func) {
+    return (callback) => {
+        func((val) => {
+            return callback(undefined, val);
+        });
+    };
 };
 
 function promisifyAll (obj) {
