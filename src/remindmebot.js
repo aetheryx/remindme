@@ -43,7 +43,6 @@ class RMB {
 
         this.botlists = new Map([
             [`https://novo.archbox.pro/api/bots/${this.client.user.id}`, this.config.botlists.novo],
-            [`https://list.passthemayo.space/api/bots/${this.client.user.id}`, this.config.botlists.mayo],
             [`https://discordbots.org/api/bots/${Bot.client.user.id}/stats`, this.config.botlists.dbl],
             [`https://bots.discord.pw/api/bots/${this.client.user.id}/stats`, this.config.botlists.botspw],
         ]);
