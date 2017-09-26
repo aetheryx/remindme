@@ -23,7 +23,7 @@ module.exports = function (Bot) {
 
             users: `${Bot.client.users.size}`,
 
-            ram: `${(processMem / 1048576).toFixed()}MB/` +
+            ram: `${(processMem / 1048576).toFixed()}MB/` + // eslint-disable-line prefer-template
                  (totalMem > 1000 ? `${(totalMem / 1000).toFixed(1)}GB` : `${totalMem.toFixed()}MB`) +
                  ` (${(processMem / (totalMem * 1048576) * 100).toFixed(2)}%), ` +
                  (freeMem > 1024 ? `${(freeMem / 1024).toFixed(1)}GB` : `${freeMem.toFixed()}MB`) + ' free on server',
@@ -43,7 +43,7 @@ function osutilsWrapper (func) {
             return callback(undefined, val);
         });
     };
-};
+}
 
 function promisifyAll (obj) {
     const ret = obj;
