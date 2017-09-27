@@ -23,7 +23,10 @@ module.exports = async (Bot) => {
                                 }
                             });
                     } else if (!r.channelID) {
-                        Bot.client.users.get(r.owner).send({ embed });
+                        const owner = Bot.client.users.get(r.owner);
+                        if (owner) {
+                            owner.send({ embed });
+                        }
                     }
                 } catch (err) {
                     Bot.log(err.stack, 'error');
