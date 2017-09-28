@@ -20,7 +20,7 @@
   "dependencies": {
     "humanize-duration": "^3.10.1",
     "chalk": "^2.1.0",
-    "discord.js": "^11.1.0",
+    "discord.js": "^11.2.1",
     "eslint": "^4.5.0",
     "express": "^4.15.3",
     "moment": "^2.18.1",
