@@ -99,7 +99,7 @@ logEvents.forEach(event => {
 });
 
 process.on('unhandledRejection', err => {
-    Bot.log(`Unhandled rejection: \n${err.stack}`, 'error');
+    Bot.log(`UNHANDLED REJECTION: \n${err.stack}`, 'error');
 });
 
 
