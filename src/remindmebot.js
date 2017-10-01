@@ -49,9 +49,9 @@ class RMB {
         }.bind(this.client), 8000);
 
         this.botlists = new Map([
-            [`https://novo.archbox.pro/api/bots/${this.client.user.id}`, this.config.botlists.novo],
-            [`https://discordbots.org/api/bots/${Bot.client.user.id}/stats`, this.config.botlists.dbl],
-            [`https://bots.discord.pw/api/bots/${this.client.user.id}/stats`, this.config.botlists.botspw],
+            [`https://novo.archbox.pro/api/bots/${this.client.user.id}`, this.config.keys.novo],
+            [`https://discordbots.org/api/bots/${this.client.user.id}/stats`, this.config.keys.dbl],
+            [`https://bots.discord.pw/api/bots/${this.client.user.id}/stats`, this.config.keys.botspw],
         ]);
     }
 
