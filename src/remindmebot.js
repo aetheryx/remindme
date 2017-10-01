@@ -23,10 +23,10 @@ class RMB {
             .on('guildDelete', guild => guildHandler.delete(this, guild));
     }
 
-    onReady () {
+    async onReady () {
         this.log(`Logged in as ${this.client.user.tag}.
         Bot invite link: https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${this.client.user.id}`);
-        this.owner = this.client.users.get(this.config.ownerID);
+        this.owner = await this.client.fetchUser(this.config.ownerID);
     }
 
     async start () {
@@ -94,11 +94,11 @@ const logEvents = [
     'warn'
 ];
 
-logEvents.forEach(event => {
+for (const event of logEvents) {
     Bot.client.on(event, cb => {
         Bot.log(`Event ${event} emitted: ${cb.stack || 'No errors'}`, 'info');
     });
-});
+}
 
 process.on('unhandledRejection', err => {
     Bot.log(`UNHANDLED REJECTION: \n${err.stack}`, 'error');
