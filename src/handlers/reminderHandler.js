@@ -15,15 +15,19 @@ module.exports = async (Bot) => {
 
                 try {
                     if (r.channelID && Bot.client.channels.get(r.channelID)) {
-                        Bot.client.channels.get(r.channelID).send({ embed })
-                            .catch(err => {
-                                if (err.message.includes('Missing Access')) {
-                                    Bot.client.users.get(r.owner).send(`I tried to send this to <#${r.channelID}>, but I'm not allowed to speak there.`, { embed })
-                                        .catch(() => {}); // Sometimes the owner doesn't have DMs enabled or they're not in a shared guild anymore.. nothing we can do at that point.
+                        try {
+                            Bot.client.channels.get(r.channelID).send({ embed });
+                        } catch (err) {
+                            if (err.message.includes('Missing Access')) {
+                                try {
+                                    (await Bot.client.fetchUser(r.owner)).send(`I tried to send this to <#${r.channelID}>, but I'm not allowed to speak there.`, { embed })
+                                } catch (e) {
+                                    // Sometimes the owner doesn't have DMs enabled or they're not in a shared guild anymore.. nothing we can do at that point.
                                 }
-                            });
+                            }
+                        }
                     } else if (!r.channelID) {
-                        const owner = Bot.client.users.get(r.owner);
+                        const owner = await Bot.client.fetchUser(r.owner);
                         if (owner) {
                             owner.send({ embed });
                         }
@@ -34,5 +38,5 @@ module.exports = async (Bot) => {
                     await Bot.db.run('DELETE FROM reminders WHERE rowid = ?;', r.rowid);
                 }
             });
-    }, Bot.config.tick || 3000);
+    }, Bot.config.tick);
 };

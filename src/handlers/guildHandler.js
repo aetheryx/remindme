@@ -1,7 +1,12 @@
 const snekfetch = require('snekfetch');
 
-exports.create = (Bot, guild) => {
-    guild.owner.send(`Thanks for adding me to your server! To see a list of my commands, send \`${Bot.config.defaultPrefix}help\`.\nFeel free to DM Aetheryx#2222 for any questions or concerns!`);
+exports.create = async (Bot, guild) => {
+    const message = `Thanks for adding me to your server! To see a list of my commands, send \`${Bot.config.defaultPrefix}help\`.\nFeel free to DM Aetheryx#2222 for any questions or concerns!`;
+    try {
+        await guild.owner.send(message);
+    } catch (e) {
+        //
+    }
     postStats(Bot);
 };
 
@@ -12,7 +17,7 @@ exports.delete = async (Bot, guild) => {
 };
 
 function postStats (Bot) {
-    Bot.botlists.forEach((token, url) => {
+    for (const [token, url] of Bot.botlists) {
         if (url) {
             snekfetch
                 .post(url)
@@ -20,5 +25,5 @@ function postStats (Bot) {
                 .send({ server_count: Bot.client.guilds.size })
                 .end();
         }
-    });
+    }
 }
