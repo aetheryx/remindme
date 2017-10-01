@@ -8,6 +8,14 @@ const configSchema = {
         embedColor: { type: 'integer', required: true },
         ownerID: { type: 'string', required: true },
         tick: { type: 'integer', required: true },
+        webserver: {
+            type: 'object',
+            properties: {
+                enabled: { type: 'boolean', required: true },
+                port: { type: 'integer', required: true },
+            },
+            required: true,
+        },
         keys: {
             type: 'object',
             properties: {

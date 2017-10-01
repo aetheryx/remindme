@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const { promisify } = require('util');
 const os = promisifyAll(require('os-utils'));
-const port = os.platform() === 'win32' ? 42069 : 80; // Don't even ask.
 
 module.exports = function (Bot) {
+    const port = Bot.config.webserver.port;
     app.listen(port, () => {
         Bot.log(`Web server listening on port ${port}.`);
     });

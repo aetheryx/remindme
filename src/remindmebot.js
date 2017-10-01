@@ -12,7 +12,7 @@ class RMB {
             process.exit(1);
         }
         this.client = new Client(this.config.clientOptions);
-        this.client.login(this.config.token);
+        this.client.login(this.config.keys.token);
         this.db = require('sqlite');
         this.prefixes = new Map();
         this.client
@@ -31,7 +31,9 @@ class RMB {
 
     async start () {
         await this.initDB();
-        require('./utils/server.js')(this);
+        if (this.config.webserver.enabled) {
+            require('./utils/server.js')(this);
+        }
         require('./handlers/reminderHandler')(this);
 
 
