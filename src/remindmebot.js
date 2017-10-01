@@ -1,11 +1,16 @@
-const guildHandler = require('./handlers/guildHandler.js');
-const handleMsg    = require('./handlers/msgHandler.js');
-const { Client }   = require('discord.js');
+const guildHandler  = require('./handlers/guildHandler.js');
+const handleMsg     = require('./handlers/msgHandler.js');
+const isValidConfig = require('./utils/validate_config');
+const { Client }    = require('discord.js');
 
 class RMB {
     constructor () {
         this.log = require('./utils/logger.js');
         this.config = require('./config.json');
+        if (!isValidConfig(this.config)) {
+            this.log('Invalid configuration, aborting.', 'error');
+            process.exit(1);
+        }
         this.client = new Client(this.config.clientOptions);
         this.client.login(this.config.token);
         this.db = require('sqlite');
