@@ -20,7 +20,7 @@ module.exports = async (Bot) => {
                         } catch (err) {
                             if (err.message.includes('Missing Access')) {
                                 try {
-                                    (await Bot.client.fetchUser(r.owner)).send(`I tried to send this to <#${r.channelID}>, but I'm not allowed to speak there.`, { embed })
+                                    (await Bot.client.fetchUser(r.owner)).send(`I tried to send this to <#${r.channelID}>, but I'm not allowed to speak there.`, { embed });
                                 } catch (e) {
                                     // Sometimes the owner doesn't have DMs enabled or they're not in a shared guild anymore.. nothing we can do at that point.
                                 }
