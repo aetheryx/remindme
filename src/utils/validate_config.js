@@ -20,7 +20,7 @@ const configSchema = {
             type: 'object',
             properties: {
                 token: { type: 'string', required: true },
-                dbots: { type: 'string', required: true },
+                dbl: { type: 'string', required: true },
                 botspw: { type: 'string', required: true },
             },
             required: true,
