@@ -3,6 +3,10 @@
   "embedColor": 13394255,
   "ownerID": "",
   "tick": 3000,
+  "webserver": {
+    "enabled": true,
+    "port": 8080
+  },
   "keys": {
     "token": "",
     "dbots": "",
