@@ -1,6 +1,6 @@
 {
-  "defaultPrefix": "r>",
-  "embedColor": 13394255,
+  "defaultPrefix": "",
+  "embedColor": 16777215,
   "ownerID": "",
   "tick": 3000,
   "webserver": {
@@ -9,8 +9,9 @@
   },
   "keys": {
     "token": "",
-    "dbots": "",
-    "botspw": ""
+    "dbl": "",
+    "botspw": "",
+    "novo": ""
   },
   "disabledEvents": [
     "CHANNEL_PINS_UPDATE",

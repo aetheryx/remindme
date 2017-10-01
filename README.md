@@ -21,14 +21,19 @@ npm install
 Fill in your config file (`src/config-example.json`) with all of the keys and settings:
 ```js
 {
-  "defaultPrefix": "abcd", // Default prefix for new guilds.
-  "embedColor": 12345678, // Embed color, in base10
-  "ownerID": "string", // ID of the bot owner, gives you access to eval
-  "tick": 3000, // The tick of the interval at which the bot checks for expired reminders, in ms. I wouldn't put this under 1 second.
+  "defaultPrefix": "", // Default prefix for the bot
+  "embedColor": 16777215, // The embed color for all of the embeds that the bot returns, in base10
+  "ownerID": "", // ID of the owner of the bot. Gives you access to eval / bash commands
+  "tick": 3000, // The tick of the interval at which the bot checks for reminders that are due. Don't put this too low or it'll start sending double reminders
+  "webserver": {
+    "enabled": true, // Whether the webserver should run or not
+    "port": 8080 // The port at which the webserverw would run
+  },
   "keys": {
-    "token": "abcd", // Bot token
-    "dbots": "abcd", // your bots.discord.pw token, leave empty if you don't have one
-    "botspw": "abcd" // your discordbots.org token, leave empty if you don't have one
+    "token": "", // Your bot token
+    "dbl": "", // discord.bots.org token, leave empty if you don't have one
+    "botspw": "", // bots.discord.pw token, leave empty if you don't have one
+    "novo": "" // novo token, leave empty if you don't have one
   },
   "disabledEvents": [ // Disabled websocket events. Removing items from this list is probably harmless, but adding some can fuck up things. Be careful.
     "CHANNEL_PINS_UPDATE",
@@ -47,9 +52,10 @@ Fill in your config file (`src/config-example.json`) with all of the keys and se
     "MESSAGE_REACTION_REMOVE_ALL"
   ]
 }
+
 ```
 
 At this point, all you have to do is start the bot with `sudo npm start` (or `sudo pm2 start remindmebot.js`).
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE file](https://github.com/Aetheryx/remindme/blob/master/LICENSE) for more info. Basically, you can do whatever the fuck you like as long as you mention/credit me in your code if you use mine. Oh, and you can't sue me if it blows up.
+This project is licensed under the MIT License - see the [LICENSE file](https://github.com/Aetheryx/remindme/blob/master/LICENSE) for more info. Basically, you can do whatever the fuck you like as long as you mention/credit me. Oh, and you can't sue me if it blows up.
