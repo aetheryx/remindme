@@ -1,17 +1,19 @@
 const guildHandler  = require('./handlers/guildHandler.js');
 const handleMsg     = require('./handlers/msgHandler.js');
-const isValidConfig = require('./utils/validate_config');
+const validateConfig = require('./utils/validateConfig.js');
 const { Client }    = require('discord.js');
 
 class RMB {
     constructor () {
         this.log = require('./utils/logger.js');
         this.config = require('./config.json');
-        if (!isValidConfig(this.config)) {
-            this.log('Invalid configuration, aborting.', 'error');
-            process.exit(1);
-        }
-        this.client = new Client(this.config.clientOptions);
+        validateConfig(this.config, (err) => {
+            if (err) {
+                this.log(`Invalid configuration, aborting:\n${err}`, 'error');
+                process.exit(1);
+            }
+        });
+        this.client = new Client({ disabledEvents: this.config.disabledEvents || [] });
         this.client.login(this.config.keys.token);
         this.db = require('sqlite');
         this.prefixes = new Map();
@@ -31,8 +33,8 @@ class RMB {
 
     async start () {
         await this.initDB();
-        if (this.config.webserver.enabled) {
-            require('./utils/server.js')(this);
+        if (this.config.webserver && this.config.webserver.enabled) {
+            require('./website/server.js')(this);
         }
         require('./handlers/reminderHandler')(this);
 

@@ -1,4 +1,4 @@
-const validate = require('jsonschema').validate;
+const { validate } = require('jsonschema');
 
 const configSchema = {
     id: 'Config',
@@ -11,34 +11,34 @@ const configSchema = {
         webserver: {
             type: 'object',
             properties: {
-                enabled: { type: 'boolean', required: true },
-                port: { type: 'integer', required: true },
+                enabled: { type: 'boolean', required: false },
+                port: { type: 'integer', required: false },
             },
-            required: true,
+            required: false,
         },
         keys: {
             type: 'object',
             properties: {
-                token: { type: 'string', required: true },
-                dbl: { type: 'string', required: true },
-                botspw: { type: 'string', required: true },
+                token: { type: 'string', required: false },
+                dbl: { type: 'string', required: false },
+                botspw: { type: 'string', required: false },
             },
             required: true,
         },
         disabledEvents: {
             type: 'array',
-            items: { type: 'string', required: true },
-            required: true,
+            items: { type: 'string', required: false },
+            required: false,
         },
     },
 };
 
-function isValid (config) {
+function isValid (config, callback) {
     try {
         validate(config, configSchema, { throwError: true });
-        return true;
-    } catch (e) {
-        return false;
+        callback();
+    } catch (err) {
+        callback(err.stack);
     }
 }
 
