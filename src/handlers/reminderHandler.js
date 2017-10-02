@@ -30,7 +30,7 @@ module.exports = async (Bot) => {
                         const owner = await Bot.client.fetchUser(r.owner);
                         if (owner) {
                             try {
-                                owner.send({ embed });                                
+                                owner.send({ embed });
                             } catch (e) {
                                 // More or less same as the comment above.
                             }
