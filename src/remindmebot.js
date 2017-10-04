@@ -94,7 +94,7 @@ class RMB {
         }
     }
 
-    encrypt(stringToBeEncrypted) {
+    encrypt (stringToBeEncrypted) {
         const key = randomString(KEY_LENGTH_SIZE);
         const cipher = crypto.createCipher('aes256', key);
         let encryptedString = cipher.update(stringToBeEncrypted, 'utf8', 'hex');
@@ -107,11 +107,11 @@ class RMB {
             key
         };
     }
-        
-    decrypt(stringToBeDecrypted, key) {
+
+    decrypt (stringToBeDecrypted, key) {
         const decipher = crypto.createDecipher('aes256', key);
         let decryptedString = decipher.update(stringToBeDecrypted, 'hex', 'utf8');
-        const finalDecryptedString = (decryptedString += decipher.final('utf8'));
+        const finalDecryptedString = decryptedString += decipher.final('utf8');
 
         return finalDecryptedString;
     }
