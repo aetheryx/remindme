@@ -319,7 +319,7 @@ module.exports = async function (Bot, msg) {
                 }
 
                 r.dueDate = parsedTime.absolute;
-                msg.channel.send('Would you like to receive the channel in a specific channel, or in your DMs?\nMention the channel you\'d like to receive the reminder in, or send `DM` if you\'d like to receive it in your DMs.')
+                msg.channel.send('Would you like to receive the reminder in a specific channel, or in your DMs?\nMention the channel you\'d like to receive the reminder in, or send `DM` if you\'d like to receive it in your DMs.')
                     .then(m => delarray.push(m));
             }
 
