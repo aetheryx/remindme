@@ -2,6 +2,12 @@ const guildHandler  = require('./handlers/guildHandler.js');
 const handleMsg     = require('./handlers/msgHandler.js');
 const validateConfig = require('./utils/validateConfig.js');
 const { Client }    = require('discord.js');
+const crypto = require('crypto');
+const randomString = require('../src/utils/randomString');
+
+// You can set how strong you want your encryption by the length of the key size.
+// This will also affect performance, so we need to find a good balance.
+const KEY_LENGTH_SIZE = 24;
 
 class RMB {
     constructor () {
@@ -65,6 +71,7 @@ class RMB {
         await this.db.run(`CREATE TABLE IF NOT EXISTS reminders (
             owner        TEXT,
             reminderText TEXT,
+            key          VARCHAR(128),
             createdDate  INTEGER,
             dueDate      INTEGER,
             channelID    TEXT);`);
@@ -85,6 +92,28 @@ class RMB {
             this.log(err, 'error');
             msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (<discord.gg/TCNNsSQ>) if the issue persists.');
         }
+    }
+
+    encrypt (stringToBeEncrypted) {
+        const key = randomString(KEY_LENGTH_SIZE);
+        const cipher = crypto.createCipher('aes256', key);
+        let encryptedString = cipher.update(stringToBeEncrypted, 'utf8', 'hex');
+
+        encryptedString += cipher.final('hex');
+
+        // Here we are returning the encrypted string and also the key
+        return {
+            encryptedString,
+            key
+        };
+    }
+
+    decrypt (stringToBeDecrypted, key) {
+        const decipher = crypto.createDecipher('aes256', key);
+        let decryptedString = decipher.update(stringToBeDecrypted, 'hex', 'utf8');
+        const finalDecryptedString = decryptedString += decipher.final('utf8');
+
+        return finalDecryptedString;
     }
 }
 
