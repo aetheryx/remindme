@@ -16,7 +16,7 @@ module.exports = async (Bot) => {
                 try {
                     if (r.channelID && Bot.client.channels.get(r.channelID)) {
                         try {
-                            Bot.client.channels.get(r.channelID).send({ embed });
+                            Bot.client.channels.get(r.channelID).send(`<@${r.owner}>`, { embed });
                         } catch (err) {
                             if (err.message.includes('Missing Access')) {
                                 try {
