@@ -19,7 +19,7 @@ class RMB {
                 process.exit(1);
             }
         });
-        this.client = new Client({ disabledEvents: this.config.disabledEvents || [] });
+        this.client = new Client({ disabledEvents: this.config.disabledEvents || [], messageCacheMaxSize: 0 });
         this.client.login(this.config.keys.token);
         this.db = require('sqlite');
         this.prefixes = new Map();
