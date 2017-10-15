@@ -3,9 +3,9 @@ const [argless, withArgs] = [require('./remindmeArgless.js'), require('./remindm
 
 exports.run = async function (Bot, msg, args) {
     if (args[0]) {
-        withArgs(Bot, msg, args);
+        await withArgs(Bot, msg, args);
     } else {
-        argless(Bot, msg);
+        await argless(Bot, msg);
     }
 };
 
