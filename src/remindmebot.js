@@ -142,7 +142,10 @@ class RMB {
                     get: () => {
                         return {
                             prefix: this.config.defaultPrefix,
-                            shard: { latency: this.client.shards.get(0).latency }
+                            shard: {
+                                latency: this.client.shards.get(0).latency,
+                                client: this.client
+                            }
                         };
                     }
                 });
