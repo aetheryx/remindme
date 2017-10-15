@@ -1,6 +1,6 @@
 exports.run = async function (Bot, msg, args) {
     const filteredCommands = [];
-    Bot.commands.forEach((key, command) => {
+    Bot.commands.forEach((command, key) => {
         if (!command.props.ownerOnly) {
             filteredCommands.push(key);
         }
