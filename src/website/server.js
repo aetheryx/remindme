@@ -12,16 +12,16 @@ module.exports = function (Bot) {
     app.use(express.static('./website'));
 
     app.get('/api/stats', async (req, res) => {
-        const totalMem = os.totalmem();
+        const freeMem    = os.freemem();
+        const totalMem   = os.totalmem();
         const processMem = process.memoryUsage().rss;
-        const freeMem = os.freemem();
 
         res.send(JSON.stringify({
             guilds: Bot.client.guilds.size,
 
-            channels: `${Bot.client.channels.filter(c => c.type === 'voice').size} voice, ${Bot.client.channels.filter(c => c.type === 'text').size} text (${Bot.client.channels.filter(c => c.type === 'text' || c.type === 'voice').size} total)`,
+            channels: Object.keys(Bot.client.channelGuildMap).length,
 
-            users: `${Bot.client.users.size}`,
+            users: Bot.client.users.size,
 
             ram: `${(processMem / 1048576).toFixed()}MB/` + // eslint-disable-line prefer-template
                  (totalMem > 1000 ? `${(totalMem / 1000).toFixed(1)}GB` : `${totalMem.toFixed()}MB`) +
