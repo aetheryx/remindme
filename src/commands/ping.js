@@ -6,5 +6,5 @@ exports.props = {
     name        : 'ping',
     usage       : '{command}',
     aliases     : [],
-    description : 'Pong!'
+    description : 'Returns the websocket latency to the API servers in ms.'
 };

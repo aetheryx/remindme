@@ -13,5 +13,5 @@ exports.props = {
     name        : 'remindme',
     usage       : '{command}',
     aliases     : ['remind'],
-    description : 'TODO'
+    description : 'Creates a reminder. Pass without args to start a guided tour.'
 };

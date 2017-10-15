@@ -19,5 +19,5 @@ exports.props = {
     name        : 'prefix',
     usage       : '{command} <desired prefix>',
     aliases     : ['setprefix'],
-    description : 'Change RemindMeBot\'s prefix for this server.'
+    description : 'Changes your prefix to the given argument.'
 };

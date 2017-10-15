@@ -33,5 +33,5 @@ exports.props = {
     name        : 'reminders',
     usage       : '{command}',
     aliases     : ['list'],
-    description : 'Receive a list of your current reminders.'
+    description : 'Sends you your current reminders in DM. Note: will send in channel if DMs are disabled.'
 };

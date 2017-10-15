@@ -28,5 +28,5 @@ exports.props = {
     name        : 'clear',
     usage       : '{command}',
     aliases     : [],
-    description : 'TODO'
+    description : 'Starts a guided tour to clear all of your reminders.'
 };

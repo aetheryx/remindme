@@ -8,6 +8,6 @@ exports.props = {
     name        : 'reboot',
     usage       : '{command}',
     aliases     : ['restart'],
-    description : 'TODO',
+    description : 'Bot owner only.',
     ownerOnly   : true
 };

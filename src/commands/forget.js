@@ -54,5 +54,5 @@ exports.props = {
     name        : 'forget',
     usage       : '{command}',
     aliases     : ['delete'],
-    description : 'TODO'
+    description : 'Starts a guided tour to forget one of your reminders.'
 };

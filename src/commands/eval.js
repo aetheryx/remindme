@@ -26,8 +26,8 @@ exports.run = async function (Bot, msg, args) {
 
 exports.props = {
     name        : 'eval',
-    usage       : '{command}',
+    usage       : '{command} <code>',
     aliases     : ['ev'],
     ownerOnly   : true,
-    description : 'TODO',
+    description : 'Bot owner only.',
 };

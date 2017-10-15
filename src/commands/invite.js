@@ -9,5 +9,5 @@ exports.props = {
     name        : 'invite',
     usage       : '{command}',
     aliases     : [],
-    description : 'Returns an invite for RemindMeBot and his support server.'
+    description : 'Returns an invite for RemindMeBot and the support server.'
 };
