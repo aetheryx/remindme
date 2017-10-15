@@ -3,7 +3,7 @@ const validateConfig   = require('./utils/validateConfig.js');
 const guildHandler     = require('./handlers/guildHandler.js');
 const botPackage       = require('../package.json');
 const handleMsg        = require('./handlers/msgHandler.js');
-const Eris             = require('eris');
+const Eris             = loadMods(require('eris'));
 const fs               = require('fs');
 
 class RMB {
@@ -129,16 +129,6 @@ class RMB {
                 prefixes.set(this.id, newPrefix);
             }
         });
-
-
-        Eris.Channel.prototype.awaitMessages = function (filter, options) {
-            const collector = new messageCollector(this, filter, options);
-            return new Promise(resolve => {
-                collector.on('end', (collected, reason) => {
-                    resolve([collected, reason]);
-                });
-            });
-        };
     }
 
     async onMessage (msg) {
@@ -148,7 +138,14 @@ class RMB {
 
         try {
             if (!msg.channel.guild) {
-                msg.channel.guild = { prefix: this.config.defaultPrefix };
+                Object.defineProperty(msg.channel, 'guild', {
+                    get: () => {
+                        return {
+                            prefix: this.config.defaultPrefix,
+                            shard: { latency: this.client.shards.get(0).latency }
+                        };
+                    }
+                });
             }
             await handleMsg(this, msg);
         } catch (err) {
@@ -202,3 +199,19 @@ class RMB {
 }
 
 new RMB();
+
+
+function loadMods (eris) {
+    Object.defineProperty(eris.Channel.prototype, 'awaitMessages', {
+        value: function (filter, options) {
+            const collector = new messageCollector(this, filter, options);
+            return new Promise(resolve => {
+                collector.on('end', (collected, reason) => {
+                    resolve([collected, reason]);
+                });
+            });
+        }
+    });
+
+    return eris;
+}
