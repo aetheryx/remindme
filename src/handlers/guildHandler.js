@@ -16,14 +16,13 @@ exports.delete = async (Bot, guild) => {
     postStats(Bot);
 };
 
-function postStats (Bot) {
+async function postStats (Bot) {
     for (const [url, token] of Bot.botlists) {
-        if (url) {
+        if (token) {
             snekfetch
                 .post(url)
                 .set('Authorization', token)
-                .send({ server_count: Bot.client.guilds.size })
-                .end();
+                .send({ server_count: Bot.client.guilds.size });
         }
     }
 }

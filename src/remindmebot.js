@@ -1,13 +1,10 @@
-const guildHandler  = require('./handlers/guildHandler.js');
-const handleMsg     = require('./handlers/msgHandler.js');
-const validateConfig = require('./utils/validateConfig.js');
-const { Client }    = require('discord.js');
-const crypto = require('crypto');
-const randomString = require('../src/utils/randomString');
-
-// You can set how strong you want your encryption by the length of the key size.
-// This will also affect performance, so we need to find a good balance.
-const KEY_LENGTH_SIZE = 24;
+const messageCollector = require('./utils/messageCollector.js');
+const validateConfig   = require('./utils/validateConfig.js');
+const guildHandler     = require('./handlers/guildHandler.js');
+const botPackage       = require('../package.json');
+const handleMsg        = require('./handlers/msgHandler.js');
+const Eris             = require('eris');
+const fs               = require('fs');
 
 class RMB {
     constructor () {
@@ -19,26 +16,39 @@ class RMB {
                 process.exit(1);
             }
         });
-        this.client = new Client({ disabledEvents: this.config.disabledEvents || [], messageCacheMaxSize: 0 });
-        this.client.login(this.config.keys.token);
+        this.client = new Eris(this.config.keys.token,
+            Object.assign({}, this.defaultClientOptions, this.config.clientOptions || {}));
         this.db = require('sqlite');
-        this.prefixes = new Map();
+
+        this.commands = new Map();
+        this.aliases = new Map();
+        this.loadCommands();
+
         this.client
+            .on('connect', this.onShardConnect.bind(this))
+            .on('messageCreate', this.onMessage.bind(this))
             .on('ready', this.onReady.bind(this))
-            .once('ready', this.start.bind(this))
-            .on('message', this.onMessage.bind(this))
             .on('guildCreate', guild => guildHandler.create(this, guild))
-            .on('guildDelete', guild => guildHandler.delete(this, guild));
+            .on('guildDelete', guild => guildHandler.delete(this, guild))
+            .once('ready', this.start.bind(this));
+
+        this.client.connect();
+    }
+
+    async onShardConnect (id) {
+        this.log(`Shard ${id} successfully initiated.`);
     }
 
     async onReady () {
-        this.log(`Logged in as ${this.client.user.tag}.
+        this.prefixRX = new RegExp(`<@!*${this.client.user.id}>`);
+        this.tokenRegex = new RegExp(this.config.keys.token, 'gi');
+        this.log(`Logged in as ${this.client.user.username}.
         Bot invite link: https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${this.client.user.id}`);
-        this.owner = await this.client.fetchUser(this.config.ownerID);
     }
 
     async start () {
         await this.initDB();
+        await this.loadPrefixes();
         if (this.config.webserver && this.config.webserver.enabled) {
             require('./website/server.js')(this);
         }
@@ -53,7 +63,9 @@ class RMB {
         ];
         setInterval(function () {
             index = (index + 1) % statuses.length;
-            this.user.setGame(statuses[index].replace('%s', this.guilds.size));
+            this.editStatus('online', {
+                name: statuses[index].replace('%s', this.guilds.size)
+            });
         }.bind(this.client), 8000);
 
         this.botlists = new Map([
@@ -63,8 +75,27 @@ class RMB {
         ]);
     }
 
+    async loadCommands () {
+        fs.readdir(`${__dirname}/commands/`, (err, files) => {
+            if (err) {
+                return this.log(err.stack, 'error');
+            }
+            this.log(`Loading a total of ${files.length} commands.`);
+
+            files.forEach(file => {
+                const command = require(`${__dirname}/commands/${file}`);
+                if (!command.props) {
+                    return;
+                }
+                this.commands.set(command.props.name, command);
+
+                command.props.aliases.forEach(alias => this.aliases.set(alias, command.props.name));
+            });
+        });
+    }
+
     async initDB () {
-        await this.db.open('./rmb.database');
+        await this.db.open(require('path').join(process.env.HOME || process.env.USERPROFILE || __dirname, 'rmb.database'));
         await this.db.run(`CREATE TABLE IF NOT EXISTS prefixes (
             guildID TEXT,
             prefix  TEXT);`);
@@ -75,10 +106,39 @@ class RMB {
             createdDate  INTEGER,
             dueDate      INTEGER,
             channelID    TEXT);`);
+    }
+
+    async loadPrefixes () {
+        const _this = this;
+        const prefixes = new Map();
 
         await this.db.each('SELECT * FROM prefixes', (err, row) => {
-            this.prefixes.set(row.guildID, row.prefix);
+            prefixes.set(row.guildID, row.prefix);
         });
+
+        Object.defineProperty(Eris.Guild.prototype, 'prefix', { // A new concept I'm playing with.. might not be around for ever, so calm your tits :^)
+            get: function () {
+                return prefixes.get(this.id) || _this.config.defaultPrefix;
+            },
+            set: async function (newPrefix) {
+                if (prefixes.has(this.id)) {
+                    _this.db.run('UPDATE prefixes SET prefix = ? WHERE guildID = ?;', newPrefix, this.id);
+                } else {
+                    _this.db.run('INSERT INTO prefixes (guildID, prefix) VALUES (?, ?);', this.id, newPrefix);
+                }
+                prefixes.set(this.id, newPrefix);
+            }
+        });
+
+
+        Eris.Channel.prototype.awaitMessages = function (filter, options) {
+            const collector = new messageCollector(this, filter, options);
+            return new Promise(resolve => {
+                collector.on('end', (collected, reason) => {
+                    resolve([collected, reason]);
+                });
+            });
+        };
     }
 
     async onMessage (msg) {
@@ -87,55 +147,58 @@ class RMB {
         }
 
         try {
+            if (!msg.channel.guild) {
+                msg.channel.guild = { prefix: this.config.defaultPrefix };
+            }
             await handleMsg(this, msg);
         } catch (err) {
-            this.log(err, 'error');
-            msg.channel.send('Something went wrong while executing this command. The error has been logged. \nPlease join here (<discord.gg/TCNNsSQ>) if the issue persists.');
+            msg.channel.createMessage('Something went wrong while executing this command. The error has been logged. \nPlease join here (<https://discord.gg/Yphr6WG>) if the issue persists.');
+            this.log(err.stack, 'error');
         }
     }
 
-    encrypt (stringToBeEncrypted) {
-        const key = randomString(KEY_LENGTH_SIZE);
-        const cipher = crypto.createCipher('aes256', key);
-        let encryptedString = cipher.update(stringToBeEncrypted, 'utf8', 'hex');
+    async sendMessage (target, content, isUser = false) {
+        try {
+            if (isUser) {
+                const DMChannel = await this.client.getDMChannel(target);
+                return await DMChannel.createMessage(content);
+            } else {
+                return await this.client.createMessage(target, content);
+            }
+        } catch (err) {
+            if (!err.message.includes('Missing Permissions') && !err.message.includes('Cannot send messages to this user')) {
+                this.log(err.stack);
+            } else {
+                return false;
+            }
+        }
+    }
 
-        encryptedString += cipher.final('hex');
+    get package () {
+        return botPackage;
+    }
 
-        // Here we are returning the encrypted string and also the key
+    get defaultClientOptions () {
         return {
-            encryptedString,
-            key
+            disableEveryone: true,
+            maxShards: 'auto',
+            messageLimit: 10,
+            disableEvents: {
+                CHANNEL_PINS_UPDATE: true,
+                USER_SETTINGS_UPDATE: true,
+                USER_NOTE_UPDATE: true,
+                RELATIONSHIP_ADD: true,
+                RELATIONSHIP_REMOVE: true,
+                GUILD_BAN_ADD: true,
+                GUILD_BAN_REMOVE: true,
+                TYPING_START: true,
+                MESSAGE_UPDATE: true,
+                MESSAGE_DELETE: true,
+                MESSAGE_DELETE_BULK: true,
+                VOICE_STATE_UPDATE: true
+            }
         };
     }
-
-    decrypt (stringToBeDecrypted, key) {
-        const decipher = crypto.createDecipher('aes256', key);
-        let decryptedString = decipher.update(stringToBeDecrypted, 'hex', 'utf8');
-        const finalDecryptedString = decryptedString += decipher.final('utf8');
-
-        return finalDecryptedString;
-    }
 }
 
-const Bot = new RMB();
-
-const logEvents = [
-    'disconnect',
-    'error',
-    'warn'
-];
-
-for (const event of logEvents) {
-    Bot.client.on(event, cb => {
-        Bot.log(`Event ${event} emitted: ${cb.stack || 'No errors'}`, 'info');
-    });
-}
-
-process.on('unhandledRejection', err => {
-    Bot.log(`UNHANDLED REJECTION: \n${err.stack}`, 'error');
-});
-
-
-process.on('uncaughtException', err => {
-    Bot.log(`UNCAUGHT EXCEPTION: \n${err.stack}`, 'error');
-});
+new RMB();

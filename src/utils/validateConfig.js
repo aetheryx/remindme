@@ -25,9 +25,8 @@ const configSchema = {
             },
             required: true,
         },
-        disabledEvents: {
-            type: 'array',
-            items: { type: 'string', required: false },
+        clientOptions: {
+            type: 'object',
             required: false,
         },
     },
