@@ -1,4 +1,11 @@
 exports.run = async function (Bot, msg, args) {
+    const filteredCommands = [];
+    Bot.commands.forEach((key, command) => {
+        if (!command.props.ownerOnly) {
+            filteredCommands.push(key);
+        }
+    });
+
     if (!args[0]) {
         const content = `To set a reminder, simply send \`${msg.channel.guild.prefix}remindme\` and follow the instructions.\n` +
             `Alternatively, you can also send \`${msg.channel.guild.prefix}remindme time_argument "message"\`, ` +
@@ -6,7 +13,7 @@ exports.run = async function (Bot, msg, args) {
             `My current prefix is \`${msg.channel.guild.prefix}\`, but you can also mention me as a prefix.\nHere's a list of my commands:`;
         Bot.sendMessage(msg.channel.id, { content, embed: {
             color: Bot.config.embedColor,
-            description: filterCommands(Bot.commands)
+            description: filteredCommands.join(', ')
         }});
     } else {
         if (Bot.commands.has(args[0]) || Bot.aliases.has(args[0])) {
@@ -27,16 +34,6 @@ exports.run = async function (Bot, msg, args) {
 exports.props = {
     name        : 'help',
     usage       : '{command} [command]',
-    aliases     : ['command'],
-    description : 'TODO'
+    aliases     : ['halp'],
+    description : 'Returns extra documentation for a specific command (or the list of all commands).'
 };
-
-function filterCommands (commands) {
-    const items = [];
-    for (const [key, command] of commands) {
-        if (!command.props.ownerOnly) {
-            items.push(key);
-        }
-    }
-    return items.join(', ');
-}
