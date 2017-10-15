@@ -1,8 +1,9 @@
 loadCommands([ // eslint-disable-line no-undef
     {
         Name: 'help',
-        Info: 'Returns a help message to get you started with RemindMeBot.',
-        Usage: 'r>help'
+        Info: 'Returns extra documentation for a specific command (or the list of all commands).',
+        Usage: 'r>help [command]',
+        Example: 'r>help remind'
     },
     {
         Name: 'remindme',
@@ -33,12 +34,12 @@ loadCommands([ // eslint-disable-line no-undef
     },
     {
         Name: 'invite',
-        Info: 'Returns an invite for RemindMeBot.',
+        Info: 'Returns an invite for RemindMeBot and the support server.',
         Usage: 'r>invite'
     },
     {
         Name: 'ping',
-        Info: '	Returns the Websocket ping to the API servers in ms.',
+        Info: 'Returns the websocket latency to the API servers in ms.',
         Usage: 'r>ping'
     },
     {
