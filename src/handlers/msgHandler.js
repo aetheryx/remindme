@@ -5,6 +5,10 @@ module.exports = async function (Bot, msg) {
 
     const match = msg.content.slice(0, 22).match(Bot.prefixRX);
     const prefix = match ? `${match[0]} ` : msg.channel.guild.prefix;
+    if (!msg.content.startsWith(prefix)) {
+        return;
+    }
+
     const args = msg.content.slice(prefix.length).split(' ').filter(arg => arg.length > 0);
     let command = args.shift();
 
