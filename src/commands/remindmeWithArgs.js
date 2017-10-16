@@ -10,11 +10,11 @@ const time = require('time-parser');
 
 module.exports = async function (Bot, msg, args) {
     args = args.join(' ');
-    if (!args.includes('"')) {
+    if (!args.includes('"') && !args.includes('“') && !args.includes('”')) { // :(
         return Bot.sendMessage(msg.channel.id, `Argument error. Please follow the proper syntax for the command:\n\`${msg.channel.guild.prefix}remindme time_argument "message"\`, e.g. \`${msg.channel.guild.prefix}remindme 31 December 2017 "New Years"\``);
     }
 
-    const timeRX = new RegExp('(.*?)"', 'i');
+    const timeRX = new RegExp('(.*?)("|“|”)', 'i');
     let timeArg = timeRX.exec(args)[1];
     Object.keys(timeRXes).map(regexKey => {
         if (timeArg.includes(regexKey)) {
@@ -36,8 +36,8 @@ module.exports = async function (Bot, msg, args) {
         channelID[1] = msg.channel.id;
     }
 
-    const reminderRX = /"([^]*?)"/i;
-    const reminder = reminderRX.exec(msg.cleanContent)[1].trim();
+    const reminderRX = /("|“|”)([^]*?)("|“|”)/i;
+    const reminder = reminderRX.exec(msg.cleanContent)[2].trim();
     if (reminder.length > 1000) {
         return Bot.sendMessage(msg.channel.id, 'Your reminder cannot exceed 1000 characters.');
     }
@@ -45,10 +45,12 @@ module.exports = async function (Bot, msg, args) {
     await Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, dueDate, channelID)
         VALUES (?, ?, ?, ?, ?);`, msg.author.id, reminder, Date.now(), parsedTime.absolute, channelID ? channelID[1].replace(/<|>|#/g, '') : null);
 
-    Bot.sendMessage(msg.channel.id, { embed: {
-        color: Bot.config.embedColor,
-        description: `:ballot_box_with_check: Reminder added: ${reminder}`,
-        footer: { text: 'Reminder set for ' },
-        timestamp: new Date(parsedTime.absolute)
-    }});
+    Bot.sendMessage(msg.channel.id, {
+        embed: {
+            color: Bot.config.embedColor,
+            description: `:ballot_box_with_check: Reminder added: ${reminder}`,
+            footer: { text: 'Reminder set for ' },
+            timestamp: new Date(parsedTime.absolute)
+        }
+    });
 };
