@@ -8,7 +8,6 @@ exports.create = async (Bot, guild) => {
 
 exports.delete = async (Bot, guild) => {
     await Bot.db.run('DELETE FROM prefixes WHERE guildID = ?;', guild.id);
-    Bot.prefixes.delete(guild.id);
     postStats(Bot);
 };
 
