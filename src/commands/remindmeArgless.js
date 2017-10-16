@@ -37,7 +37,7 @@ module.exports = async function (Bot, msg) {
             return collector.stop();
         }
         if (m.content.toLowerCase().includes('cancel') || m.content.toLowerCase() === 'c') {
-            msg.channel.send('Cancelled.');
+            Bot.sendMessage(msg.channel.id, 'Cancelled.');
             return collector.stop();
         }
 
