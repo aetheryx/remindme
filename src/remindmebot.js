@@ -66,7 +66,7 @@ class RMB {
             this.editStatus('online', {
                 name: statuses[index].replace('%s', this.guilds.size)
             });
-        }.bind(this.client), 8000);
+        }.bind(this.client), 30000);
 
         this.botlists = new Map([
             [`https://novo.archbox.pro/api/bots/${this.client.user.id}`, this.config.keys.novo],
