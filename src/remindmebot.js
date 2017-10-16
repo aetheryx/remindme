@@ -166,7 +166,9 @@ class RMB {
                 return await this.client.createMessage(target, content);
             }
         } catch (err) {
-            if (!err.message.includes('Missing Permissions') && !err.message.includes('Cannot send messages to this user')) {
+            if (!err.message.includes('Missing Permissions') &&
+                !err.message.includes('Cannot send messages to this user') &&
+                !err.message.includes('Missing Access')) {
                 this.log(err.stack);
             } else {
                 return false;
