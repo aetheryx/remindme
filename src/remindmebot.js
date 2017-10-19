@@ -3,6 +3,7 @@ const validateConfig   = require('./utils/validateConfig.js');
 const guildHandler     = require('./handlers/guildHandler.js');
 const botPackage       = require('../package.json');
 const handleMsg        = require('./handlers/msgHandler.js');
+const datadog          = require('datadog-metrics');
 const Eris             = loadMods(require('eris'));
 const fs               = require('fs');
 
@@ -18,6 +19,13 @@ class RMB {
         });
         this.client = new Eris(this.config.keys.token,
             Object.assign({}, this.defaultClientOptions, this.config.clientOptions || {}));
+        this.metrics = datadog;
+        this.metrics.init({
+            apiKey: this.config.datadog.API_KEY,
+            appKey: this.config.datadog.APP_KEY,
+            flushIntervalSeconds: 10,
+            prefix: 'rmb.'
+        });
         this.db = require('sqlite');
 
         this.commands = new Map();
@@ -33,6 +41,8 @@ class RMB {
             .once('ready', this.start.bind(this));
 
         this.client.connect();
+
+        setInterval(this.gaugeMetrics, 30000);
     }
 
     async onShardConnect (id) {
@@ -174,6 +184,11 @@ class RMB {
                 return false;
             }
         }
+    }
+
+    gaugeMetrics () {
+        this.metrics.gauge('memUsage', process.memoryUsage().heapUsed);
+        // more to come soonTM
     }
 
     get package () {

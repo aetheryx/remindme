@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Aetheryx/remindme#readme",
   "dependencies": {
+    "datadog-metrics": "^0.6.1",
     "chalk": "^2.1.0",
     "eris": "^0.8.0",
     "eslint": "^4.5.0",
