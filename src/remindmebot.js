@@ -153,7 +153,7 @@ class RMB {
             await handleMsg(this, msg);
         } catch (err) {
             msg.channel.createMessage('Something went wrong while executing this command. The error has been logged. \nPlease join here (<https://discord.gg/Yphr6WG>) if the issue persists.');
-            this.log(err.stack, 'error');
+            this.log(`COMMAND ERROR:\nMessage content: ${msg.content}\nError: ${err.stack}`, 'error');
         }
     }
 
