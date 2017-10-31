@@ -36,10 +36,8 @@ module.exports = async function (Bot, msg, args) {
         channelID[1] = msg.channel.id;
     }
 
-    const recurring = 0;
     const recurRX = /-r$/i;
-    if (recurRX.test(args))
-        recurring = 1;
+    const recurring = recurRX.test(args) ? 1 : 0;
 
     const reminderRX = /("|“|”)([^]*?)("|“|”)/i;
     const reminder = reminderRX.exec(msg.cleanContent)[2].trim();
