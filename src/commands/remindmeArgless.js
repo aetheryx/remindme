@@ -24,6 +24,8 @@ module.exports = async function (Bot, msg) {
     let step = 1;
     const r = {
         reminderText: undefined,
+        recurring: 0,
+        duration: undefined,
         dueDate: undefined,
         channelID: undefined
     };
@@ -67,6 +69,7 @@ module.exports = async function (Bot, msg) {
                     .then(m => delarray.push(m.id));
             }
 
+            r.duration = parsedTime.relative;
             r.dueDate = parsedTime.absolute;
             Bot.sendMessage(msg.channel.id, 'Would you like to receive the reminder in a specific channel, or in your DMs?\nMention the channel you\'d like to receive the reminder in, or send `DM` if you\'d like to receive it in your DMs.')
                 .then(m => delarray.push(m.id));
@@ -83,8 +86,8 @@ module.exports = async function (Bot, msg) {
 
             collector.stop();
 
-            await Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, dueDate, channelID)
-                VALUES (?, ?, ?, ?, ?);`, msg.author.id, r.reminderText, Date.now(), r.dueDate, r.channelID);
+            await Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, duration, recurring, dueDate, channelID)
+                VALUES (?, ?, ?, ?, ?, ?, ?);`, msg.author.id, r.reminderText, Date.now(), r.duration, r.recurring, r.dueDate, r.channelID);
 
             Bot.sendMessage(msg.channel.id, { embed: {
                 color: Bot.config.embedColor,

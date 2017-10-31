@@ -114,6 +114,8 @@ class RMB {
             reminderText TEXT,
             key          VARCHAR(128),
             createdDate  INTEGER,
+            duration     INTEGER,
+            recurring    INTEGER,
             dueDate      INTEGER,
             channelID    TEXT);`);
     }

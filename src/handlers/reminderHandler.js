@@ -22,14 +22,18 @@ async function sendReminder (Bot, err, r) {
     } catch (err) {
         Bot.log(err.stack, 'error');
     } finally {
-        await Bot.db.run('DELETE FROM reminders WHERE rowid = ?;', r.rowid);
+        if (r.recurring == 0) {
+            await Bot.db.run('DELETE FROM reminders WHERE rowid = ?;', r.rowid);
+        } else {
+            await Bot.db.run('UPDATE reminders SET dueDate = ? WHERE rowid = ?;', (Date.now() + r.duration), r.rowid);
+        }
     }
 }
 
 
 module.exports = async (Bot) => {
     setInterval(async () => {
-        await Bot.db.each('SELECT rowid, owner, reminderText, createdDate, channelID FROM reminders WHERE dueDate < ?;',
+        await Bot.db.each('SELECT rowid, owner, reminderText, duration, recurring, createdDate, channelID FROM reminders WHERE dueDate < ?;',
             Date.now(),
             async (...args) => sendReminder(Bot, ...args));
     }, Bot.config.tick);

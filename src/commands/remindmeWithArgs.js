@@ -36,14 +36,19 @@ module.exports = async function (Bot, msg, args) {
         channelID[1] = msg.channel.id;
     }
 
+    const recurring = 0;
+    const recurRX = /-r$/i;
+    if (recurRX.test(args))
+        recurring = 1;
+
     const reminderRX = /("|“|”)([^]*?)("|“|”)/i;
     const reminder = reminderRX.exec(msg.cleanContent)[2].trim();
     if (reminder.length > 1000) {
         return Bot.sendMessage(msg.channel.id, 'Your reminder cannot exceed 1000 characters.');
     }
 
-    await Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, dueDate, channelID)
-        VALUES (?, ?, ?, ?, ?);`, msg.author.id, reminder, Date.now(), parsedTime.absolute, channelID ? channelID[1].replace(/<|>|#/g, '') : null);
+    await Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, duration, recurring, dueDate, channelID)
+        VALUES (?, ?, ?, ?, ?, ?, ?);`, msg.author.id, reminder, Date.now(), parsedTime.relative, recurring, parsedTime.absolute, channelID ? channelID[1].replace(/<|>|#/g, '') : null);
 
     Bot.sendMessage(msg.channel.id, {
         embed: {
