@@ -81,7 +81,7 @@ module.exports = async function (Bot, msg) {
                     return Bot.sendMessage(msg.channel.id, 'You need to either ping the channel you\'d like to receive your reminder in, send `here` or send `DM`.\nWhere would you like to receive your reminder?')
                         .then(m => delarray.push(m.id));
                 }
-                r.channelID = (m.channelMentions[0] || { id: m.channel.id }).id;
+                r.channelID = m.channelMentions[0] || m.channel.id;
             }
 
             collector.stop();
