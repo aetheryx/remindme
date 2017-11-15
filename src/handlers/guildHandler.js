@@ -12,6 +12,9 @@ exports.delete = async (Bot, guild) => {
 };
 
 async function postStats (Bot) {
+    if (Bot.devMode) {
+        return;
+    }
     for (const [url, token] of Bot.botlists) {
         if (token) {
             snekfetch
