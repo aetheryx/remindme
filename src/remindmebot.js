@@ -9,6 +9,7 @@ const fs               = require('fs');
 
 class RMB {
     constructor () {
+        this.devMode = process.argv.includes('--development');
         this.log = require('./utils/logger.js');
         this.config = require('./config.json');
         validateConfig(this.config, (err) => {
@@ -19,13 +20,17 @@ class RMB {
         });
         this.client = new Eris(this.config.keys.token,
             Object.assign({}, this.defaultClientOptions, this.config.clientOptions || {}));
-        this.metrics = datadog;
-        this.metrics.init({
-            apiKey: this.config.datadog.API_KEY,
-            appKey: this.config.datadog.APP_KEY,
-            flushIntervalSeconds: 10,
-            prefix: 'rmb.'
-        });
+
+        if (!this.devMode) {
+            this.metrics = datadog;
+            this.metrics.init({
+                apiKey: this.config.datadog.API_KEY,
+                appKey: this.config.datadog.APP_KEY,
+                flushIntervalSeconds: 10,
+                prefix: 'rmb.'
+            });
+            setInterval(this.gaugeMetrics, 30000);
+        }
         this.db = require('sqlite');
 
         this.commands = new Map();
@@ -41,8 +46,6 @@ class RMB {
             .once('ready', this.start.bind(this));
 
         this.client.connect();
-
-        setInterval(this.gaugeMetrics, 30000);
     }
 
     async onShardConnect (id) {
