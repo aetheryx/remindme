@@ -22,7 +22,7 @@ async function sendReminder (Bot, err, r) {
     } catch (err) {
         Bot.log(err.stack, 'error');
     } finally {
-        if (r.recurring === 0) {
+        if (!r.recurring) {
             await Bot.db.run('DELETE FROM reminders WHERE rowid = ?;', r.rowid);
         } else {
             await Bot.db.run('UPDATE reminders SET dueDate = ? WHERE rowid = ?;', Date.now() + r.duration, r.rowid);
