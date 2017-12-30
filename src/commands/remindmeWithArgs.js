@@ -11,7 +11,7 @@ const time = require('time-parser');
 module.exports = async function (Bot, msg, args) {
     args = args.join(' ');
     if (!args.includes('"') && !args.includes('“') && !args.includes('”')) { // :(
-        return Bot.sendMessage(msg.channel.id, `Argument error. Please follow the proper syntax for the command:\n\`${msg.channel.guild.prefix}remindme time_argument "message"\`, e.g. \`${msg.channel.guild.prefix}remindme 31 December 2017 "New Years"\``);
+        return Bot.sendMessage(msg.channel.id, `Argument error. Please follow the proper syntax for the command:\n\`${msg.prefix}remindme time_argument "message"\`, e.g. \`${msg.prefix}remindme 31 December 2017 "New Years"\``);
     }
 
     const timeRX = new RegExp('(.*?)("|“|”)', 'i');

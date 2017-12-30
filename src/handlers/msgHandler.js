@@ -4,7 +4,7 @@ module.exports = async function (Bot, msg) {
     }
 
     const match = msg.content.slice(0, 22).match(Bot.prefixRX);
-    const prefix = match ? `${match[0]} ` : msg.channel.guild.prefix;
+    const prefix = match ? `${match[0]} ` : msg.prefix;
     if (!msg.content.startsWith(prefix)) {
         return;
     }

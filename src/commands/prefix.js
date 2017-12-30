@@ -3,7 +3,7 @@ exports.run = async function (Bot, msg, args) {
         return Bot.sendMessage(msg.channel.id, 'Custom prefixes are currently not supported in DMs.');
     }
     if (!args[0]) {
-        return Bot.sendMessage(msg.channel.id, `The prefix in this server is \`${msg.channel.guild.prefix}\`.`);
+        return Bot.sendMessage(msg.channel.id, `The prefix in this server is \`${msg.prefix}\`.`);
     }
     if (!msg.member.permission.has('manageGuild')) {
         return Bot.sendMessage(msg.channel.id, 'You are not authorized to use this command.');
@@ -11,7 +11,7 @@ exports.run = async function (Bot, msg, args) {
     if (args.join(' ').length > 32) {
         return Bot.sendMessage(msg.channel.id, 'Your prefix cannot be longer than 32 characters.');
     }
-    msg.channel.guild.prefix = args.join(' ');
+    msg.prefix = args.join(' ');
     Bot.sendMessage(msg.channel.id, `Prefix successfully set to \`${args.join(' ')}\` for this server.`);
 };
 

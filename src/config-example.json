@@ -10,8 +10,7 @@
   "keys": {
     "token": "",
     "dbl": "",
-    "botspw": "",
-    "novo": ""
+    "botspw": ""
   },
   "disabledEvents": [
     "CHANNEL_PINS_UPDATE",

@@ -82,7 +82,6 @@ class RMB {
         }.bind(this.client), 30000);
 
         this.botlists = new Map([
-            [`https://novo.archbox.pro/api/bots/${this.client.user.id}`, this.config.keys.novo],
             [`https://discordbots.org/api/bots/${this.client.user.id}/stats`, this.config.keys.dbl],
             [`https://bots.discord.pw/api/bots/${this.client.user.id}/stats`, this.config.keys.botspw],
         ]);
@@ -131,9 +130,9 @@ class RMB {
             prefixes.set(row.guildID, row.prefix);
         });
 
-        Object.defineProperty(Eris.Guild.prototype, 'prefix', { // A new concept I'm playing with.. might not be around for ever, so calm your tits :^)
+        Object.defineProperty(Eris.Message.prototype, 'prefix', {
             get: function () {
-                return prefixes.get(this.id) || _this.config.defaultPrefix;
+                return !this.channel.guild ? _this.config.defaultPrefix : prefixes.get(this.id) || _this.config.defaultPrefix;
             },
             set: async function (newPrefix) {
                 if (prefixes.has(this.id)) {
@@ -152,19 +151,15 @@ class RMB {
         }
 
         try {
-            if (!msg.channel.guild) {
-                Object.defineProperty(msg.channel, 'guild', {
-                    get: () => {
-                        return {
-                            prefix: this.config.defaultPrefix,
-                            shard: {
-                                latency: this.client.shards.get(0).latency,
-                                client: this.client
-                            }
-                        };
-                    }
-                });
-            }
+            const client = this.client;
+            Object.defineProperty(msg, 'shard', {
+                get () {
+                    return {
+                        latency: client.shards.get(0).latency,
+                        client
+                    };
+                }
+            });
             await handleMsg(this, msg);
         } catch (err) {
             msg.channel.createMessage('Something went wrong while executing this command. The error has been logged. \nPlease join here (<https://discord.gg/Yphr6WG>) if the issue persists.');

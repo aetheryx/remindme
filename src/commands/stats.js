@@ -12,7 +12,7 @@ exports.run = async function (Bot, msg) {
         fields: [
             { name: 'Guilds', value: Bot.client.guilds.size, inline: true },
             { name: 'Uptime', value: moment.duration(process.uptime(), 'seconds').format('dd:hh:mm:ss'), inline: true },
-            { name: 'Ping', value: `${msg.channel.guild.shard.latency.toFixed()} ms`, inline: true },
+            { name: 'Ping', value: `${msg.shard.latency.toFixed()} ms`, inline: true },
             { name: 'RAM Usage', value: `${(memUsage / 1048576).toFixed()}MB/${(totalMem / 1073741824).toFixed(1)} GB\n(${(memUsage / totalMem * 100).toFixed(2)}%)`, inline: true
             },
             { name: 'System Info', value: `${process.platform} (${process.arch})\n${(os.totalmem() > 1073741824 ? `${(os.totalmem() / 1073741824).toFixed(1)} GB` : `${(os.totalmem() / 1048576).toFixed(2)} MB`)}`, inline: true },
