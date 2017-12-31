@@ -21,7 +21,7 @@ function post (options, body) {
         resolve(output);
       });
     });
-    req.write(body);
+    req.write(data);
     req.end();
   });
 }
