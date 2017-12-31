@@ -6,11 +6,13 @@ async function helpCommand (Bot, msg, args) {
     }
   }
 
+  const prefix = await Bot.db.getPrefix(msg.channel.guild.id);
+
   if (!args[0]) {
-    const content = `To set a reminder, simply send \`fremindme\` and follow the instructions.\n` +
-      `Alternatively, you can also send \`fremindme time_argument "message"\`, ` +
-      `e.g. \`fremindme 31 December 2017 "New Years"\`.\n` +
-      `My current prefix is \`f\`, but you can also mention me as a prefix.\nHere's a list of my commands:`;
+    const content = `To set a reminder, simply send \`${prefix}remindme\` and follow the instructions.\n` +
+      `Alternatively, you can also send \`${prefix}remindme time_argument "message"\`, ` +
+      `e.g. \`${prefix}remindme 31 December 2017 "New Years"\`.\n` +
+      `My current prefix is \`${prefix}\`, but you can also mention me.\nHere's a list of my commands:`;
     Bot.sendMessage(msg.channel.id, { content, embed: {
       color: Bot.config.embedColor,
       description: filteredCommands.join(', ')
@@ -27,7 +29,7 @@ async function helpCommand (Bot, msg, args) {
       color: Bot.config.embedColor,
       fields: [
         { 'name': 'Description: ', 'value': command.description },
-        { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', 'f' + command.name)}${'```'}` },
+        { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', prefix + command.name)}${'```'}` },
         { 'name': 'Aliases: ', 'value': command.aliases[0] ? command.aliases.join(', ') : 'None' }
       ]
     }});
