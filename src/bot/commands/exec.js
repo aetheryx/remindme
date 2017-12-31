@@ -11,7 +11,6 @@ async function execCommand (Bot, msg, args) {
       }, `${stdout}\n\n${stderr}`);
 
       Bot.sendMessage(msg.channel.id, { embed: {
-        color: Bot.config.embedColor,
         description: `Console log exceeds 2000 characters. View [here](https://hastebin.com/${JSON.parse(res).key}).`
       }});
     } else {

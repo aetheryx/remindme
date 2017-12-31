@@ -12,12 +12,11 @@ class RemindMeBot {
     this.log = utils.log;
 
     this.config = config;
-    // utils.validateConfig(config, (err) => {
-    //   if (err) {
-    //       this.log(`Invalid configuration, aborting:\n${err}`, 'error');
-    //       process.exit(1);
-    //   }
-    // });
+    utils.validateConfig(config)
+      .catch(err => {
+        this.log(`Invalid configuration, aborting:\n${err}`, 'error');
+        process.exit(1);
+      });
 
     this.commands = {};
     this.loadCommands();
@@ -88,16 +87,20 @@ class RemindMeBot {
   }
 
   async sendMessage (target, content, isUser = false) {
+    if (content.embed && !content.embed.color) {
+      content.embed.color = this.config.embedColor;
+    }
+
     try {
       if (isUser) {
         const DMChannel = await this.client.getDMChannel(target);
-        return await DMChannel.createMessage(content);
-      } else {
+        return await DMChannel.createMessage(content); // return await is okay here
+      } else {                                        //  because we're in a try-catch
         return await this.client.createMessage(target, content);
       }
     } catch (err) {
       if (
-        !err.message.includes('Missing Permissions') &&
+        !err.message.includes('Missing Permissions') && // TODO: re-test these and replace these strings with HTTP codes
         !err.message.includes('Cannot send messages to this user') &&
         !err.message.includes('Missing Access')
       ) {

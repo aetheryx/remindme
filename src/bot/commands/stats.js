@@ -10,7 +10,6 @@ async function statsCommand (Bot, msg) {
     Bot.client.shards.get(0);
 
   Bot.sendMessage(msg.channel.id, { embed: {
-    color: Bot.config.embedColor,
     title: `RemindMeBot ${botVersion}`,
     url: 'http://remindmebot.xyz',
     fields: [

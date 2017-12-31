@@ -14,7 +14,6 @@ async function helpCommand (Bot, msg, args) {
       `e.g. \`${prefix}remindme 31 December 2017 "New Years"\`.\n` +
       `My current prefix is \`${prefix}\`, but you can also mention me.\nHere's a list of my commands:`;
     Bot.sendMessage(msg.channel.id, { content, embed: {
-      color: Bot.config.embedColor,
       description: filteredCommands.join(', ')
     }});
   } else {
@@ -26,7 +25,6 @@ async function helpCommand (Bot, msg, args) {
 
     Bot.sendMessage(msg.channel.id, { embed: {
       title: `Help for command: ${command.name}`,
-      color: Bot.config.embedColor,
       fields: [
         { 'name': 'Description: ', 'value': command.description },
         { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', prefix + command.name)}${'```'}` },
