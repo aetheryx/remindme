@@ -3,6 +3,7 @@ const Eris = require('eris');
 const fs   = require('fs');
 
 const utils = require(`${__dirname}/../utils`);
+const dbFunctions = require(`${__dirname}/../dbFunctions`);
 const events = require(`${__dirname}/events`);
 
 class RemindMeBot {
@@ -23,6 +24,7 @@ class RemindMeBot {
 
     this.dbClient = null;
     this.dbConn = null;
+    this.db = null;
     this.initDB();
 
     this.client = new Eris(this.config.keys.token, this.clientOptions);
@@ -38,8 +40,19 @@ class RemindMeBot {
   }
 
   async initDB () {
-    this.dbClient = await MongoClient.connect(this.config.dbURL || 'mongodb://localhost:27017');
+    this.dbClient = await MongoClient.connect(this.config.dbURL || 'mongodb://localhost:27017')
+      .catch(e => {
+        if (e.message.includes('ECONNREFUSED')) {
+          this.log('Failed to connect to MongoDB! Exiting...', 'error');
+          process.exit();
+        }
+      });
     this.dbConn = this.dbClient.db('remindmebot');
+
+    this.db = {};
+    for (const dbFunction in dbFunctions) {
+      this.db[dbFunction] = dbFunctions[dbFunction].bind(this);
+    }
   }
 
   async loadCommands () {
