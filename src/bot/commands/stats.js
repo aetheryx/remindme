@@ -1,4 +1,3 @@
-
 const os = require('os');
 const totalMem = os.totalmem();
 const erisVersion = require(`${__dirname}/../../../node_modules/eris/package.json`).version;
