@@ -3,7 +3,7 @@ async function updatePrefix (id, prefix) {
 
   const existingPrefix = await prefixes.findOne({ id });
 
-  if (existingPrefix._id) {
+  if (existingPrefix) {
     return prefixes.updateOne({ _id: existingPrefix._id }, { '$set': { prefix } });
   } else {
     return prefixes.insertOne({ id, prefix });
