@@ -3,114 +3,114 @@ var statsPage = true;
 var index = 3;
 
 function loadCommands (commands) { // eslint-disable-line no-unused-vars
-    document.getElementById('commands').appendChild(document.createElement('br'));
-    commands.forEach(command => {
-        const card = document.createElement('div');
-        card.className = 'card card-1';
-        card.style.padding = '16px';
-        Object.keys(command).forEach(commandKey => {
-            if (Array.isArray(command[commandKey])) {
-                card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey][0]}`));
-                card.appendChild(document.createElement('br'));
-                card.appendChild(document.createTextNode(command[commandKey][1]));
-            } else if (['Usage', 'Example'].includes(commandKey)) {
-                const tag = document.createElement('kbd');
-                const text = document.createTextNode(command[commandKey]);
-                tag.appendChild(text);
-                card.appendChild(document.createTextNode(`${commandKey}: `));
-                card.appendChild(tag);
-            } else {
-                card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey]}`));
-            }
-            card.appendChild(document.createElement('br'));
-        });
-        document.getElementById('commands').appendChild(card);
+  document.getElementById('commands').appendChild(document.createElement('br'));
+  commands.forEach(command => {
+    const card = document.createElement('div');
+    card.className = 'card card-1';
+    card.style.padding = '16px';
+    Object.keys(command).forEach(commandKey => {
+      if (Array.isArray(command[commandKey])) {
+        card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey][0]}`));
+        card.appendChild(document.createElement('br'));
+        card.appendChild(document.createTextNode(command[commandKey][1]));
+      } else if (['Usage', 'Example'].includes(commandKey)) {
+        const tag = document.createElement('kbd');
+        const text = document.createTextNode(command[commandKey]);
+        tag.appendChild(text);
+        card.appendChild(document.createTextNode(`${commandKey}: `));
+        card.appendChild(tag);
+      } else {
+        card.appendChild(document.createTextNode(`${commandKey}: ${command[commandKey]}`));
+      }
+      card.appendChild(document.createElement('br'));
     });
+    document.getElementById('commands').appendChild(card);
+  });
 
-    const soontm = document.createElement('p');
-    soontm.appendChild(document.createTextNode('More coming soon.'));
-    soontm.style.fontSize = '50px';
-    document.getElementById('commands').appendChild(soontm);
+  const soontm = document.createElement('p');
+  soontm.appendChild(document.createTextNode('More coming soon.'));
+  soontm.style.fontSize = '50px';
+  document.getElementById('commands').appendChild(soontm);
 
-    console.log('hey kid you wanna smonk some weeds'); // eslint-disable-line no-console
+  console.log('hey kid you wanna smonk some weeds'); // eslint-disable-line no-console
 }
 
 function initStats (uptime, statsPage, index) {
-    if (uptime === 0) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                uptime = +xhttp.responseText;
-            }
-        };
-        xhttp.open('GET', '/api/uptime', true);
-        xhttp.send();
-    }
+  if (uptime === 0) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4 && this.status === 200) {
+        uptime = +xhttp.responseText;
+      }
+    };
+    xhttp.open('GET', '/api/uptime', true);
+    xhttp.send();
+  }
 
-    setInterval(() => {
-        if (statsPage !== true) {
-            return;
+  setInterval(() => {
+    if (statsPage !== true) {
+      return;
+    }
+    if (index === 3) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          var stats = JSON.parse(xhttp.responseText);
+          var array = Object.keys(stats);
+          for (var value in array) {
+            document.getElementById(array[value]).innerHTML = stats[array[value]];
+          }
         }
-        if (index === 3) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState === 4 && this.status === 200) {
-                    var stats = JSON.parse(xhttp.responseText);
-                    var array = Object.keys(stats);
-                    for (var value in array) {
-                        document.getElementById(array[value]).innerHTML = stats[array[value]];
-                    }
-                }
-            };
-            index = 0;
-            xhttp.open('GET', '/api/stats', true);
-            xhttp.send();
-        }
-        document.getElementById('uptime').innerHTML = humanizeDuration(uptime.toFixed() * 1000, { conjunction: ' and ', serialComma: false }); // eslint-disable-line no-undef
-        uptime++;
-        index++;
-    }, 1000);
+      };
+      index = 0;
+      xhttp.open('GET', '/api/stats', true);
+      xhttp.send();
+    }
+    document.getElementById('uptime').innerHTML = humanizeDuration(uptime.toFixed() * 1000, { conjunction: ' and ', serialComma: false }); // eslint-disable-line no-undef
+    uptime++;
+    index++;
+  }, 1000);
 }
 
 function switchNavSelected (state) {
-    document.querySelector('li.nav-link.active').className = document.querySelector('li.nav-link.active').className.replace(' active', '');
-    document.querySelector(`li.nav-link#${state}`).className += ' active';
-    statsPage = state === 'homepagebtn' ? true : false;
+  document.querySelector('li.nav-link.active').className = document.querySelector('li.nav-link.active').className.replace(' active', '');
+  document.querySelector(`li.nav-link#${state}`).className += ' active';
+  statsPage = state === 'homepagebtn' ? true : false;
 }
 
 function enterHomePage () { // eslint-disable-line no-unused-vars
-    switchNavSelected('homepagebtn');
+  switchNavSelected('homepagebtn');
 
-    const commandsStyle = document.getElementById('commands').style;
-    commandsStyle.opacity = '0';
+  const commandsStyle = document.getElementById('commands').style;
+  commandsStyle.opacity = '0';
+
+  setTimeout(() => {
+    const headerStyle = document.getElementById('mainheader').style;
+    headerStyle.maxHeight = '1000px';
+    headerStyle.transform = 'translate(0px, 0px)';
 
     setTimeout(() => {
-        const headerStyle = document.getElementById('mainheader').style;
-        headerStyle.maxHeight = '1000px';
-        headerStyle.transform = 'translate(0px, 0px)';
+      const cardStyle = document.querySelector('div.card.card-1').style;
+      cardStyle.display = 'inline-block';
+      cardStyle.opacity = '1';
+    }, 200);
 
-        setTimeout(() => {
-            const cardStyle = document.querySelector('div.card.card-1').style;
-            cardStyle.display = 'inline-block';
-            cardStyle.opacity = '1';
-        }, 200);
-
-        commandsStyle.display = 'none';
-    }, 800);
+    commandsStyle.display = 'none';
+  }, 800);
 }
 
 function enterCommandPage () { // eslint-disable-line no-unused-vars
-    switchNavSelected('cmdpagebtn');
-    document.getElementById('mainheader').style.transform = 'translate(0px, -715px)';
-    document.querySelector('div.card.card-1').style.opacity = '0';
-    setTimeout(() => document.getElementById('mainheader').style.maxHeight = '1px', 120);
-    setTimeout(() => {
-        document.querySelector('div.card.card-1').style.display = 'none';
-    }, 800);
-    setTimeout(() => {
-        document.getElementById('commands').style.display = 'inline';
-        document.getElementById('commands').style.opacity = '1';
-    }, 1200);
+  switchNavSelected('cmdpagebtn');
+  document.getElementById('mainheader').style.transform = 'translate(0px, -715px)';
+  document.querySelector('div.card.card-1').style.opacity = '0';
+  setTimeout(() => document.getElementById('mainheader').style.maxHeight = '1px', 120);
+  setTimeout(() => {
+    document.querySelector('div.card.card-1').style.display = 'none';
+  }, 800);
+  setTimeout(() => {
+    document.getElementById('commands').style.display = 'inline';
+    document.getElementById('commands').style.opacity = '1';
+  }, 1200);
 }
 
 initStats(uptime, statsPage, index);
