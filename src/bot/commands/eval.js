@@ -10,7 +10,7 @@ async function evalCommand (Bot, msg, args) {
 
   let result;
   try {
-    result = asynchr ? await eval(`(async()=>{${input}})();`) : eval(input);
+    result = await (asynchr ? eval(`(async()=>{${input}})();`) : eval(input));
     if (typeof result !== 'string') {
       result = inspect(result, { depth: 1 }).length > 1990 ?
         inspect(result, { depth: 0 }) :
