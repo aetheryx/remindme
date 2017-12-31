@@ -1,6 +1,6 @@
 const { inspect } = require('util');
 
-async function evalCommand (Bot, msg, args) {
+async function evalCommand (msg, args) {
   let input = args.join(' ');
   const silent = input.includes('--silent');
   const asynchr = input.includes('return');
@@ -16,13 +16,13 @@ async function evalCommand (Bot, msg, args) {
         inspect(result, { depth: 0 }) :
         inspect(result, { depth: 1 });
     }
-    result = result.replace(new RegExp(Bot.config.keys.token, 'gi'), 'i think the fuck not you trick ass bitch');
+    result = result.replace(new RegExp(this.config.keys.token, 'gi'), 'i think the fuck not you trick ass bitch');
   } catch (err) {
     result = err.message;
   }
 
   if (!silent) {
-    Bot.sendMessage(msg.channel.id, `${input}\n\`\`\`js\n${result}\n\`\`\``);
+    return `${input}\n\`\`\`js\n${result}\n\`\`\``;
   }
 }
 

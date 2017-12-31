@@ -25,7 +25,13 @@ async function onMessageCreate (msg) {
     if (command.ownerOnly && msg.author.id !== this.config.ownerID) {
       return;
     }
-    command.call(this, msg, args)
+
+    command.call.call(this, msg, args)
+      .then(res => {
+        if (res && (typeof res === 'string' || res instanceof Object)) {
+          this.sendMessage(msg.channel.id, res);
+        }
+      })
       .catch(e => {
         this.log(e.stack, 'error');
         msg.channel.createMessage('Something went wrong while executing this command. The error has been logged. \nPlease join here (Yphr6WG) if the issue persists.');

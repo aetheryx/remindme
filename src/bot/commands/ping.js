@@ -1,11 +1,9 @@
-async function pingCommand (Bot, msg) {
+async function pingCommand (msg) {
   const shard = msg.channel.guild ?
     msg.channel.guild.shard :
-    Bot.client.shards.get(0);
+    this.client.shards.get(0);
 
-  Bot.sendMessage(msg.channel.id, {
-    content: `:ping_pong: Pong! ${shard.latency.toFixed()}ms`
-  });
+  return `:ping_pong: Pong! ${shard.latency.toFixed()}ms`;
 }
 
 module.exports = {

@@ -13,9 +13,13 @@ async function helpCommand (Bot, msg, args) {
       `Alternatively, you can also send \`${prefix}remindme time_argument "message"\`, ` +
       `e.g. \`${prefix}remindme 31 December 2017 "New Years"\`.\n` +
       `My current prefix is \`${prefix}\`, but you can also mention me.\nHere's a list of my commands:`;
-    Bot.sendMessage(msg.channel.id, { content, embed: {
-      description: filteredCommands.join(', ')
-    }});
+
+    return {
+      content,
+      embed: {
+        description: filteredCommands.join(', ')
+      }
+    };
   } else {
     const command = Bot.commands[args[0]] || Bot.commands[Object.keys(Bot.commands).find(c => Bot.commands[c].aliases.includes(args[0]))];
 
@@ -23,14 +27,16 @@ async function helpCommand (Bot, msg, args) {
       return; // TODO: decide whether this should be a silent exit or not
     }
 
-    Bot.sendMessage(msg.channel.id, { embed: {
-      title: `Help for command: ${command.name}`,
-      fields: [
-        { 'name': 'Description: ', 'value': command.description },
-        { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', prefix + command.name)}${'```'}` },
-        { 'name': 'Aliases: ', 'value': command.aliases[0] ? command.aliases.join(', ') : 'None' }
-      ]
-    }});
+    return {
+      embed: {
+        title: `Help for command: ${command.name}`,
+        fields: [
+          { 'name': 'Description: ', 'value': command.description },
+          { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', prefix + command.name)}${'```'}` },
+          { 'name': 'Aliases: ', 'value': command.aliases[0] ? command.aliases.join(', ') : 'None' }
+        ]
+      }
+    };
   }
 }
 

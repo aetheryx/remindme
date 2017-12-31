@@ -1,7 +1,7 @@
-async function rebootCommand (Bot, msg) {
-  await Bot.sendMessage(msg.channel.id, 'Restarting...');
-  await Bot.client.disconnect({ reconnect: false });
-  await Bot.dbClient.close();
+async function rebootCommand (msg) {
+  await this.sendMessage(msg.channel.id, 'Restarting...');
+  await this.client.disconnect({ reconnect: false });
+  await this.dbClient.close();
   process.exit();
 }
 
