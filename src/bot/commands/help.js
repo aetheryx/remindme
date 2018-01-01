@@ -1,12 +1,12 @@
-async function helpCommand (Bot, msg, args) {
+async function helpCommand (msg, args) {
   const filteredCommands = [];
-  for (const command in Bot.commands) {
-    if (!Bot.commands[command].ownerOnly) {
+  for (const command in this.commands) {
+    if (!this.commands[command].ownerOnly) {
       filteredCommands.push(command);
     }
   }
 
-  const prefix = await Bot.db.getPrefix(msg.channel.guild.id);
+  const prefix = await this.db.getPrefix(msg.channel.guild.id);
 
   if (!args[0]) {
     const content = `To set a reminder, simply send \`${prefix}remindme\` and follow the instructions.\n` +
@@ -21,7 +21,7 @@ async function helpCommand (Bot, msg, args) {
       }
     };
   } else {
-    const command = Bot.commands[args[0]] || Bot.commands[Object.keys(Bot.commands).find(c => Bot.commands[c].aliases.includes(args[0]))];
+    const command = this.commands[args[0]] || this.commands[Object.keys(this.commands).find(c => this.commands[c].aliases.includes(args[0]))];
 
     if (!command || command.ownerOnly) {
       return; // TODO: decide whether this should be a silent exit or not
