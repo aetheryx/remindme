@@ -1,6 +1,6 @@
 const quotes = ['"', '“', '”'];
 const timeRX = new RegExp(`(.*?)(${quotes.join('|')})`, 'i');
-const channelRX = /channel: *(<#[0-9]{18}>|here)/g;
+const channelRX = new RegExp('channel: *(<#([0-9]{16,18})>|here)');
 
 async function remindmeWithArgs (msg, args) {
   args = args.join(' ');
@@ -21,11 +21,13 @@ async function remindmeWithArgs (msg, args) {
     return 'Your reminder wasn\'t added because it was set for the past.\nNote that if you\'re trying to set a reminder for the same day at a specific time (e.g. `6 PM`), UTC time will be assumed. You can fix this by including your timezone (e.g. `6 PM PST`).';
   }
 
-  const channelID = args.match(channelRX);
+  let channelID = args.match(channelRX);
   if (channelID && channelID[1] === 'here') {
-    channelID[1] = msg.channel.id;
+    channelID = msg.channel.id;
+  } else if (channelID) {
+    channelID = channelID[2];
   } else {
-    
+    channelID = null;
   }
 
   const reminderRX = /("|“|”)([^]*?)("|“|”)/i;
@@ -33,17 +35,21 @@ async function remindmeWithArgs (msg, args) {
   if (reminder.length > 1500) {
     return 'Your reminder cannot exceed 1500 characters.';
   }
-  ot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, dueDate, channelID)${}`)
 
   await this.db.addReminder({
     ownerID: msg.author.id,
-    reminder,
     dueDate: parsedTime.absolute,
-    channelID: channelID
-  })
+    reminder,
+    channelID
+  });
 
-
-
+  return {
+    embed: {
+      description: `:ballot_box_with_check: Reminder added: ${reminder}`,
+      footer: { text: 'Reminder set for ' },
+      timestamp: new Date(parsedTime.absolute)
+    }
+  };
 
 }
 
