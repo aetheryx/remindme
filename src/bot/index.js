@@ -1,10 +1,10 @@
-const { MongoClient } = require('mongodb');
-const Eris = require('eris');
-const fs   = require('fs');
-
 const utils = require(`${__dirname}/../utils`);
 const dbFunctions = require(`${__dirname}/../dbFunctions`);
 const events = require(`${__dirname}/events`);
+
+const { MongoClient } = require('mongodb');
+const Eris = utils.loadErisMods(require('eris'));
+const fs   = require('fs');
 
 class RemindMeBot {
   constructor (config) {
