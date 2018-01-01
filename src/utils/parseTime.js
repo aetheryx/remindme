@@ -42,7 +42,7 @@ function parseTime (input) {
 
   if (parsedTime.relative < 0) {
     const currentYear = new Date().getFullYear();
-    if (input.includes(currentYear)) {
+    if (parsedTime.mode === 'relative') {
       return 'SET_FOR_PAST';
     } else {
       return parseTime(`${input} ${currentYear + 1}`);
