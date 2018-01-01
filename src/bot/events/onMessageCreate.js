@@ -40,7 +40,7 @@ async function onMessageCreate (msg) {
     msg.mentions.find(u => u.id === this.client.user.id) &&
     msg.content.toLowerCase().includes('help')
   ) {
-    return this.commands['help'].call(msg);
+    return this.commands['help'].call.call(null, msg);
   }
 }
 
