@@ -10,7 +10,7 @@ async function onMessageCreate (msg) {
   }
 
   const args = msg.content.slice(prefix.length).split(' ').filter(Boolean);
-  let command = args.shift();
+  let command = args.shift().toLowerCase();
 
   if (command in this.commands) {
     command = this.commands[command];
@@ -34,7 +34,7 @@ async function onMessageCreate (msg) {
       })
       .catch(e => {
         this.log(e.stack, 'error');
-        msg.channel.createMessage('Something went wrong while executing this command. The error has been logged. \nPlease join here (Yphr6WG) if the issue persists.');
+        msg.channel.createMessage(`Something went wrong while executing this command. The error has been logged. \nPlease join here (discord.gg/Yphr6WG) if the issue persists.\n\`\`\`${e.message}\`\`\``);
       });
   } else if (
     msg.mentions.find(u => u.id === this.client.user.id) &&
