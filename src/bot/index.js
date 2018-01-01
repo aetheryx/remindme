@@ -22,8 +22,8 @@ class RemindMeBot {
     this.loadCommands();
 
     this.dbClient = null;
-    this.dbConn = null;
-    this.db = null;
+    this.dbConn   = null;
+    this.db       = null;
     this.initDB();
 
     this.client = new Eris(this.config.keys.token, this.clientOptions);
@@ -65,7 +65,7 @@ class RemindMeBot {
       files.forEach(file => {
         try {
           const command = require(`${__dirname}/commands/${file}`);
-          if (command instanceof Object) {
+          if (command instanceof Object && command.description) {
             this.commands[command.name] = Object.assign({
               aliases: [],
               ownerOnly: false,
