@@ -17,7 +17,7 @@ async function remindmeArgless (msg) {
     { time: 60000 }
   );
   let step = 1;
-  const reminder = {};
+  const reminder = { ownerID: msg.author.id };
 
   this.sendMessage(msg.channel.id, 'What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
     .then(m => delarray.push(m.id));
@@ -57,6 +57,7 @@ async function remindmeArgless (msg) {
       }
 
       reminder.dueDate = parsedTime.absolute;
+
       this.sendMessage(msg.channel.id, 'Would you like to receive the reminder in a specific channel, or in your DMs?\nMention the channel you\'d like to receive the reminder in, or send `DM` if you\'d like to receive it in your DMs.')
         .then(m => delarray.push(m.id));
     }
@@ -70,19 +71,48 @@ async function remindmeArgless (msg) {
         reminder.channelID = m.channelMentions[0] || m.channel.id;
       }
 
+      this.sendMessage(msg.channel.id, 'Would you like this reminder to be recurring? Send how frequently (e.g. `every hour` or `every 3 weeks`) or send `n` for no.')
+        .then(m => delarray.push(m.id));
+    }
+
+    if (step === 4) {
+      if (!['n', 'no'].includes(m.content.toLowerCase())) {
+        reminder.recurringArg = m.content;
+        const parsed = this.utils.parseTime(m.content);
+
+        if (parsed === 'INVALID' || parsed === 'SET_FOR_PAST' || parsed.mode !== 'relative') {
+          return this.sendMessage(msg.channel.id, `I was unable to recognize \`${m.content}\` as a valid recurring time argument. Please enter a proper recurring time argument, e.g. \`every 12 hours\` or \`every month\`.`);
+        }
+
+        reminder.recurring = parsed.relative;
+      }
+
       collector.stop();
+      await this.db.addReminder(reminder);
 
-      return this.sendMessage(msg.channel.id, JSON.stringify(reminder, '', '  '));
+      const fields = [
+        {
+          name: 'Target channel',
+          value: reminder.channelID ? `<#${reminder.channelID}>` : `<@${msg.author.id}>'s DMs`,
+          inline: true
+        }
+      ];
 
-      await Bot.db.run(`INSERT INTO reminders (owner, reminderText, createdDate, duration, recurring, dueDate, channelID)
-          VALUES (?, ?, ?, ?, ?, ?, ?);`, msg.author.id, r.reminderText, Date.now(), r.duration, r.recurring, r.dueDate, r.channelID);
+      if (reminder.recurring) {
+        fields.push({
+          name: 'Recurring',
+          value: `${reminder.recurringArg.trim()} (every ${this.utils.parseDuration(reminder.recurring / 1000)})`,
+          inline: true
+        });
+      }
 
-      Bot.sendMessage(msg.channel.id, { embed: {
-        color: Bot.config.embedColor,
-        description: `:ballot_box_with_check: Reminder added: ${r.reminderText}`,
+      this.sendMessage(msg.channel.id, {
+        title: 'Reminder successfully added',
+        description: reminder.reminder,
+        fields: fields,
         footer: { text: 'Reminder set for ' },
-        timestamp: new Date(r.dueDate)
-      }});
+        timestamp: new Date(reminder.dueDate)
+      });
       cleanup();
     }
     step++;
@@ -90,7 +120,7 @@ async function remindmeArgless (msg) {
 
   collector.on('end', async (_, reason) => {
     if (reason === 'time') {
-      Bot.sendMessage(msg.channel.id, 'Prompt timed out.');
+      this.sendMessage(msg.channel.id, 'Prompt timed out.');
     }
   });
 }
