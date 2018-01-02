@@ -36,7 +36,7 @@ function parseTime (input) {
 
   const parsedTime = timeParser(input.trim());
 
-  if (!parsedTime.mode === 'error' || Number(input)) {
+  if (parsedTime.mode === 'error' || Number(input)) {
     return 'INVALID';
   }
 
