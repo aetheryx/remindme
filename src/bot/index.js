@@ -38,13 +38,15 @@ class RemindMeBot {
     this.client.connect();
   }
 
+  async startWebServer () {
+
+  }
+
   async initDB () {
     this.dbClient = await MongoClient.connect(this.config.dbURL || 'mongodb://localhost:27017')
       .catch(e => {
-        if (e.message.includes('ECONNREFUSED')) {
-          this.log('Failed to connect to MongoDB! Exiting...', 'error');
-          process.exit();
-        }
+        this.log(`Failed to connect to MongoDB: ${e.message}\nExiting...`, 'error');
+        process.exit();
       });
     this.dbConn = this.dbClient.db('remindmebot');
 
@@ -82,11 +84,11 @@ class RemindMeBot {
     });
   }
 
-  async start () {
-
-  }
-
   async sendMessage (target, content, isUser = false) {
+    if (content instanceof Object && !content.content) {
+      content = { embed: content };
+    }
+
     if (content.embed && !content.embed.color) {
       content.embed.color = this.config.embedColor;
     }

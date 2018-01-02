@@ -28,14 +28,12 @@ async function helpCommand (msg, args) {
     }
 
     return {
-      embed: {
-        title: `Help for command: ${command.name}`,
-        fields: [
-          { 'name': 'Description: ', 'value': command.description },
-          { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', prefix + command.name)}${'```'}` },
-          { 'name': 'Aliases: ', 'value': command.aliases[0] ? command.aliases.join(', ') : 'None' }
-        ]
-      }
+      title: `Help for command: ${command.name}`,
+      fields: [
+        { 'name': 'Description: ', 'value': command.description },
+        { 'name': 'Usage: ', 'value': `${'```'}\n${command.usage.replace('{command}', prefix + command.name)}${'```'}` },
+        { 'name': 'Aliases: ', 'value': command.aliases[0] ? command.aliases.join(', ') : 'None' }
+      ]
     };
   }
 }

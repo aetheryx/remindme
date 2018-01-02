@@ -20,9 +20,9 @@ async function listCommand (msg) {
     }
   }
 
-  const sent = await this.sendMessage(msg.author.id, { embed }, true);
+  const sent = await this.sendMessage(msg.author.id, embed, true);
   if (!sent) {
-    return { embed };
+    return embed;
   } else {
     return ':ballot_box_with_check: Check your DMs!';
   }

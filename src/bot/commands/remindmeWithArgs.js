@@ -77,13 +77,11 @@ async function remindmeWithArgs (msg, args) {
 
   msg.addReaction('☑');
   return {
-    embed: {
-      title: 'Reminder successfully added',
-      description: reminder,
-      fields: fields,
-      footer: { text: 'Reminder set for ' },
-      timestamp: new Date(parsedTime.absolute)
-    }
+    title: 'Reminder successfully added',
+    description: reminder,
+    fields,
+    footer: { text: 'Reminder set for ' },
+    timestamp: new Date(parsedTime.absolute)
   };
 }
 
