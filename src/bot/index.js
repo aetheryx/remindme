@@ -1,6 +1,7 @@
 const utils = require(`${__dirname}/../utils`);
 const dbFunctions = require(`${__dirname}/../dbFunctions`);
 const events = require(`${__dirname}/events`);
+const startWebServer = require(`${__dirname}/../website`);
 
 const { MongoClient } = require('mongodb');
 const Eris = utils.loadErisMods(require('eris'));
@@ -8,6 +9,8 @@ const fs   = require('fs');
 
 class RemindMeBot {
   constructor (config) {
+    this.devMode = process.argv.find(arg => arg.includes('dev'));
+
     this.utils = utils;
     this.log = utils.log;
 
@@ -26,20 +29,22 @@ class RemindMeBot {
     this.db       = null;
     this.initDB();
 
-    this.client = new Eris(this.config.keys.token, this.clientOptions);
+    this.client = new Eris(this.config.token, this.clientOptions);
     this.client
       .on('connect', events.onConnect.bind(this))
       .on('ready', events.onReady.bind(this))
       .on('messageCreate', events.onMessageCreate.bind(this))
-      .on('guildCreate', events.onGuildCreate.bind(this))
-      .on('guildDelete', events.onGuildDelete.bind(this))
+      .on('guildCreate', events.onGuild.onCreate.bind(this))
+      .on('guildDelete', events.onGuild.onDelete.bind(this))
       .once('ready', events.onceReady.bind(this));
 
     this.client.connect();
   }
 
   async startWebServer () {
-
+    if (this.config.webserver && this.config.webserver.enabled) {
+      startWebServer.call(this);
+    }
   }
 
   async initDB () {

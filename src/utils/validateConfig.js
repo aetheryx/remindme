@@ -8,6 +8,7 @@ const configSchema = {
     embedColor: { type: 'integer', required: true },
     ownerID: { type: 'string', required: true },
     dbURL: { type: 'string', required: false },
+    token: { type: 'string', required: true },
     tick: { type: 'integer', required: false },
     webserver: {
       type: 'object',
@@ -17,14 +18,9 @@ const configSchema = {
       },
       required: false,
     },
-    keys: {
-      type: 'object',
-      properties: {
-        token: { type: 'string', required: true },
-        dbl: { type: 'string', required: false },
-        botspw: { type: 'string', required: false },
-      },
-      required: true,
+    botlists: {
+      type: 'array',
+      required: false
     }
   }
 };

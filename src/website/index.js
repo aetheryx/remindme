@@ -3,13 +3,13 @@ const app = express();
 const { promisify } = require('util');
 const os = promisifyAll(require('os-utils'));
 
-module.exports = function (Bot) {
-  const port = Bot.config.webserver.port;
+module.exports = function () {
+  const port = this.config.webserver.port || 42069;
   app.listen(port, () => {
-    Bot.log(`Web server listening on port ${port}.`);
+    this.log(`Web server listening on port ${port}.`);
   });
 
-  app.use(express.static('./website'));
+  app.use(express.static(__dirname));
 
   app.get('/api/stats', async (req, res) => {
     const freeMem    = os.freemem();
@@ -17,11 +17,11 @@ module.exports = function (Bot) {
     const processMem = process.memoryUsage().rss;
 
     res.send(JSON.stringify({
-      guilds: Bot.client.guilds.size,
+      guilds: this.client.guilds.size,
 
-      channels: Object.keys(Bot.client.channelGuildMap).length,
+      channels: Object.keys(this.client.channelGuildMap).length,
 
-      users: Bot.client.users.size,
+      users: this.client.users.size,
 
       ram: `${(processMem / 1048576).toFixed()}MB/` + // eslint-disable-line prefer-template
                  (totalMem > 1000 ? `${(totalMem / 1000).toFixed(1)}GB` : `${totalMem.toFixed()}MB`) +
