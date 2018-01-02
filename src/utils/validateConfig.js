@@ -7,6 +7,7 @@ const configSchema = {
     defaultPrefix: { type: 'string', required: true },
     embedColor: { type: 'integer', required: true },
     ownerID: { type: 'string', required: true },
+    dbURL: { type: 'string', required: false },
     tick: { type: 'integer', required: false },
     webserver: {
       type: 'object',
