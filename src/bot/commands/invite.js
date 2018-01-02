@@ -8,7 +8,7 @@ async function inviteCommand (msg, args) {
 }
 
 module.exports = {
-  call: inviteCommand,
+  command: inviteCommand,
   name: 'invite',
   description: 'Returns an invite for RemindMeBot and the support server.'
 };

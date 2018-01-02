@@ -24,12 +24,12 @@ async function listCommand (msg) {
   if (!sent) {
     return embed;
   } else {
-    return ':ballot_box_with_check: Check your DMs!';
+    return '☑ Check your DMs!';
   }
 }
 
 module.exports = {
-  call: listCommand,
+  command: listCommand,
   name: 'list',
   aliases: ['reminders'],
   description: 'Sends you your current reminders in DM. Note: will send in channel if DMs are disabled.'

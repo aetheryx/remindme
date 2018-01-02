@@ -39,7 +39,7 @@ async function helpCommand (msg, args) {
 }
 
 module.exports = {
-  call: helpCommand,
+  command: helpCommand,
   name: 'help',
   usage: '{command} [command]',
   description: 'Returns extra documentation for a specific command (or a list of all commands).'

@@ -25,7 +25,7 @@ async function clearCommand (msg) {
 }
 
 module.exports = {
-  call: clearCommand,
+  command: clearCommand,
   name: 'clear',
   description : 'Starts a guided tour to clear all of your reminders.'
 };

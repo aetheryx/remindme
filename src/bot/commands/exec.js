@@ -28,7 +28,7 @@ async function execCommand (msg, args) {
 }
 
 module.exports = {
-  call: execCommand,
+  command: execCommand,
   name: 'exec',
   usage: '{command} <command>',
   aliases: ['zsh'], // edge as fuck :^)

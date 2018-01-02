@@ -18,7 +18,7 @@ async function prefixCommand (msg, args) {
 }
 
 module.exports = {
-  call: prefixCommand,
+  command: prefixCommand,
   name: 'prefix',
   usage: '{command} <new prefix>',
   aliases: ['setprefix'],

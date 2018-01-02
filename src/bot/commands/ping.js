@@ -7,7 +7,7 @@ async function pingCommand (msg) {
 }
 
 module.exports = {
-  call: pingCommand,
+  command: pingCommand,
   name: 'ping',
   description: 'Returns the websocket latency to Discord API.'
 };

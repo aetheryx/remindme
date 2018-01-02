@@ -27,7 +27,7 @@ async function evalCommand (msg, args) {
 }
 
 module.exports = {
-  call: evalCommand,
+  command: evalCommand,
   name: 'eval',
   usage: '{command} <script>',
   aliases: ['ev'],

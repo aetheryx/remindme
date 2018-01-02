@@ -6,7 +6,7 @@ async function rebootCommand (msg) {
 }
 
 module.exports = {
-  call: rebootCommand,
+  command: rebootCommand,
   name: 'reboot',
   aliases: ['restart'],
   ownerOnly: true,

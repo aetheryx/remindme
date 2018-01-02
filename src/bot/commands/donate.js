@@ -16,7 +16,7 @@ async function donateCommand () {
 }
 
 module.exports = {
-  call: donateCommand,
+  command: donateCommand,
   name: 'donate',
   description: 'Returns information regarding donations.'
 };

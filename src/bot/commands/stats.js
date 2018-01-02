@@ -34,7 +34,7 @@ async function statsCommand (msg) {
 }
 
 module.exports = {
-  call: statsCommand,
+  command: statsCommand,
   name: 'stats',
   aliases: ['info'],
   description: 'Returns information and statistics about RemindMeBot.'

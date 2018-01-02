@@ -14,7 +14,7 @@ async function remindmeCommand (msg, args) {
 }
 
 module.exports = {
-  call: remindmeCommand,
+  command: remindmeCommand,
   name: 'remindme',
   usage: '{command} <time_argument> <"message"> [channel: #channel|here] [-recurring <time_argument>]',
   aliases: ['remind'],
