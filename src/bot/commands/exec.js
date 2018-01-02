@@ -14,11 +14,9 @@ async function execCommand (msg, args) {
         }
       }, `${stdout}\n\n${stderr}`);
 
-      return {
-        embed: {
-          description: `Console log exceeds 2000 characters. View [here](https://hastebin.com/${JSON.parse(res).key}).`
-        }
-      };
+      this.sendMessage(msg.channel.id, {
+        description: `Console log exceeds 2000 characters. View [here](https://hastebin.com/${JSON.parse(res).key}).`
+      });
     } else {
       if (!stderr && !stdout) {
         msg.react('\u2611');
