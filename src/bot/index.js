@@ -33,7 +33,7 @@ class RemindMeBot {
       .on('messageCreate', events.onMessageCreate.bind(this))
       .on('guildCreate', events.onGuildCreate.bind(this))
       .on('guildDelete', events.onGuildDelete.bind(this))
-      .once('ready', this.start.bind(this));
+      .once('ready', events.onceReady.bind(this));
 
     this.client.connect();
   }
