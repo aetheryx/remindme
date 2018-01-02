@@ -7,7 +7,7 @@ async function clearCommand (msg) {
   this.sendMessage(msg.channel.id, `:warning: This will delete all of your reminders (${reminders.length} total)! Are you sure? (\`y\`/\`n\`)`);
 
   // eslint-disable-next-line prefer-const
-  let [message, reason] = await msg.channel.awaitMessages(m => m.author.id === msg.author.id, { maxMatches: 1, time: 25000 });
+  let [message, reason] = await msg.channel.awaitMessages(this.client, m => m.author.id === msg.author.id, { maxMatches: 1, time: 25000 });
 
   if (!message[0] && reason === 'time') {
     return 'Prompt timed out.';

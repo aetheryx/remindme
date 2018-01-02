@@ -1,5 +1,5 @@
 async function remindmeArgless (msg) {
-  const prefix = await this.db.getPrefix(msg.channel.guild.id);
+  const prefix = this.db.getPrefix(msg.channel.guild ? msg.channel.guild.id : null);
 
   const delarray = [];
   const cleanup = async () => {
@@ -11,6 +11,7 @@ async function remindmeArgless (msg) {
   delarray.push(msg.id);
 
   const collector = new this.utils.MessageCollector(
+    this.client,
     msg.channel,
     (message) => message.author.id === msg.author.id,
     { time: 60000 }

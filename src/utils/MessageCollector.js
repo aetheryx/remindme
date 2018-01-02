@@ -1,14 +1,14 @@
 const EventEmitter = require('events').EventEmitter;
 
 class MessageCollector extends EventEmitter {
-  constructor (channel, filter, options = {}) {
+  constructor (bot, channel, filter, options = {}) {
     super();
     this.filter = filter;
     this.channel = channel;
     this.options = options;
     this.ended = false;
     this.collected = [];
-    this.bot = channel.guild.shard.client;
+    this.bot = bot;
 
     this.listener = message => this.verify(message);
     this.bot.on('messageCreate', this.listener);
