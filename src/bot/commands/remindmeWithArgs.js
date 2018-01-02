@@ -5,7 +5,7 @@ const recurringRX = new RegExp('recurring: *(.+?($|(?=channel)))');
 
 async function remindmeWithArgs (msg, args) {
   args = args.join(' ');
-  const prefix = this.db.getPrefix(msg.channel.guild ? msg.channel.guild.id : null);
+  const prefix = await this.db.getPrefix(msg.channel.guild ? msg.channel.guild.id : null);
 
   if (quotes.every(quote => !args.includes(quote))) {
     return `Argument error. Please follow the proper syntax for the command:\n\`${prefix}remindme time_argument "message"\`, e.g. \`${prefix}remindme 31 December 2017 "New Years"\``;
@@ -23,8 +23,8 @@ async function remindmeWithArgs (msg, args) {
   }
 
   const reminder = msg.content.substring(
-    quotes.map(quote => msg.content.indexOf(quote)).filter(index => index > 0).sort((a, b) => a - b)[0] + 1,
-    quotes.map(quote => msg.content.lastIndexOf(quote)).filter(index => index > 0).sort((a, b) => b - a)[0]
+    Math.min(...quotes.map(quote => msg.content.indexOf(quote)).filter(index => index > 0)) + 1,
+    Math.max(...quotes.map(quote => msg.content.lastIndexOf(quote)).filter(index => index > 0))
   );
   if (reminder.length > 1500) {
     return 'Your reminder cannot exceed 1500 characters.';
