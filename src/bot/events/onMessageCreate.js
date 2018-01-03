@@ -10,7 +10,13 @@ async function onMessageCreate (msg) {
   }
 
   const args = msg.content.slice(prefix.length).split(' ').filter(Boolean);
-  let command = args.shift().toLowerCase();
+  let command = args.shift();
+
+  if (!command) {
+    return;
+  } else {
+    command = command.toLowerCase();
+  }
 
   if (command in this.commands) {
     command = this.commands[command];
