@@ -1,10 +1,15 @@
 async function getExpiredReminders () {
   const reminders = this.dbConn.collection('reminders');
-  return reminders.find({
+  return (await reminders.find({
     dueDate: {
       $lt: Date.now()
     }
-  }).toArray();
+  }).toArray())
+    .map(r => {
+      const decrypted = this.utils.decrypt(r.reminder, r.key);
+      r.reminder = decrypted;
+      return r;
+    });
 }
 
 module.exports = getExpiredReminders;
