@@ -111,7 +111,7 @@ class RemindMeBot {
         !err.message.includes('Cannot send messages to this user') &&
         !err.message.includes('Missing Access')
       ) {
-        this.log(err.stack, 'error');
+        this.log(`Unrecognized error: ${err.stack}\n${content}`, 'error');
       } else {
         return false;
       }
