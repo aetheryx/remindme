@@ -1,8 +1,8 @@
 const https = require('https');
 
 function post (options, body) {
-  return new Promise((resolve, reject) => { // TODO: catch this through https
-    const data = JSON.stringify(body);
+  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
+    const data = JSON.stringify(body);      // TODO: catch this through https
     const postOptions = {
       host: options.url[0],
       path: options.url[1],
