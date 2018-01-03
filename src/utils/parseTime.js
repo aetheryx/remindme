@@ -15,8 +15,7 @@ const timeRXes = {
   'an ': 'one ',
   'sec ': 'second ',
   'min ': 'minute ',
-  'mins ': 'minutes ',
-  'every': '1 '
+  'mins ': 'minutes '
 };
 
 function parseTime (input) {
@@ -34,6 +33,14 @@ function parseTime (input) {
       input = input.replace(new RegExp(regexKey, 'gi'), timeRXes[regexKey]);
     }
   });
+
+  if (input.startsWith('every')) {
+    if ((/every *[0-9]/).test(input)) {
+      input = input.replace('every', '');
+    } else {
+      input = input.replace('every', '1 ');
+    }
+  }
 
   const parsedTime = timeParser(input.trim());
 
