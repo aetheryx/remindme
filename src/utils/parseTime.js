@@ -15,7 +15,8 @@ const timeRXes = {
   'an ': 'one ',
   'sec ': 'second ',
   'min ': 'minute ',
-  'mins ': 'minutes '
+  'mins ': 'minutes ',
+  'every': '1 '
 };
 
 function parseTime (input) {
