@@ -6,7 +6,7 @@ async function helpCommand (msg, args) {
     }
   }
 
-  const prefix = await this.db.getPrefix(msg.channel.guild.id);
+  const prefix = await this.db.getPrefix(msg.channel.guild ? msg.channel.guild.id : null);
 
   if (!args[0]) {
     const content = `To set a reminder, simply send \`${prefix}remindme\` and follow the instructions.\n` +
