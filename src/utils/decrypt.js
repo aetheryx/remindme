@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 function decrypt (stringToBeDecrypted, key) {
   const decipher = crypto.createDecipher('aes256', key);
   let decryptedString = decipher.update(stringToBeDecrypted, 'hex', 'utf8');

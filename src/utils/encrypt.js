@@ -1,5 +1,7 @@
 const KEY_LENGTH_SIZE = 24;
 
+const crypto = require('crypto');
+
 const getRandomString = () => {
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   return new Array(KEY_LENGTH_SIZE)
