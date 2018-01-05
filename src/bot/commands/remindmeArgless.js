@@ -18,6 +18,7 @@ async function remindmeArgless (msg) {
   );
   let step = 1;
   const reminder = { ownerID: msg.author.id };
+  let reminderText;
 
   this.sendMessage(msg.channel.id, 'What would you like the reminder to be? (You can send `cancel` at any time to cancel creation.)')
     .then(m => delarray.push(m.id));
@@ -38,7 +39,7 @@ async function remindmeArgless (msg) {
     delarray.push(m.id);
 
     if (step === 1) {
-      reminder.reminder = m.content || m.attachments[0].proxy_url;
+      reminder.reminder = reminderText = m.content || m.attachments[0].proxy_url;
 
       this.sendMessage(msg.channel.id, 'When would you like to be reminded? (e.g. 24 hours)')
         .then(m => delarray.push(m.id));
@@ -71,7 +72,7 @@ async function remindmeArgless (msg) {
         reminder.channelID = m.channelMentions[0] || m.channel.id;
       }
 
-      this.sendMessage(msg.channel.id, 'Would you like this reminder to be recurring? Send how frequently (e.g. `every hour` or `every 3 weeks`) or send `n` for no.')
+      this.sendMessage(msg.channel.id, 'Would you like this reminder to be recurring? Send how frequently (e.g. `every hour` or `every 3 weeks`) or send `no`.')
         .then(m => delarray.push(m.id));
     }
 
@@ -88,6 +89,7 @@ async function remindmeArgless (msg) {
       }
 
       collector.stop();
+
       await this.db.addReminder(reminder);
 
       const fields = [
@@ -108,7 +110,7 @@ async function remindmeArgless (msg) {
 
       this.sendMessage(msg.channel.id, {
         title: 'Reminder successfully added',
-        description: reminder.reminder,
+        description: reminderText,
         fields: fields,
         footer: { text: 'Reminder set for ' },
         timestamp: new Date(reminder.dueDate)
