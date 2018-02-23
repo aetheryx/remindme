@@ -1,6 +1,6 @@
 async function deleteReminder (_id) {
   const reminders = this.dbConn.collection('reminders');
-  return reminders.deleteOne({ _id });
+  return reminders.deleteMany({ _id });
 }
 
 module.exports = deleteReminder;
