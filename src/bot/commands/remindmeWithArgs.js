@@ -26,8 +26,8 @@ async function remindmeWithArgs (msg, args) {
     Math.min(...quotes.map(quote => msg.content.indexOf(quote)).filter(index => index > 0)) + 1,
     Math.max(...quotes.map(quote => msg.content.lastIndexOf(quote)).filter(index => index > 0))
   );
-  if (reminder.length > 1500) {
-    return 'Your reminder cannot exceed 1500 characters.';
+  if (reminder.length > 750) {
+    return 'Your reminder cannot exceed 750 characters.';
   }
 
   let channelID = args.match(channelRX);
