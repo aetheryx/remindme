@@ -50,6 +50,6 @@ async function forgetCommand (msg) {
 module.exports = {
   command: forgetCommand,
   name: 'forget',
-  aliases: ['delete'],
+  aliases: ['delete', 'forgetti'],
   description: 'Starts a guided tour to forget one of your reminders.'
 };
