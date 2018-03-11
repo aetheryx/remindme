@@ -1,6 +1,6 @@
 const os = require('os');
 const totalMem = os.totalmem();
-const erisVersion = require(`${__dirname}/../../../node_modules/eris/package.json`).version;
+const { VERSION } = require('eris');
 const botVersion = require(`${__dirname}/../../../package.json`).version;
 
 async function statsCommand (msg) {
@@ -19,7 +19,7 @@ async function statsCommand (msg) {
       { name: 'RAM Usage', value: `${(memUsage / 1048576).toFixed()}MB/${(totalMem / 1073741824).toFixed(1)} GB\n(${(memUsage / totalMem * 100).toFixed(2)}%)`, inline: true
       },
       { name: 'System Info', value: `${process.platform} (${process.arch})\n${(totalMem > 1073741824 ? `${(totalMem / 1073741824).toFixed(1)} GB` : `${(totalMem / 1048576).toFixed(2)} MB`)}`, inline: true },
-      { name: 'Libraries', value: `[Eris](https://abal.moe/Eris) v${erisVersion}\n[Node.js](https://nodejs.org/en/) ${process.version}`, inline: true },
+      { name: 'Libraries', value: `[Eris](https://abal.moe/Eris) v${VERSION}\n[Node.js](https://nodejs.org/en/) ${process.version}`, inline: true },
       { name: 'Links', value: [
         `[Bot invite](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${this.client.user.id})`,
         '[Support server invite](https://discord.gg/Yphr6WG)',
