@@ -19,7 +19,7 @@ async function execCommand (msg, args) {
       });
     } else {
       if (!stderr && !stdout) {
-        msg.react('\u2611');
+        msg.addReaction('\u2611');
       } else {
         this.sendMessage(msg.channel.id, `${stdout ? `Info: \`\`\`\n${stdout}\n\`\`\`` : ''}\n${stderr ? `Errors: \`\`\`\n${stderr}\`\`\`` : ''}`);
       }
