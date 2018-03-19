@@ -13,3 +13,5 @@ process.on('SIGINT', async () => {
 
   process.exit();
 });
+
+setTimeout(() => process.emit('SIGINT'), 1000 * 60 * 60 * 8); // 8 hours
