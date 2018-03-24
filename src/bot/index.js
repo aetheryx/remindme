@@ -110,7 +110,8 @@ class RemindMeBot {
         !err.message.includes('Missing Permissions') && // TODO: re-test these and replace these strings with HTTP codes
         !err.message.includes('Cannot send messages to this user') &&
         !err.message.includes('Missing Access') &&
-        !err.message.includes('Unknown Channel')
+        !err.message.includes('Unknown Channel') && 
+        !err.message.includes('Invalid Form Body')
       ) {
         this.log(`Unrecognized error: ${err.stack}\n${content}`, 'error');
       } else {
