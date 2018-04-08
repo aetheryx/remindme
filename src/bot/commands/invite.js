@@ -3,7 +3,7 @@ async function inviteCommand (msg, args) {
 
   return {
     description: `Click [here](https://discordapp.com/oauth2/authorize?permissions=27648&scope=bot&client_id=${id}) to invite me to your server,` +
-    'or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.'
+    ' or click [here](https://discord.gg/Yphr6WG) for an invite to RemindMeBot\'s support server.'
   };
 }
 
