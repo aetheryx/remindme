@@ -43,7 +43,7 @@ class RemindMeBot {
 
   async startWebServer () {
     if (this.config.webserver && this.config.webserver.enabled) {
-      // startWebServer.call(this);
+      startWebServer.call(this);
     }
   }
 
