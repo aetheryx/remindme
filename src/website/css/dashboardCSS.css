@@ -179,3 +179,9 @@ nav.navbar.navbar-default {
   font-size: 75%;
   padding: 16px;
 }
+
+#commands .card {
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+}
