@@ -108,7 +108,8 @@ function enterCommandPage () { // eslint-disable-line no-unused-vars
     document.querySelector('div.card.card-1').style.display = 'none';
   }, 800);
   setTimeout(() => {
-    document.getElementById('commands').style.display = 'inline';
+    document.getElementById('commands').style.display = 'flex';
+    document.getElementById('commands').style.flexDirection = 'column';
     document.getElementById('commands').style.opacity = '1';
   }, 1200);
 }
