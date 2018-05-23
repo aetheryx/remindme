@@ -25,7 +25,7 @@
     "moment": "^2.22.1",
     "moment-duration-format": "^2.2.2",
     "mongodb": "^3.0.8",
-    "os-utils": "0.0.14",
+    "os-utils": "^0.0.14",
     "time-parser": "^0.2.10"
   },
   "devDependencies": {
