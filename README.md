@@ -7,6 +7,10 @@
 [![Discord](https://img.shields.io/discord/299979631715549184.svg)](https://discord.gg/Yphr6WG)
 [![issues](https://img.shields.io/github/issues/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/issues)
 [![prs](https://img.shields.io/github/issues-pr/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/pulls)
+
+# Notice
+This project has been discontinued along side the RemindMe discord bot. You may use this repo to run your own version of the discord bot (at your own risk and without help).
+
 ## Getting started
 
 Make sure you have `git` and `node` (latest is preferred) installed on your machine. <sup>Side note - if your version of Node is below 7.6, you need to run with a `--harmony` flag.</sup>
