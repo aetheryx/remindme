@@ -1,9 +1,9 @@
 # RemindMeBot 
 
-[![Build Status](https://travis-ci.org/Aetheryx/remindme.svg?branch=master)](https://travis-ci.org/Aetheryx/remindme)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ccbde6fcb76f489fbf5b66970ffe9757)](https://www.codacy.com/app/Aetheryx/remindme?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Aetheryx/remindme&amp;utm_campaign=Badge_Grade)
-[![GitHub release](https://img.shields.io/github/release/Aetheryx/remindme.svg)](https://github.com/Aetheryx/remindme/releases)
-[![License](https://img.shields.io/github/license/aetheryx/remindme.svg)](https://github.com/Aetheryx/remindme/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/aetheryx/remindme.svg?branch=master)](https://travis-ci.org/aetheryx/remindme)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ccbde6fcb76f489fbf5b66970ffe9757)](https://www.codacy.com/app/aetheryx/remindme?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=aetheryx/remindme&amp;utm_campaign=Badge_Grade)
+[![GitHub release](https://img.shields.io/github/release/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/releases)
+[![License](https://img.shields.io/github/license/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/blob/master/LICENSE)
 [![Discord](https://img.shields.io/discord/299979631715549184.svg)](https://discord.gg/Yphr6WG)
 [![issues](https://img.shields.io/github/issues/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/issues)
 [![prs](https://img.shields.io/github/issues-pr/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/pulls)
@@ -17,7 +17,7 @@ Make sure you have `git` and `node` (latest is preferred) installed on your mach
 
 Clone the repo, go into it, npm install:
 ```
-git clone https://github.com/Aetheryx/remindme.git folderName
+git clone https://github.com/aetheryx/remindme.git folderName
 cd folderName
 npm install
 ```
