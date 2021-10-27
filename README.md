@@ -9,7 +9,9 @@
 [![prs](https://img.shields.io/github/issues-pr/aetheryx/remindme.svg)](https://github.com/aetheryx/remindme/pulls)
 
 # Notice
-This project has been discontinued alongside the RemindMe Discord bot. You may use this repo to run your own version of the discord bot (at your own risk and without help).
+This project has been discontinued alongside the RemindMe Discord bot. You may use this repo to run your own version of the discord bot (at your own risk and without help).  
+
+Please contact me [here](https://discord.com/channels/299979631715549184/300952410334167043) to purchase RemindMeBot. Current going rate is `USD$5.00`.
 
 ## Getting started
 
