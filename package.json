@@ -22,7 +22,7 @@
     "express": "^4.16.3",
     "humanize-duration": "^3.12.1",
     "jsonschema": "^1.2.4",
-    "moment": "^2.22.1",
+    "moment": "^2.29.2",
     "moment-duration-format": "^2.2.2",
     "mongodb": "^3.0.8",
     "os-utils": "^0.0.14",
