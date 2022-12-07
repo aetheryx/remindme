@@ -19,7 +19,7 @@
   "homepage": "https://github.com/Aetheryx/remindme#readme",
   "dependencies": {
     "eris": "^0.8.6",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "humanize-duration": "^3.12.1",
     "jsonschema": "^1.2.4",
     "moment": "^2.22.1",
